@@ -20,8 +20,9 @@
     "url": "https://github.com/mildsunrise/node_netlink.git"
   },
   "scripts": {
-    "clean": "rm -rf dist",
-    "build": "tsc",
+    "clean": "node-gyp clean; rm -rf dist",
+    "configure": "node-gyp configure",
+    "build": "node-gyp build && tsc",
     "test": "jest --coverage",
     "test:watch": "jest --coverage --watch",
     "docs": "typedoc --out docs",
@@ -29,7 +30,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "binding.gyp"
   ],
   "jest": {
     "transform": {
@@ -60,7 +62,8 @@
     ]
   },
   "dependencies": {
-    "@types/node": "^12.0.0"
+    "@types/node": "^12.0.0",
+    "nan": "^2.14.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",
