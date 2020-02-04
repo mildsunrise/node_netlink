@@ -1,3 +1,8 @@
+/**
+ * This module exports Netlink constants.
+ */
+/** */
+
 // Based on <linux/netlink.h> at d3e8869
 
 /** Netlink protocol numbers */
@@ -122,7 +127,7 @@ Check		NLM_F_EXCL
 // -----
 
 /** Standard control message types */
-export const TYPE = {
+export const TYPES = {
     /** Nothing. */
     NLMSG_NOOP: 0x1,
     /** Error */

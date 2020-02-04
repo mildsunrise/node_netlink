@@ -155,7 +155,7 @@ export class RawNetlinkSocket extends EventEmitter {
     }
 
     send(
-        msg: Uint8Array | [Uint8Array],
+        msg: Uint8Array | Uint8Array[],
         options?: SendOptions,
         callback?: (error?: Error) => any
     ) {

@@ -19,17 +19,6 @@ npm install netlink
 
 <!-- TODO: explain api -->
 
-### Port numbers
-
-This module doesn't use libnl (see [Use of libnl](#use-of-libnl)). Unique port numbers
-are generated from the PID (lowest 16 bits) and an offset which
-is different for each created socket (highest 16 bits).
-
-If you use a native addon that creates Netlink sockets, you may
-experience conflicts. In this case, you can manually specify port
-numbers when creating sockets or overwrite the algorithm that
-allocates port numbers (see documentation of`RawNetlinkSocket`).
-
 
 ## Design
 
