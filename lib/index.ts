@@ -1,2 +1,4 @@
 export * from './constants'
-export * from './raw'
+export { RawNetlinkSocket, RawNetlinkSocketOptions, generateLocalPort } from './raw'
+export * from './message'
+export * from './netlink'
