@@ -6,6 +6,9 @@ to perform administrative operations (manage firewall, network, etc.)
 and listen for related notifications from the kernel, but also serves
 as a generic IPC mechanism.
 
+It also implements the Generic Netlink protocol, and includes a few
+common messages / operations.
+
 
 ## Usage
 
@@ -17,10 +20,43 @@ sudo apt install build-essential
 npm install netlink
 ~~~
 
-<!-- TODO: explain api -->
+Example usage:
+
+~~~ js
+const { createNetlink, PROTOCOLS } = require('netlink')
+
+const socket = createNetlink(PROTOCOLS.ROUTE)
+
+socket.on('message', (msg, rinfo) => {
+  console.log(`Received message from ${rinfo.port}:`, msg)
+})
+
+// Send a Netlink message over the socket, to port 1
+const data = Buffer.from('...')
+socket.send(type, data, { flags: ..., port: 1 })
+
+// Send message with REQUEST and ACK flags set, wait for a reply
+const data = Buffer.from('...')
+socket.sendRequest(type, data, { timeout: 1000 })
+    .then(([ reply, rinfo ]) => {
+        console.log('Received a reply:', reply)
+    }, error => {
+        console.error('Request failed:', error)
+    })
+~~~
 
 
 ## Design
+
+For Netlink applications, it's recommended to use libnl.
+However it's a very small library and its API is very C oriented;
+exposing it properly would be too much work for the benefits, as well
+as introduce a native dependency. Instead it has been reimplemented
+in Javascript, which gives the user much more flexibility.
+
+This makes the native code very thin (read: 500 lines), the rest
+is done in JavaScript. This introduces a performance penalty, but
+allows for little need to ever touch the native code.
 
 The module is composed of several layers:
 
@@ -28,6 +64,7 @@ The module is composed of several layers:
     interface (`RawNetlinkSocket`) to create Netlink sockets and
     send / receive raw data over them. Its API is intended to
     mirror [`dgram.Socket`](https://nodejs.org/api/dgram.html).
+    This is the only layer that interacts with the native code.
 
     This layer manages creation of unique port numbers, credential
     passing, addressing, message peeking, truncated messages, etc.
@@ -42,14 +79,4 @@ The module is composed of several layers:
   - `generic_netlink`: this implements the Generic Netlink protocol
     on top of `netlink`.
 
-These layers are implemented in Javascript, but there's also a tiny
-native binding that exposes the system calls. `raw` is the only layer
-that interacts with this native binding.
 
-### Use of libnl
-
-libnl is recommended, however it's a very small library and
-its API is very C oriented, and exposing it properly would be
-too much work for the benefits, as well as introducing a native
-dependency. Instead it has been implemented in Javascript, which
-gives the user much more flexibility.
