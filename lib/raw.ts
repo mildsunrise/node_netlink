@@ -81,7 +81,7 @@ export interface MessageInfo {
     truncated?: number
 }
 
-export interface SendOptions {
+export interface RawNetlinkSendOptions {
     /**
      * Destination port (default: 0, i.e. the kernel)
      */
@@ -156,7 +156,7 @@ export class RawNetlinkSocket extends EventEmitter {
 
     send(
         msg: Uint8Array | Uint8Array[],
-        options?: SendOptions,
+        options?: RawNetlinkSendOptions,
         callback?: (error?: Error) => any
     ) {
         const port = (options && options.port) || 0

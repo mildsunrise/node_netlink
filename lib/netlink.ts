@@ -12,7 +12,7 @@ const { getSystemErrorName } = (util as any) // FIXME?
 
 import { RawNetlinkSocket,
          RawNetlinkSocketOptions,
-         SendOptions as RawSendOptions, 
+         RawNetlinkSendOptions, 
          MessageInfo } from './raw'
 import { FLAGS, FLAGS_ACK, TYPES } from './constants'
 import { parseMessages, formatMessage, NetlinkMessage_Parsed, parseError } from './message'
@@ -20,7 +20,7 @@ import { parseMessages, formatMessage, NetlinkMessage_Parsed, parseError } from 
 export interface NetlinkSocketOptions {
 }
 
-export interface SendOptions extends RawSendOptions {
+export interface NetlinkSendOptions extends RawNetlinkSendOptions {
     /**
      * Message flags (default: 0, i.e. no flags)
      */
@@ -65,7 +65,7 @@ export class NetlinkSocket extends EventEmitter {
     send(
         type: number,
         data: Uint8Array | Uint8Array[],
-        options?: SendOptions,
+        options?: NetlinkSendOptions,
         callback?: (error?: Error) => any,
     ): number {
         let seq = options && options.seq
@@ -98,14 +98,14 @@ export class NetlinkSocket extends EventEmitter {
     sendRequest(
         type: number,
         data: Uint8Array | Uint8Array[],
-        options?: SendOptions & {
+        options?: NetlinkSendOptions & {
             /** Timeout in ms (default: no timeout) */
             timeout?: number
             /** Whether to reject the promise on ERROR message (default: true) */
             checkError?: boolean
         }
-    ): Promise<[NetlinkMessage_Parsed, SendOptions]> {
-        const x: Promise<[NetlinkMessage_Parsed, SendOptions]> = new Promise((resolve, reject) => {
+    ): Promise<[NetlinkMessage_Parsed, MessageInfo]> {
+        const x: Promise<[NetlinkMessage_Parsed, MessageInfo]> = new Promise((resolve, reject) => {
             const timeoutFn = () => {
                 reject(Error('Timeout has been reached'))
                 this.removeListener('message', msgListener)
