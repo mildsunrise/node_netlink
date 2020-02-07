@@ -15,7 +15,7 @@ import { RawNetlinkSocket,
          RawNetlinkSendOptions, 
          MessageInfo } from './raw'
 import { FLAGS, FLAGS_ACK, TYPES } from './constants'
-import { parseMessages, formatMessage, NetlinkMessage_Parsed, parseError } from './message'
+import { parseMessages, formatMessage, NetlinkMessage, parseError } from './message'
 
 export interface NetlinkSocketOptions {
 }
@@ -35,6 +35,18 @@ export interface NetlinkSendOptions extends RawNetlinkSendOptions {
     localPort?: number
 }
 
+export interface SendRequestOptions {
+    /** Timeout in ms (default: no timeout) */
+    timeout?: number
+    /** Whether to reject the promise on ERROR message (default: true) */
+    checkError?: boolean
+}
+
+/**
+ * TODO
+ * 
+ * This socket silently discards invalid messages (see `invalid` event).
+ */
 export class NetlinkSocket extends EventEmitter {
     readonly socket: RawNetlinkSocket
     seq: number = 1
@@ -98,19 +110,14 @@ export class NetlinkSocket extends EventEmitter {
     sendRequest(
         type: number,
         data: Uint8Array | Uint8Array[],
-        options?: NetlinkSendOptions & {
-            /** Timeout in ms (default: no timeout) */
-            timeout?: number
-            /** Whether to reject the promise on ERROR message (default: true) */
-            checkError?: boolean
-        }
-    ): Promise<[NetlinkMessage_Parsed, MessageInfo]> {
-        const x: Promise<[NetlinkMessage_Parsed, MessageInfo]> = new Promise((resolve, reject) => {
+        options?: NetlinkSendOptions & SendRequestOptions
+    ): Promise<[NetlinkMessage, MessageInfo]> {
+        const x: Promise<[NetlinkMessage, MessageInfo]> = new Promise((resolve, reject) => {
             const timeoutFn = () => {
                 reject(Error('Timeout has been reached'))
                 this.removeListener('message', msgListener)
             }
-            const msgListener = (msg: NetlinkMessage_Parsed, rinfo: MessageInfo) => {
+            const msgListener = (msg: NetlinkMessage, rinfo: MessageInfo) => {
                 if (msg.flags & FLAGS.REQUEST) return
                 if (msg.seq !== seq) return
                 resolve([msg, rinfo])
@@ -134,7 +141,7 @@ export class NetlinkSocket extends EventEmitter {
     // FIXME: reexpose rest of API
 }
 
-export function checkError(x: NetlinkMessage_Parsed) {
+export function checkError(x: NetlinkMessage) {
     if (x.type !== TYPES.ERROR) return;
     const { errno } = parseError(x.data, x.flags)
     if (errno === 0) return true
