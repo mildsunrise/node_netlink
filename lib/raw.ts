@@ -236,13 +236,13 @@ export class RawNetlinkSocket extends EventEmitter {
     setRecvBufferSize(size: number) {
         if (typeof size !== 'number')
             throw TypeError('Expected number')
-        return this.__native.getRecvBufferSize()
+        return this.__native.setRecvBufferSize(size)
     }
 
     /** Sets the `SO_SNDBUF` socket option. Sets the maximum socket send buffer in bytes. */
     setSendBufferSize(size: number) {
         if (typeof size !== 'number')
             throw TypeError('Expected number')
-        return this.__native.getSendBufferSize()
+        return this.__native.setSendBufferSize(size)
     }
 }

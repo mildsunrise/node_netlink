@@ -1110,7 +1110,7 @@ const types: TypeStore = {
         ['staAid', u16, { docs: [
             'Association ID for the station (u16)',
         ] }],
-        ['staFlags', data, { type: 'StationFlags', docs: [
+        ['staFlags', 'StationFlags', { docs: [
             'flags, nested element with NLA_FLAG attributes of',
             '&enum nl80211_sta_flags (deprecated, use %NL80211_ATTR_STA_FLAGS2)',
         ] }],
@@ -1132,7 +1132,7 @@ const types: TypeStore = {
             'given for %NL80211_CMD_GET_STATION, nested attribute containing',
             'info as possible, see &enum nl80211_sta_info.',
         ] }],
-        ['wiphyBands', array(data), { docs: [
+        ['wiphyBands', array('Band', { zero: true }), { docs: [
             'Information about an operating bands,',
             'consisting of a nested array.',
         ] }],
@@ -1242,7 +1242,7 @@ const types: TypeStore = {
             'nested attribute with SSIDs, leave out for passive',
             'scanning and include a zero-length SSID (wildcard) for wildcard scan',
         ] }],
-        ['generation', data, { docs: [
+        ['generation', u32, { docs: [
             'Used to indicate consistent snapshots for',
             'dumps. This number increases whenever the object list being',
             'dumped changes, and as such userspace can verify that it has',
@@ -1262,7 +1262,7 @@ const types: TypeStore = {
             'indicates the type of the regulatory domain currently',
             'set. This can be one of the nl80211_reg_type (%NL80211_REGDOM_TYPE_*)',
         ] }],
-        ['supportedCommands', data, { docs: [
+        ['supportedCommands', array(u32), { docs: [
             'wiphy attribute that specifies',
             'an array of command numbers (i.e. a mapping index to command number)',
             'that the driver for the given wiphy supports.',
@@ -1291,7 +1291,7 @@ const types: TypeStore = {
             'maximum length of information elements',
             'that can be added to a scan request',
         ] }],
-        ['cipherSuites', array(u32), { docs: [
+        ['cipherSuites', data, { docs: [
             'a set of u32 values indicating the supported',
             'cipher suites',
         ] }],
@@ -1438,7 +1438,7 @@ const types: TypeStore = {
         ['pmkid', data, { docs: [
             'PMK material for PMKSA caching.',
         ] }],
-        ['maxNumPmkids', data, { docs: [
+        ['maxNumPmkids', u8, { docs: [
             'maximum number of PMKIDs a firmware can',
             'cache, a wiphy attribute.',
         ] }],
@@ -1501,13 +1501,13 @@ const types: TypeStore = {
             'This is used in association with @NL80211_ATTR_WIPHY_TX_POWER_SETTING',
             'for non-automatic settings.',
         ] }],
-        ['txFrameTypes', data, { docs: [
+        ['txFrameTypes', array(data, { zero: true }), { docs: [
             'wiphy capability attribute, which is a',
             'nested attribute of %NL80211_ATTR_FRAME_TYPE attributes, containing',
             'information about which frame types can be transmitted with',
             '%NL80211_CMD_FRAME.',
         ] }],
-        ['rxFrameTypes', data, { docs: [
+        ['rxFrameTypes', array(data, { zero: true }), { docs: [
             'wiphy capability attribute, which is a',
             'nested attribute of %NL80211_ATTR_FRAME_TYPE attributes, containing',
             'information about which frame types can be registered for RX.',
@@ -1516,7 +1516,7 @@ const types: TypeStore = {
             'A u16 indicating the frame type/subtype for the',
             '@NL80211_CMD_REGISTER_FRAME command.',
         ] }],
-        ['controlPortEthertype', u16, { docs: [
+        ['controlPortEthertype', data, { docs: [
             'A 16-bit value indicating the',
             'ethertype that will be used for key negotiation. It can be',
             'specified with the associate and connect commands. If it is not',
@@ -1603,13 +1603,13 @@ const types: TypeStore = {
             'management state machine.  @NL80211_MESH_SETUP_USERSPACE_AMPE or',
             '@NL80211_MESH_SETUP_USERSPACE_MPM must be enabled.',
         ] }],
-        ['wowlanTriggers', data, { docs: [
+        ['wowlanTriggers', 'WowlanTriggers', { docs: [
             'used by %NL80211_CMD_SET_WOWLAN to',
             'indicate which WoW triggers should be enabled. This is also',
             'used by %NL80211_CMD_GET_WOWLAN to get the currently enabled WoWLAN',
             'triggers.',
         ] }],
-        ['wowlanTriggersSupported', data, { docs: [
+        ['wowlanTriggersSupported', 'WowlanTriggers', { docs: [
             'indicates, as part of the wiphy',
             'capabilities, the supported WoWLAN triggers',
         ] }],
@@ -1636,7 +1636,7 @@ const types: TypeStore = {
             'number of SSIDs you can',
             'scan with a single scheduled scan request, a wiphy attribute.',
         ] }],
-        ['maxSchedScanIeLen', data, { docs: [
+        ['maxSchedScanIeLen', u16, { docs: [
             'maximum length of information',
             'elements that can be added to a scheduled scan request',
         ] }],
@@ -1867,7 +1867,7 @@ const types: TypeStore = {
             'ACL policy, see &enum nl80211_acl_policy,',
             'carried in a u32 attribute',
         ] }],
-        ['macAddrs', data, { docs: [
+        ['macAddrs', array(data), { docs: [
             'Array of nested MAC addresses, used for',
             'MAC ACL.',
         ] }],
@@ -2110,7 +2110,7 @@ const types: TypeStore = {
             "obtained from it is coming from the device's wiphy and not the global",
             'cfg80211 regdomain.',
         ] }],
-        ['extFeatures', u8, { type: 'ExtendedFeatureIndex', docs: [
+        ['extFeatures', data, { docs: [
             'extended feature flags contained in a byte',
             'array. The feature flags are identified by their bit index (see &enum',
             'nl80211_ext_feature_index). The bit index is ordered starting at the',
@@ -2523,40 +2523,40 @@ const types: TypeStore = {
         ] },
     ]},
 
-    StationFlags: { kind: 'flags', docs: [
+    StationFlags: { docs: [
         'station flags',
         '',
         'Station flags. When a station is added to an AP interface, it is',
         'assumed to be already associated (and hence authenticated.)',
-    ], values: [
-        { value: 0, name: 'authorized', docs: [
+    ], attrs: [
+        ['authorized', flag, { docs: [
             'station is authorized (802.1X)',
-        ] },
-        { value: 1, name: 'shortPreamble', docs: [
+        ] }],
+        ['shortPreamble', flag, { docs: [
             'station is capable of receiving frames',
             'with short barker preamble',
-        ] },
-        { value: 2, name: 'wme', docs: [
+        ] }],
+        ['wme', flag, { docs: [
             'station is WME/QoS capable',
-        ] },
-        { value: 3, name: 'mfp', docs: [
+        ] }],
+        ['mfp', flag, { docs: [
             'station uses management frame protection',
-        ] },
-        { value: 4, name: 'authenticated', docs: [
+        ] }],
+        ['authenticated', flag, { docs: [
             'station is authenticated',
-        ] },
-        { value: 5, name: 'tdlsPeer', docs: [
+        ] }],
+        ['tdlsPeer', flag, { docs: [
             'station is a TDLS peer -- this flag should',
             'only be used in managed mode (even in the flags mask). Note that the',
             "flag can't be changed, it is only valid while adding a station, and",
             'attempts to change it will silently be ignored (rather than rejected',
             'as errors.)',
-        ] },
-        { value: 6, name: 'associated', docs: [
+        ] }],
+        ['associated', flag, { docs: [
             'station is associated; used with drivers',
             'that support %NL80211_FEATURE_FULL_AP_CLIENT_STATE to transition a',
             'previously added station into associated state',
-        ] },
+        ] }],
     ]},
 
     StationP2pPsStatus: { kind: 'enum', docs: [
@@ -3021,11 +3021,11 @@ const types: TypeStore = {
     Band: { docs: [
         'band attributes',
     ], attrs: [
-        ['freqs', array('Frequency'), { docs: [
+        ['freqs', array('Frequency', { zero: true }), { docs: [
             'supported frequencies in this band,',
             'an array of nested frequency attributes',
         ] }],
-        ['rates', array('Bitrate'), { docs: [
+        ['rates', array('Bitrate', { zero: true }), { docs: [
             'supported bitrates in this band,',
             'an array of nested bitrate attributes',
         ] }],
@@ -3182,7 +3182,7 @@ const types: TypeStore = {
         ['rate', u32, { docs: [
             'Bitrate in units of 100 kbps',
         ] }],
-        ['_2ghzShortpreamble', data, { docs: [
+        ['_2ghzShortpreamble', flag, { docs: [
             'Short preamble supported',
             'in 2.4 GHz band.',
         ] }],
@@ -4221,7 +4221,7 @@ const types: TypeStore = {
         ] }],
     ]},
 
-    WowlanTrigger: { docs: [
+    WowlanTriggers: { docs: [
         'WoWLAN trigger definitions',
         '',
         'These nested attributes are used to configure the wakeup triggers and',
@@ -4242,7 +4242,7 @@ const types: TypeStore = {
             'wake up on magic packet (6x 0xff, followed',
             'by 16 repetitions of MAC addr, anywhere in payload) (flag)',
         ] }],
-        ['pktPattern', u32, { docs: [
+        ['pktPattern', data, { docs: [
             'wake up on the specified packet patterns',
             'which are passed in an array of nested attributes, each nested attribute',
             'defining a with attributes from &struct nl80211_wowlan_trig_pkt_pattern.',

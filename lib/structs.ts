@@ -172,7 +172,7 @@ export function parseError(r: Buffer, flags: number): NetlinkErrorMessage {
     if (r.length < 4 + 16)
         throw Error('Invalid ERROR message length')
     let x: NetlinkErrorMessage = {
-        errno: readU32.call(r, 0),
+        errno: buf.readS32.call(r, 0),
         header: parseHeader(r.slice(4)).x,
     }
     // FIXME: TLV?
@@ -203,32 +203,35 @@ export interface NetlinkAttribute extends NetlinkAttribute_ {
 /**
  * Object allowing efficient construction of an attribute stream.
  */
+export type StreamData = Uint8Array | Uint8Array[] | ((out: AttrStream) => any)
 export class AttrStream {
     readonly bufs: Uint8Array[] = []
     private offset: number = 0
-    private emit = (data: Uint8Array) =>
-        (this.bufs.push(data), this.offset += data.length)
-    push(type: number, data: Uint8Array | Uint8Array[] | ((out: this) => any)) {
+    emit(data: StreamData) {
+        if (data instanceof Uint8Array) {
+            this.bufs.push(data)
+            this.offset += data.length
+        } else if (data instanceof Array) {
+            data.forEach(x => this.emit(x))
+        } else {
+            data(this)
+        }
+    }
+    push(type: number, data: StreamData) {
         // Emit padding (make sure to start on aligned offset)
         const p = padding(this.offset)
         if (p) this.emit(Buffer.alloc(p))
 
-        // Emit header
+        // Emit header and data
         const start = this.offset
         const header = Buffer.alloc(4)
         writeU16.call(header, (type & ((1 << 14) - 1)), 2)
         this.emit(header)
-
-        // Emit data
-        if (data instanceof Uint8Array || data instanceof Array) {
-            (data instanceof Array) ? data.forEach(x => this.emit(x)) : this.emit(data)
-        } else {
-            data(this)
-        }
+        this.emit(data)
 
         // Patch length in header
         const length = this.offset - start
-        if (length <= 0x10000)
+        if (length >= 0x10000)
             throw Error(`Maximum attribute length exceeded (${length})`)
         writeU16.call(header, length, 0)
     }
@@ -354,11 +357,10 @@ export function getArray<T>(x: Buffer, fn: (item: Buffer) => T): T[] {
     })
     return res
 }
-export type AttributeResult = ArgsType<AttrStream['push']>[1]
-export function putArray<T>(x: T[], fn: (item: T) => AttributeResult): AttributeResult {
+export function putArray<T>(x: T[], fn: (item: T) => StreamData): StreamData {
     return out => x.forEach((item, n) => out.push(n + 1, fn(item)))
 }
-export function putMap<T>(x: Map<number, T>, fn: (item: T) => AttributeResult): AttributeResult {
+export function putMap<T>(x: Map<number, T>, fn: (item: T) => StreamData): StreamData {
     return out => x.forEach((item, n) => out.push(n, fn(item)))
 }
 
@@ -385,9 +387,10 @@ export function getObject<T extends BaseObject>(
 }
 export function putObject<T extends BaseObject>(
     x: T, fns: { [key: string]: (data: AttrStream, obj: T) => any }
-): AttributeResult {
+): StreamData {
     return out => {
-        Object.keys(fns).forEach(key => {
+        Object.keys(x).forEach(key => {
+            if (typeof (x as any)[key] === 'undefined') return
             if ({}.hasOwnProperty.call(fns, key)) {
                 fns[key](out, x)
             } else {
@@ -397,6 +400,17 @@ export function putObject<T extends BaseObject>(
         if (x.__unparsed)
             x.__unparsed.forEach(([n, data]) => out.push(n, data))
     }
+}
+
+// Helpers for the parsing system
+export function getEnum<R>(mapping: {[key: number]: string}, x: number): number | keyof R {
+    if ({}.hasOwnProperty.call(mapping, x)) return mapping[x] as keyof R
+    return x
+}
+export function putEnum<R>(mapping: {[key in keyof R]: number }, x: number | keyof R) {
+    if (typeof x === 'number') return x
+    if ({}.hasOwnProperty.call(mapping, x)) return mapping[x]
+    throw Error(`Invalid key ${JSON.stringify(x)}`)
 }
 
 

@@ -142,13 +142,13 @@ export class NetlinkSocket extends EventEmitter {
 }
 
 export function checkError(x: NetlinkMessage) {
-    if (x.type !== TYPES.ERROR) return;
+    if (x.type !== TYPES.ERROR) return
     const { errno } = parseError(x.data, x.flags)
     if (errno === 0) return true
 
     let code = errno.toString()
     try {
-        code = getSystemErrorName(-errno)
+        code = getSystemErrorName(errno)
     } catch (e) {}
     throw Error(`Request rejected: ${code}`) // FIXME: do this correctly
 }

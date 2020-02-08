@@ -29,7 +29,7 @@ export interface ValueDef {
     docs?: string[]
 }
 
-export type TypeExpr = null | string | { kind: 'array' | 'map' | 'flags', type: TypeExpr }
+export type TypeExpr = string | { kind: 'array' | 'map' | 'flags', type: TypeExpr }
 
 // Standard types
 export const u8 = 'u8'
