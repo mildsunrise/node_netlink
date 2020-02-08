@@ -9,6 +9,9 @@ as a generic IPC mechanism.
 It also implements the Generic Netlink protocol, and includes a few
 common messages / operations.
 
+**Note:** This is early stage; API compatibility is not maintained.
+If you are going to use this, pin to a specific version.
+
 
 ## Usage
 
