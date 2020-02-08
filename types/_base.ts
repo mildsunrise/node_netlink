@@ -4,6 +4,7 @@ export interface TypeStore {
 
 export interface TypeDef {
     kind?: "attrs" | "enum" | "flags"
+    orig?: string
     docs?: string[]
     root?: boolean
     /** For attrs, the attribute definition */
@@ -21,12 +22,15 @@ export interface AttributeOptions {
     type?: string | { kind: 'flags', type: string }
     /** For 'string' type, maximum payload length including null terminator */
     maxLength?: number
+    /** Original constant name in headers */
+    orig?: string
 }
 
 export interface ValueDef {
     value: number
     name: string
     docs?: string[]
+    orig?: string
 }
 
 export type TypeExpr = string | { kind: 'array' | 'map' | 'flags', type: TypeExpr, zero?: boolean }

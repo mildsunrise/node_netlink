@@ -7,7 +7,7 @@ export enum Commands {
      * request information about a wiphy or dump request
      * to get a list of all present wiphys.
      */
-    GET_WIPHY,
+    GET_WIPHY = 1,
     
     /**
      * set wiphy parameters, needs %NL80211_ATTR_WIPHY or
@@ -20,33 +20,33 @@ export enum Commands {
      * However, for setting the channel, see %NL80211_CMD_SET_CHANNEL
      * instead, the support here is for backward compatibility only.
      */
-    SET_WIPHY = 1,
+    SET_WIPHY = 2,
     
     /**
      * Newly created wiphy, response to get request
      * or rename notification. Has attributes %NL80211_ATTR_WIPHY and
      * %NL80211_ATTR_WIPHY_NAME.
      */
-    NEW_WIPHY = 2,
+    NEW_WIPHY = 3,
     
     /**
      * Wiphy deleted. Has attributes
      * %NL80211_ATTR_WIPHY and %NL80211_ATTR_WIPHY_NAME.
      */
-    DEL_WIPHY = 3,
+    DEL_WIPHY = 4,
     
     /**
      * Request an interface's configuration;
      * either a dump request for all interfaces or a specific get with a
      * single %NL80211_ATTR_IFINDEX is supported.
      */
-    GET_INTERFACE = 4,
+    GET_INTERFACE = 5,
     
     /**
      * Set type of a virtual interface, requires
      * %NL80211_ATTR_IFINDEX and %NL80211_ATTR_IFTYPE.
      */
-    SET_INTERFACE = 5,
+    SET_INTERFACE = 6,
     
     /**
      * Newly created virtual interface or response
@@ -56,7 +56,7 @@ export enum Commands {
      * then requires attributes %NL80211_ATTR_WIPHY, %NL80211_ATTR_IFTYPE and
      * %NL80211_ATTR_IFNAME.
      */
-    NEW_INTERFACE = 6,
+    NEW_INTERFACE = 7,
     
     /**
      * Virtual interface was deleted, has attributes
@@ -64,35 +64,35 @@ export enum Commands {
      * userspace to request deletion of a virtual interface, then requires
      * attribute %NL80211_ATTR_IFINDEX.
      */
-    DEL_INTERFACE = 7,
+    DEL_INTERFACE = 8,
     
     /**
      * Get sequence counter information for a key specified
      * by %NL80211_ATTR_KEY_IDX and/or %NL80211_ATTR_MAC.
      */
-    GET_KEY = 8,
+    GET_KEY = 9,
     
     /**
      * Set key attributes %NL80211_ATTR_KEY_DEFAULT,
      * %NL80211_ATTR_KEY_DEFAULT_MGMT, or %NL80211_ATTR_KEY_THRESHOLD.
      */
-    SET_KEY = 9,
+    SET_KEY = 10,
     
     /**
      * add a key with given %NL80211_ATTR_KEY_DATA,
      * %NL80211_ATTR_KEY_IDX, %NL80211_ATTR_MAC, %NL80211_ATTR_KEY_CIPHER,
      * and %NL80211_ATTR_KEY_SEQ attributes.
      */
-    NEW_KEY = 10,
+    NEW_KEY = 11,
     
     /**
      * delete a key identified by %NL80211_ATTR_KEY_IDX
      * or %NL80211_ATTR_MAC.
      */
-    DEL_KEY = 11,
+    DEL_KEY = 12,
     
     /** (not used) */
-    GET_BEACON = 12,
+    GET_BEACON = 13,
     
     /**
      * change the beacon on an access point interface
@@ -101,7 +101,7 @@ export enum Commands {
      * internally, the following attributes must be provided: %NL80211_ATTR_IE,
      * %NL80211_ATTR_IE_PROBE_RESP and %NL80211_ATTR_IE_ASSOC_RESP.
      */
-    SET_BEACON = 13,
+    SET_BEACON = 14,
     
     /**
      * Start AP operation on an AP interface, parameters
@@ -116,28 +116,28 @@ export enum Commands {
      * The channel to use can be set on the interface or be given using the
      * %NL80211_ATTR_WIPHY_FREQ and the attributes determining channel width.
      */
-    START_AP = 14,
+    START_AP = 15,
     
     /** Stop AP operation on the given interface */
-    STOP_AP = 15,
+    STOP_AP = 16,
     
     /**
      * Get station attributes for station identified by
      * %NL80211_ATTR_MAC on the interface identified by %NL80211_ATTR_IFINDEX.
      */
-    GET_STATION = 16,
+    GET_STATION = 17,
     
     /**
      * Set station attributes for station identified by
      * %NL80211_ATTR_MAC on the interface identified by %NL80211_ATTR_IFINDEX.
      */
-    SET_STATION = 17,
+    SET_STATION = 18,
     
     /**
      * Add a station with given attributes to the
      * the interface identified by %NL80211_ATTR_IFINDEX.
      */
-    NEW_STATION = 18,
+    NEW_STATION = 19,
     
     /**
      * Remove a station identified by %NL80211_ATTR_MAC
@@ -148,39 +148,39 @@ export enum Commands {
      * (Deauthentication or Disassociation frame and reason code for that
      * frame).
      */
-    DEL_STATION = 19,
+    DEL_STATION = 20,
     
     /**
      * Get mesh path attributes for mesh path to
      * destination %NL80211_ATTR_MAC on the interface identified by
      * %NL80211_ATTR_IFINDEX.
      */
-    GET_MPATH = 20,
+    GET_MPATH = 21,
     
     /**
      * Set mesh path attributes for mesh path to
      * destination %NL80211_ATTR_MAC on the interface identified by
      * %NL80211_ATTR_IFINDEX.
      */
-    SET_MPATH = 21,
+    SET_MPATH = 22,
     
     /**
      * Create a new mesh path for the destination given by
      * %NL80211_ATTR_MAC via %NL80211_ATTR_MPATH_NEXT_HOP.
      */
-    NEW_MPATH = 22,
+    NEW_MPATH = 23,
     
     /**
      * Delete a mesh path to the destination given by
      * %NL80211_ATTR_MAC.
      */
-    DEL_MPATH = 23,
+    DEL_MPATH = 24,
     
     /**
      * Set BSS attributes for BSS identified by
      * %NL80211_ATTR_IFINDEX.
      */
-    SET_BSS = 24,
+    SET_BSS = 25,
     
     /**
      * Set current regulatory domain. CRDA sends this command
@@ -194,26 +194,26 @@ export enum Commands {
      * %NL80211_ATTR_REG_RULE_POWER_MAX_ANT_GAIN and
      * %NL80211_ATTR_REG_RULE_POWER_MAX_EIRP.
      */
-    SET_REG = 25,
+    SET_REG = 26,
     
     /**
      * ask the wireless core to set the regulatory domain
      * to the specified ISO/IEC 3166-1 alpha2 country code. The core will
      * store this as a valid request and then query userspace for it.
      */
-    REQ_SET_REG = 26,
+    REQ_SET_REG = 27,
     
     /**
      * Get mesh networking properties for the
      * interface identified by %NL80211_ATTR_IFINDEX
      */
-    GET_MESH_CONFIG = 27,
+    GET_MESH_CONFIG = 28,
     
     /**
      * Set mesh networking properties for the
      * interface identified by %NL80211_ATTR_IFINDEX
      */
-    SET_MESH_CONFIG = 28,
+    SET_MESH_CONFIG = 29,
     
     /**
      * Set extra IEs for management frames. The
@@ -230,7 +230,7 @@ export enum Commands {
      * NL80211_CMD_AUTHENTICATE, NL80211_CMD_ASSOCIATE,
      * NL80211_CMD_DEAUTHENTICATE, and NL80211_CMD_DISASSOCIATE.
      */
-    SET_MGMT_EXTRA_IE = 29,
+    SET_MGMT_EXTRA_IE = 30,
     
     /**
      * ask the wireless core to send us its currently set
@@ -247,10 +247,10 @@ export enum Commands {
      * its private regdomain is the only valid one for it. The regulatory
      * core is not used to help with compliance in this case.
      */
-    GET_REG = 30,
+    GET_REG = 31,
     
     /** get scan results */
-    GET_SCAN = 31,
+    GET_SCAN = 32,
     
     /**
      * trigger a new scan with the given parameters
@@ -259,19 +259,19 @@ export enum Commands {
      * specify a BSSID to scan for; if not included, the wildcard BSSID will
      * be used.
      */
-    TRIGGER_SCAN = 32,
+    TRIGGER_SCAN = 33,
     
     /**
      * scan notification (as a reply to
      * NL80211_CMD_GET_SCAN and on the "scan" multicast group)
      */
-    NEW_SCAN_RESULTS = 33,
+    NEW_SCAN_RESULTS = 34,
     
     /**
      * scan was aborted, for unspecified reasons,
      * partial scan results may be available
      */
-    SCAN_ABORTED = 34,
+    SCAN_ABORTED = 35,
     
     /**
      * indicates to userspace the regulatory domain
@@ -285,7 +285,7 @@ export enum Commands {
      * %NL80211_REG_TYPE_COUNTRY the alpha2 to which we have moved on
      * to (%NL80211_ATTR_REG_ALPHA2).
      */
-    REG_CHANGE = 35,
+    REG_CHANGE = 36,
     
     /**
      * authentication request and notification.
@@ -313,7 +313,7 @@ export enum Commands {
      * %NL80211_ATTR_TIMED_OUT flag (and %NL80211_ATTR_MAC to indicate which
      * pending authentication timed out).
      */
-    AUTHENTICATE = 36,
+    AUTHENTICATE = 37,
     
     /**
      * association request and notification; like
@@ -325,7 +325,7 @@ export enum Commands {
      * included) or for reassociation within the ESS (that attribute is
      * included).
      */
-    ASSOCIATE = 37,
+    ASSOCIATE = 38,
     
     /**
      * deauthentication request and notification; like
@@ -333,14 +333,14 @@ export enum Commands {
      * MLME-DEAUTHENTICATION.request and MLME-DEAUTHENTICATE.indication
      * primitives).
      */
-    DEAUTHENTICATE = 38,
+    DEAUTHENTICATE = 39,
     
     /**
      * disassociation request and notification; like
      * NL80211_CMD_AUTHENTICATE but for Disassociation frames (similar to
      * MLME-DISASSOCIATE.request and MLME-DISASSOCIATE.indication primitives).
      */
-    DISASSOCIATE = 39,
+    DISASSOCIATE = 40,
     
     /**
      * notification of a locally detected Michael
@@ -351,7 +351,7 @@ export enum Commands {
      * %NL80211_ATTR_KEY_SEQ to indicate the TSC value of the frame; this
      * event matches with MLME-MICHAELMICFAILURE.indication() primitive
      */
-    MICHAEL_MIC_FAILURE = 40,
+    MICHAEL_MIC_FAILURE = 41,
     
     /**
      * indicates to userspace that an AP beacon
@@ -371,7 +371,7 @@ export enum Commands {
      * before (%NL80211_ATTR_FREQ_BEFORE) and after (%NL80211_ATTR_FREQ_AFTER)
      * the beacon hint was processed.
      */
-    REG_BEACON_HINT = 41,
+    REG_BEACON_HINT = 42,
     
     /**
      * Join a new IBSS -- given at least an SSID and a
@@ -383,20 +383,20 @@ export enum Commands {
      * given in the %NL80211_ATTR_BEACON_INTERVAL attribute, which if not
      * given defaults to 100 TU (102.4ms).
      */
-    JOIN_IBSS = 42,
+    JOIN_IBSS = 43,
     
     /**
      * Leave the IBSS -- no special arguments, the IBSS is
      * determined by the network interface.
      */
-    LEAVE_IBSS = 43,
+    LEAVE_IBSS = 44,
     
     /**
      * testmode command, takes a wiphy (or ifindex) attribute
      * to identify the device, and the TESTDATA blob attribute to pass through
      * to the driver.
      */
-    TESTMODE = 44,
+    TESTMODE = 45,
     
     /**
      * connection request and notification; this command
@@ -446,7 +446,7 @@ export enum Commands {
      * handshake offload should send %NL80211_CMD_PORT_AUTHORIZED event when
      * the 4 way handshake is completed successfully.
      */
-    CONNECT = 45,
+    CONNECT = 46,
     
     /**
      * Notification indicating the card/driver roamed by itself.
@@ -455,7 +455,7 @@ export enum Commands {
      * handshake), this event should be followed by an
      * %NL80211_CMD_PORT_AUTHORIZED event.
      */
-    ROAM = 46,
+    ROAM = 47,
     
     /**
      * drop a given connection; also used to notify
@@ -463,25 +463,25 @@ export enum Commands {
      * reasons, for this the %NL80211_ATTR_DISCONNECTED_BY_AP and
      * %NL80211_ATTR_REASON_CODE attributes are used.
      */
-    DISCONNECT = 47,
+    DISCONNECT = 48,
     
     /**
      * Set a wiphy's netns. Note that all devices
      * associated with this wiphy must be down and will follow.
      */
-    SET_WIPHY_NETNS = 48,
+    SET_WIPHY_NETNS = 49,
     
     /**
      * get survey resuls, e.g. channel occupation
      * or noise level
      */
-    GET_SURVEY = 49,
+    GET_SURVEY = 50,
     
     /**
      * survey data notification (as a reply to
      * NL80211_CMD_GET_SURVEY and on the "scan" multicast group)
      */
-    NEW_SURVEY_RESULTS = 50,
+    NEW_SURVEY_RESULTS = 51,
     
     /**
      * Add a PMKSA cache entry using %NL80211_ATTR_MAC
@@ -493,7 +493,7 @@ export enum Commands {
      * advertized by a FILS capable AP identifying the scope of PMKSA in an
      * ESS.
      */
-    SET_PMKSA = 51,
+    SET_PMKSA = 52,
     
     /**
      * Delete a PMKSA cache entry, using %NL80211_ATTR_MAC
@@ -501,10 +501,10 @@ export enum Commands {
      * %NL80211_ATTR_FILS_CACHE_ID, and %NL80211_ATTR_PMKID in case of FILS
      * authentication.
      */
-    DEL_PMKSA = 52,
+    DEL_PMKSA = 53,
     
     /** Flush all PMKSA cache entries. */
-    FLUSH_PMKSA = 53,
+    FLUSH_PMKSA = 54,
     
     /**
      * Request to remain awake on the specified
@@ -523,7 +523,7 @@ export enum Commands {
      * that will be included with any events pertaining to this request;
      * the cookie is also used to cancel the request.
      */
-    REMAIN_ON_CHANNEL = 54,
+    REMAIN_ON_CHANNEL = 55,
     
     /**
      * This command can be used to cancel a
@@ -535,14 +535,14 @@ export enum Commands {
      * This command is also used as an event to notify when a requested
      * remain-on-channel duration has expired.
      */
-    CANCEL_REMAIN_ON_CHANNEL = 55,
+    CANCEL_REMAIN_ON_CHANNEL = 56,
     
     /**
      * Set the mask of rates to be used in TX
      * rate selection. %NL80211_ATTR_IFINDEX is used to specify the interface
      * and @NL80211_ATTR_TX_RATES the set of allowed rates.
      */
-    SET_TX_BITRATE_MASK = 56,
+    SET_TX_BITRATE_MASK = 57,
     
     /**
      * Register for receiving certain mgmt frames
@@ -555,7 +555,7 @@ export enum Commands {
      * cannot be dropped, but is removed automatically when the netlink
      * socket is closed. Multiple registrations can be made.
      */
-    REGISTER_FRAME = 57,
+    REGISTER_FRAME = 58,
     
     /**
      * Management frame TX request and RX notification. This
@@ -577,7 +577,7 @@ export enum Commands {
      * counters which will be updated to the current value. This attribute
      * is used during CSA period.
      */
-    FRAME = 58,
+    FRAME = 59,
     
     /**
      * Report TX status of a management frame
@@ -586,27 +586,27 @@ export enum Commands {
      * frame. %NL80211_ATTR_ACK flag is included if the recipient acknowledged
      * the frame.
      */
-    FRAME_TX_STATUS = 59,
+    FRAME_TX_STATUS = 60,
     
     /** Set powersave, using %NL80211_ATTR_PS_STATE */
-    SET_POWER_SAVE = 60,
+    SET_POWER_SAVE = 61,
     
     /** Get powersave status in %NL80211_ATTR_PS_STATE */
-    GET_POWER_SAVE = 61,
+    GET_POWER_SAVE = 62,
     
     /**
      * Connection quality monitor configuration. This command
      * is used to configure connection quality monitoring notification trigger
      * levels.
      */
-    SET_CQM = 62,
+    SET_CQM = 63,
     
     /**
      * Connection quality monitor notification. This
      * command is used as an event to indicate the that a trigger level was
      * reached.
      */
-    NOTIFY_CQM = 63,
+    NOTIFY_CQM = 64,
     
     /**
      * Set the channel (using %NL80211_ATTR_WIPHY_FREQ
@@ -619,10 +619,10 @@ export enum Commands {
      * of any other interfaces, and other interfaces will again take
      * precedence when they are used.
      */
-    SET_CHANNEL = 64,
+    SET_CHANNEL = 65,
     
     /** Set the MAC address of the peer on a WDS interface. */
-    SET_WDS_PEER = 65,
+    SET_WDS_PEER = 66,
     
     /**
      * When an off-channel TX was requested, this
@@ -631,33 +631,33 @@ export enum Commands {
      * also sent as an event whenever the driver has completed the off-channel
      * wait time.
      */
-    FRAME_WAIT_CANCEL = 66,
+    FRAME_WAIT_CANCEL = 67,
     
     /**
      * Join a mesh. The mesh ID must be given, and initial
      * mesh config parameters may be given.
      */
-    JOIN_MESH = 67,
+    JOIN_MESH = 68,
     
     /**
      * Leave the mesh network -- no special arguments, the
      * network is determined by the network interface.
      */
-    LEAVE_MESH = 68,
+    LEAVE_MESH = 69,
     
     /**
      * Unprotected deauthentication frame
      * notification. This event is used to indicate that an unprotected
      * deauthentication frame was dropped when MFP is in use.
      */
-    UNPROT_DEAUTHENTICATE = 69,
+    UNPROT_DEAUTHENTICATE = 70,
     
     /**
      * Unprotected disassociation frame
      * notification. This event is used to indicate that an unprotected
      * disassociation frame was dropped when MFP is in use.
      */
-    UNPROT_DISASSOCIATE = 70,
+    UNPROT_DISASSOCIATE = 71,
     
     /**
      * Notification on the reception of a
@@ -672,10 +672,10 @@ export enum Commands {
      * new station with the AUTHENTICATED flag unset and maybe change it later
      * depending on the authentication result.
      */
-    NEW_PEER_CANDIDATE = 71,
+    NEW_PEER_CANDIDATE = 72,
     
     /** get Wake-on-Wireless-LAN (WoWLAN) settings. */
-    GET_WOWLAN = 72,
+    GET_WOWLAN = 73,
     
     /**
      * set Wake-on-Wireless-LAN (WoWLAN) settings.
@@ -691,7 +691,7 @@ export enum Commands {
      * in the wakeup notification, the wireless device didn't cause the
      * wakeup but reports that it was woken up.
      */
-    SET_WOWLAN = 73,
+    SET_WOWLAN = 74,
     
     /**
      * start a scheduled scan at certain
@@ -718,20 +718,20 @@ export enum Commands {
      * scans, it will allow such when the caller provides the flag attribute
      * %NL80211_ATTR_SCHED_SCAN_MULTI to indicate user-space support for it.
      */
-    START_SCHED_SCAN = 74,
+    START_SCHED_SCAN = 75,
     
     /**
      * stop a scheduled scan. Returns -ENOENT if
      * scheduled scan is not running. The caller may assume that as soon
      * as the call returns, it is safe to start a new scheduled scan again.
      */
-    STOP_SCHED_SCAN = 75,
+    STOP_SCHED_SCAN = 76,
     
     /**
      * indicates that there are scheduled scan
      * results available.
      */
-    SCHED_SCAN_RESULTS = 76,
+    SCHED_SCAN_RESULTS = 77,
     
     /**
      * indicates that the scheduled scan has
@@ -742,7 +742,7 @@ export enum Commands {
      * %NL80211_CMD_STOP_SCHED_SCAN command is received or when the interface
      * is brought down while a scheduled scan was running.
      */
-    SCHED_SCAN_STOPPED = 77,
+    SCHED_SCAN_STOPPED = 78,
     
     /**
      * This command is used give the driver
@@ -753,13 +753,13 @@ export enum Commands {
      * this command may also be sent by the driver as an MLME event to
      * inform userspace of the new replay counter.
      */
-    SET_REKEY_OFFLOAD = 78,
+    SET_REKEY_OFFLOAD = 79,
     
     /**
      * This is used as an event to inform userspace
      * of PMKSA caching dandidates.
      */
-    PMKSA_CANDIDATE = 79,
+    PMKSA_CANDIDATE = 80,
     
     /**
      * Perform a high-level TDLS command (e.g. link setup).
@@ -770,7 +770,7 @@ export enum Commands {
      * %NL80211_ATTR_REASON_CODE the reason code to be used (only with
      * %NL80211_TDLS_TEARDOWN).
      */
-    TDLS_OPER = 80,
+    TDLS_OPER = 81,
     
     /**
      * Send a TDLS management frame. The
@@ -782,7 +782,7 @@ export enum Commands {
      * and the currently supported TDLS actions codes are given in
      * &enum ieee80211_tdls_actioncode.
      */
-    TDLS_MGMT = 81,
+    TDLS_MGMT = 82,
     
     /**
      * Used by an application controlling an AP
@@ -796,7 +796,7 @@ export enum Commands {
      * only unsubscribe from the event by closing the socket. Subscription
      * is also for %NL80211_CMD_UNEXPECTED_4ADDR_FRAME events.
      */
-    UNEXPECTED_FRAME = 82,
+    UNEXPECTED_FRAME = 83,
     
     /**
      * Probe an associated station on an AP interface
@@ -807,7 +807,7 @@ export enum Commands {
      * up the event with the request. The event includes the same data and
      * has %NL80211_ATTR_ACK set if the frame was ACKed.
      */
-    PROBE_CLIENT = 83,
+    PROBE_CLIENT = 84,
     
     /**
      * Register this socket to receive beacons from
@@ -815,7 +815,7 @@ export enum Commands {
      * OLBC handling in hostapd. Beacons are reported in %NL80211_CMD_FRAME
      * messages. Note that per PHY only one application may register.
      */
-    REGISTER_BEACONS = 84,
+    REGISTER_BEACONS = 85,
     
     /**
      * Sent as an event indicating that the
@@ -823,13 +823,13 @@ export enum Commands {
      * and wasn't already in a 4-addr VLAN. The event will be sent similarly
      * to the %NL80211_CMD_UNEXPECTED_FRAME event, to the same listener.
      */
-    UNEXPECTED_4ADDR_FRAME = 85,
+    UNEXPECTED_4ADDR_FRAME = 86,
     
     /**
      * sets a bitmap for the individual TIDs whether
      * No Acknowledgement Policy should be applied.
      */
-    SET_NOACK_MAP = 86,
+    SET_NOACK_MAP = 87,
     
     /**
      * An AP or GO may decide to switch channels
@@ -839,7 +839,7 @@ export enum Commands {
      * sent when a remotely-initiated switch (e.g., when a STA receives a CSA
      * from the remote AP) is completed;
      */
-    CH_SWITCH_NOTIFY = 87,
+    CH_SWITCH_NOTIFY = 88,
     
     /**
      * Start the given P2P Device, identified by
@@ -848,13 +848,13 @@ export enum Commands {
      * P2P Device can be used for P2P operations, e.g. remain-on-channel and
      * public action frame TX.
      */
-    START_P2P_DEVICE = 88,
+    START_P2P_DEVICE = 89,
     
     /**
      * Stop the given P2P Device, identified by
      * its %NL80211_ATTR_WDEV identifier.
      */
-    STOP_P2P_DEVICE = 89,
+    STOP_P2P_DEVICE = 90,
     
     /**
      * connection request to an AP failed; used to
@@ -862,13 +862,13 @@ export enum Commands {
      * station, due to particular reason. %NL80211_ATTR_CONN_FAILED_REASON
      * is used for this.
      */
-    CONN_FAILED = 90,
+    CONN_FAILED = 91,
     
     /**
      * Change the rate used to send multicast frames
      * for IBSS or MESH vif.
      */
-    SET_MCAST_RATE = 91,
+    SET_MCAST_RATE = 92,
     
     /**
      * sets ACL for MAC address based access control.
@@ -881,7 +881,7 @@ export enum Commands {
      * command is used in AP/P2P GO mode. Driver has to make sure to clear its
      * ACL list during %NL80211_CMD_STOP_AP.
      */
-    SET_MAC_ACL = 92,
+    SET_MAC_ACL = 93,
     
     /**
      * Start a Channel availability check (CAC). Once
@@ -892,20 +892,20 @@ export enum Commands {
      * %NL80211_ATTR_RADAR_EVENT is used to inform about the type of the
      * event.
      */
-    RADAR_DETECT = 93,
+    RADAR_DETECT = 94,
     
     /**
      * Get global nl80211 protocol features,
      * i.e. features for the nl80211 protocol rather than device features.
      * Returns the features in the %NL80211_ATTR_PROTOCOL_FEATURES bitmap.
      */
-    GET_PROTOCOL_FEATURES = 94,
+    GET_PROTOCOL_FEATURES = 95,
     
     /**
      * Pass down the most up-to-date Fast Transition
      * Information Element to the WLAN driver
      */
-    UPDATE_FT_IES = 95,
+    UPDATE_FT_IES = 96,
     
     /**
      * Send a Fast transition event from the WLAN driver
@@ -913,26 +913,26 @@ export enum Commands {
      * with the relevant Information Elements. This event is used to report
      * received FT IEs (MDIE, FTIE, RSN IE, TIE, RICIE).
      */
-    FT_EVENT = 96,
+    FT_EVENT = 97,
     
     /**
      * Indicates user-space will start running
      * a critical protocol that needs more reliability in the connection to
      * complete.
      */
-    CRIT_PROTOCOL_START = 97,
+    CRIT_PROTOCOL_START = 98,
     
     /**
      * Indicates the connection reliability can
      * return back to normal.
      */
-    CRIT_PROTOCOL_STOP = 98,
+    CRIT_PROTOCOL_STOP = 99,
     
     /** Get currently supported coalesce rules. */
-    GET_COALESCE = 99,
+    GET_COALESCE = 100,
     
     /** Configure coalesce rules or clear existing rules. */
-    SET_COALESCE = 100,
+    SET_COALESCE = 101,
     
     /**
      * Perform a channel switch by announcing the
@@ -945,7 +945,7 @@ export enum Commands {
      * other station that transmission must be blocked until the channel
      * switch is complete.
      */
-    CHANNEL_SWITCH = 101,
+    CHANNEL_SWITCH = 102,
     
     /**
      * Vendor-specified command/event. The command is specified
@@ -957,7 +957,7 @@ export enum Commands {
      * (&struct nl80211_vendor_cmd_info) of the supported vendor commands.
      * This may also be sent as an event with the same attributes.
      */
-    VENDOR = 102,
+    VENDOR = 103,
     
     /**
      * Set Interworking QoS mapping for IP DSCP values.
@@ -966,7 +966,7 @@ export enum Commands {
      * QoS mapping is relevant for IP packets, it is only valid during an
      * association. This is cleared on disassociation and AP restart.
      */
-    SET_QOS_MAP = 103,
+    SET_QOS_MAP = 104,
     
     /**
      * Ask the kernel to add a traffic stream for the given
@@ -981,7 +981,7 @@ export enum Commands {
      * make that impossible. However, the subsequent "real" setup may still
      * fail even if the check was successful.
      */
-    ADD_TX_TS = 104,
+    ADD_TX_TS = 105,
     
     /**
      * Remove an existing TS with the %NL80211_ATTR_TSID
@@ -989,26 +989,26 @@ export enum Commands {
      * before removing a station entry entirely, or before disassociating
      * or similar, cleanup will happen in the driver/device in this case.
      */
-    DEL_TX_TS = 105,
+    DEL_TX_TS = 106,
     
     /**
      * Get mesh path attributes for mesh proxy path to
      * destination %NL80211_ATTR_MAC on the interface identified by
      * %NL80211_ATTR_IFINDEX.
      */
-    GET_MPP = 106,
+    GET_MPP = 107,
     
     /**
      * Join the OCB network. The center frequency and
      * bandwidth of a channel must be given.
      */
-    JOIN_OCB = 107,
+    JOIN_OCB = 108,
     
     /**
      * Leave the OCB network -- no special arguments, the
      * network is determined by the network interface.
      */
-    LEAVE_OCB = 108,
+    LEAVE_OCB = 109,
     
     /**
      * Notify that a channel switch
@@ -1020,7 +1020,7 @@ export enum Commands {
      * decide to react to this indication by requesting other
      * interfaces to change channel as well.
      */
-    CH_SWITCH_STARTED_NOTIFY = 109,
+    CH_SWITCH_STARTED_NOTIFY = 110,
     
     /**
      * Start channel-switching with a TDLS peer,
@@ -1032,28 +1032,28 @@ export enum Commands {
      * operations and returning to the base channel for communication with the
      * AP.
      */
-    TDLS_CHANNEL_SWITCH = 110,
+    TDLS_CHANNEL_SWITCH = 111,
     
     /**
      * Stop channel-switching with a TDLS
      * peer given by %NL80211_ATTR_MAC. Both peers must be on the base channel
      * when this command completes.
      */
-    TDLS_CANCEL_CHANNEL_SWITCH = 111,
+    TDLS_CANCEL_CHANNEL_SWITCH = 112,
     
     /**
      * Similar to %NL80211_CMD_REG_CHANGE, but used
      * as an event to indicate changes for devices with wiphy-specific regdom
      * management.
      */
-    WIPHY_REG_CHANGE = 112,
+    WIPHY_REG_CHANGE = 113,
     
     /**
      * Stop an ongoing scan. Returns -ENOENT if a scan is
      * not running. The driver indicates the status of the scan through
      * cfg80211_scan_done().
      */
-    ABORT_SCAN = 113,
+    ABORT_SCAN = 114,
     
     /**
      * Start NAN operation, identified by its
@@ -1067,13 +1067,13 @@ export enum Commands {
      * decide what to use.  After this command NAN functions can be
      * added.
      */
-    START_NAN = 114,
+    START_NAN = 115,
     
     /**
      * Stop the NAN operation, identified by
      * its %NL80211_ATTR_WDEV interface.
      */
-    STOP_NAN = 115,
+    STOP_NAN = 116,
     
     /**
      * Add a NAN function. The function is defined
@@ -1091,7 +1091,7 @@ export enum Commands {
      * the response to this command.
      * Look at %NL80211_ATTR_SOCKET_OWNER as well.
      */
-    ADD_NAN_FUNCTION = 116,
+    ADD_NAN_FUNCTION = 117,
     
     /**
      * Delete a NAN function by cookie.
@@ -1099,7 +1099,7 @@ export enum Commands {
      * terminated. This will contain a %NL80211_ATTR_NAN_FUNC_INST_ID
      * and %NL80211_ATTR_COOKIE attributes.
      */
-    DEL_NAN_FUNCTION = 117,
+    DEL_NAN_FUNCTION = 118,
     
     /**
      * Change current NAN
@@ -1111,14 +1111,14 @@ export enum Commands {
      * set to zero, the configuration is changed to don't-care
      * (i.e. the device can decide what to do).
      */
-    CHANGE_NAN_CONFIG = 118,
+    CHANGE_NAN_CONFIG = 119,
     
     /**
      * Notification sent when a match is reported.
      * This will contain a %NL80211_ATTR_NAN_MATCH nested attribute and
      * %NL80211_ATTR_COOKIE.
      */
-    NAN_MATCH = 119,
+    NAN_MATCH = 120,
     
     /**
      * Configure if this AP should perform
@@ -1135,7 +1135,7 @@ export enum Commands {
      * If %NL80211_ATTR_MULTICAST_TO_UNICAST_ENABLED is not present with this
      * command, the feature is disabled.
      */
-    SET_MULTICAST_TO_UNICAST = 120,
+    SET_MULTICAST_TO_UNICAST = 121,
     
     /**
      * Update one or more connect parameters
@@ -1144,7 +1144,7 @@ export enum Commands {
      * does not result in a change for the current association. Currently,
      * only the %NL80211_ATTR_IE data is used and updated with this command.
      */
-    UPDATE_CONNECT_PARAMS = 121,
+    UPDATE_CONNECT_PARAMS = 122,
     
     /**
      * For offloaded 4-Way handshake, set the PMK or PMK-R0
@@ -1152,14 +1152,14 @@ export enum Commands {
      * When %NL80211_ATTR_PMKR0_NAME is set, %NL80211_ATTR_PMK specifies the
      * PMK-R0, otherwise it specifies the PMK.
      */
-    SET_PMK = 122,
+    SET_PMK = 123,
     
     /**
      * For offloaded 4-Way handshake, delete the previously
      * configured PMK for the authenticator address identified by
      * %NL80211_ATTR_MAC.
      */
-    DEL_PMK = 123,
+    DEL_PMK = 124,
     
     /**
      * An event that indicates that the 4 way
@@ -1169,10 +1169,10 @@ export enum Commands {
      * %NL80211_CMD_CONNECT or %NL80211_CMD_ROAM. If the 4 way handshake failed
      * %NL80211_CMD_DISCONNECT should be indicated instead.
      */
-    PORT_AUTHORIZED = 124,
+    PORT_AUTHORIZED = 125,
     
     /** Request that the regdb firmware file is reloaded. */
-    RELOAD_REGDB = 125,
+    RELOAD_REGDB = 126,
     
     /**
      * This interface is exclusively defined for host
@@ -1196,7 +1196,7 @@ export enum Commands {
      * user space through the connect result as the user space would have
      * initiated the connection through the connect request.
      */
-    EXTERNAL_AUTH = 126,
+    EXTERNAL_AUTH = 127,
     
     /**
      * An event that notify station's
@@ -1204,7 +1204,7 @@ export enum Commands {
      * %NL80211_ATTR_CHANNEL_WIDTH,%NL80211_ATTR_NSS attributes with its
      * address(specified in %NL80211_ATTR_MAC).
      */
-    STA_OPMODE_CHANGED = 127,
+    STA_OPMODE_CHANGED = 128,
     
     /**
      * Control Port (e.g. PAE) frame TX request
@@ -1218,13 +1218,13 @@ export enum Commands {
      * indicating the protocol type of the received frame; whether the frame
      * was received unencrypted and the MAC address of the peer respectively.
      */
-    CONTROL_PORT_FRAME = 128,
+    CONTROL_PORT_FRAME = 129,
     
     /**
      * Retrieve FTM responder statistics, in
      * the %NL80211_ATTR_FTM_RESPONDER_STATS attribute.
      */
-    GET_FTM_RESPONDER_STATS = 129,
+    GET_FTM_RESPONDER_STATS = 130,
     
     /**
      * start a (set of) peer measurement(s)
@@ -1246,20 +1246,20 @@ export enum Commands {
      * Depending on driver support it may or may not be possible to start
      * multiple concurrent measurements.
      */
-    PEER_MEASUREMENT_START = 130,
+    PEER_MEASUREMENT_START = 131,
     
     /**
      * This command number is used for the
      * result notification from the driver to the requesting socket.
      */
-    PEER_MEASUREMENT_RESULT = 131,
+    PEER_MEASUREMENT_RESULT = 132,
     
     /**
      * Notification only, indicating that
      * the measurement completed, using the measurement cookie
      * (%NL80211_ATTR_COOKIE).
      */
-    PEER_MEASUREMENT_COMPLETE = 132,
+    PEER_MEASUREMENT_COMPLETE = 133,
     
     /**
      * Notify the kernel that a radar signal was
@@ -1267,7 +1267,7 @@ export enum Commands {
      * indicated by %NL80211_ATTR_WIPHY_FREQ and other attributes
      * determining the width and type.
      */
-    NOTIFY_RADAR = 133,
+    NOTIFY_RADAR = 134,
     
     /**
      * This interface allows the host driver to
@@ -1275,7 +1275,7 @@ export enum Commands {
      * OWE AKM by the host drivers that implement SME but rely
      * on the user space for the cryptographic/DH IE processing in AP mode.
      */
-    UPDATE_OWE_INFO = 134,
+    UPDATE_OWE_INFO = 135,
     
     /**
      * The requirement for mesh link metric
@@ -1293,7 +1293,7 @@ export enum Commands {
      * peer MAC address and %NL80211_ATTR_FRAME is used to specify the frame
      * content. The frame is ethernet data.
      */
-    PROBE_MESH_LINK = 135,
+    PROBE_MESH_LINK = 136,
 }
 
 /** nl80211 netlink attributes */
@@ -8507,13 +8507,13 @@ export function formatProtocolFeatures(x: ProtocolFeatures): number {
 /** nl80211 critical protocol identifiers */
 export enum CritProtoId {
     /** BOOTP or DHCPv6 protocol. */
-    DHCP,
+    DHCP = 1,
     
     /** EAPOL protocol. */
-    EAPOL = 1,
+    EAPOL = 2,
     
     /** APIPA protocol. */
-    APIPA = 2,
+    APIPA = 3,
 }
 
 /**
@@ -8898,7 +8898,7 @@ export interface NanSrf extends BaseObject {
      * and only if %NL80211_NAN_SRF_BF isn't present. This is a nested
      * attribute. Each nested attribute is a MAC address.
      */
-    macAddrs?: Buffer
+    macAddrs?: Buffer[]
 }
 
 /** Parses the attributes of a [[NanSrf]] object */
@@ -8907,7 +8907,7 @@ export function parseNanSrf(r: Buffer): NanSrf {
         1: (data, obj) => obj.include = structs.getFlag(data),
         2: (data, obj) => obj.bf = data,
         3: (data, obj) => obj.bfIdx = structs.getU8(data),
-        4: (data, obj) => obj.macAddrs = data,
+        4: (data, obj) => obj.macAddrs = structs.getArray(data, x => x),
     })
 }
 
@@ -8917,7 +8917,7 @@ export function formatNanSrf(x: NanSrf): StreamData {
         include: (data, obj) => data.push(1, structs.putFlag(obj.include!)),
         bf: (data, obj) => data.push(2, obj.bf!),
         bfIdx: (data, obj) => data.push(3, structs.putU8(obj.bfIdx!)),
-        macAddrs: (data, obj) => data.push(4, obj.macAddrs!),
+        macAddrs: (data, obj) => data.push(4, structs.putArray(obj.macAddrs!, x => x)),
     })
 }
 

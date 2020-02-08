@@ -111,7 +111,7 @@ writeFileSync(outFilename, output)
 
 // FIXME: warn if 64-bit on flags (enum should be safe)
 // FIXME: remember to set bigint on 64-bit
-// FIXME: missing things on types: replace refs in docs & add orig attribute & convert types to array & unknown type -> null
+// FIXME: missing things on types: replace refs in docs & convert types to array & unknown type -> null
 
 
 // Actual processing
