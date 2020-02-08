@@ -15,9 +15,15 @@ import { RawNetlinkSocket,
          RawNetlinkSendOptions, 
          MessageInfo } from './raw'
 import { FLAGS, FLAGS_ACK, TYPES } from './constants'
-import { parseMessages, formatMessage, NetlinkMessage, parseError } from './structs'
+import { parseMessages, formatMessage, NetlinkMessage, parseError, NetlinkMessage_ } from './structs'
 
 export interface NetlinkSocketOptions {
+    /**
+     * If true, the event loop will not exit while the socket is
+     * is open (default: false). You should set this to true if
+     * you need to listen for notifications. See the [[ref]] method.
+     */
+    ref?: boolean
 }
 
 export interface NetlinkSendOptions extends RawNetlinkSendOptions {
@@ -46,15 +52,21 @@ export interface SendRequestOptions {
  * TODO
  * 
  * This socket silently discards invalid messages (see `invalid` event).
+ * FIXME: cork / uncork api
+ * FIXME: debug option, common for all sockets
  */
 export class NetlinkSocket extends EventEmitter {
     readonly socket: RawNetlinkSocket
     seq: number = 1
+    protected referenced: boolean = false
+    protected requests: Map<number, (msg: NetlinkMessage[], rinfo: MessageInfo) => any> = new Map()
+    protected multipartMessage?: NetlinkMessage[]
 
     constructor(socket: RawNetlinkSocket, options?: NetlinkSocketOptions) {
         super()
         this.socket = socket
         this.socket.on('message', this._receive.bind(this))
+        this.ref(!!(options && options.ref))
     }
 
     private _receive(msg: Buffer, rinfo: MessageInfo) {
@@ -64,16 +76,78 @@ export class NetlinkSocket extends EventEmitter {
         } catch (e) {
             return this.emit('invalid', e, msg, rinfo)
         }
-        msgs.forEach(x => this.emit('message', x, rinfo))
+        this.handleMessages(msgs, rinfo)
     }
 
+    /**
+     * Handles zero or more messages received over the socket,
+     * doing multipart grouping and emitting 'message' events
+     * for every message.
+     */
+    protected handleMessages(msgs: NetlinkMessage[], rinfo: MessageInfo) {
+        // FIXME: do actual sequence checking, etc
+        msgs.forEach(msg => {
+            if (this.multipartMessage) {
+                if (msg.type === TYPES.DONE && msg.seq === this.multipartMessage[0].seq) {
+                    this.emitMessage(this.multipartMessage, rinfo)
+                    this.multipartMessage = undefined
+                    return
+                } else if (msg.flags & FLAGS.MULTI && msg.seq === this.multipartMessage[0].seq) {
+                    return this.multipartMessage.push(msg)
+                }
+                this.emit('invalid', Error('Multipart message not terminated'), this.multipartMessage, rinfo)
+                this.multipartMessage = undefined
+            }
+            if (msg.flags & FLAGS.MULTI) {
+                this.multipartMessage = [msg]
+                return
+            }
+            this.emitMessage([msg], rinfo)
+        })
+    }
+
+    /**
+     * Close the Netlink socket. After this, all other methods
+     * can no longer be called.
+     */
+    close() {
+        return this.socket.close()
+    }
+
+    /**
+     * Return the address this socket is currently bound at.
+     * 
+     * @returns Local address
+     */
+    address() {
+        return this.socket.address()
+    }
+
+    /**
+     * Generate a unique sequence number to use in a message
+     */
     generateSeq() {
         // FIXME: how does libnl generate / check seq?
+        //while (this.requests.has(this.seq))
+        //    this.seq = this.seq % 0xFFFFFFFF + 1
         const r = this.seq
         this.seq = this.seq % 0xFFFFFFFF + 1
         return r
     }
 
+    /**
+     * Send a Netlink message over the socket, addressed as
+     * the options indicate. By default, the sequence number
+     * and port will be filled automatically.
+     * 
+     * @param type Message type
+     * @param data Message payload
+     * @param options Message send options
+     * @param callback Callback will be called after
+     * the message has been sent (or failed to be sent)
+     * 
+     * @returns The sequence number of the sent message
+     */
     send(
         type: number,
         data: Uint8Array | Uint8Array[],
@@ -111,34 +185,109 @@ export class NetlinkSocket extends EventEmitter {
         type: number,
         data: Uint8Array | Uint8Array[],
         options?: NetlinkSendOptions & SendRequestOptions
-    ): Promise<[NetlinkMessage, MessageInfo]> {
-        const x: Promise<[NetlinkMessage, MessageInfo]> = new Promise((resolve, reject) => {
-            const timeoutFn = () => {
-                reject(Error('Timeout has been reached'))
-                this.removeListener('message', msgListener)
-            }
-            const msgListener = (msg: NetlinkMessage, rinfo: MessageInfo) => {
-                if (msg.flags & FLAGS.REQUEST) return
-                if (msg.seq !== seq) return
+    ): Promise<[NetlinkMessage[], MessageInfo]> {
+        const flags = Number(options && options.flags) | FLAGS.REQUEST | FLAGS.ACK
+        let seq: number
+        let timeout: NodeJS.Timeout
+        let x: Promise<[NetlinkMessage[], MessageInfo]> = new Promise((resolve, reject) => {
+            seq = this.makeRef(this.send(type, data, { ...options, flags }, error => {
+                error && reject(error)
+            }), (msg: NetlinkMessage[], rinfo: MessageInfo) => {
                 resolve([msg, rinfo])
-                this.removeListener('message', msgListener)
-            }
-            const flags = Number(options && options.flags) | FLAGS.REQUEST | FLAGS.ACK
-            const seq = this.send(type, data, { ...options, flags }, error => {
-                if (error) {
-                    reject(error)
-                    this.removeListener('message', msgListener)
-                } else if (options && options.timeout) {
-                    setTimeout(timeoutFn, options && options.timeout)
-                }
             })
-            this.on('message', msgListener)
+            if (options && options.timeout) {
+                timeout = setTimeout(() => reject(Error('Timeout has been reached')), options.timeout)
+            }
         })
+        x = x.finally(() => (typeof timeout !== 'undefined') && clearTimeout(timeout))
+        x = x.finally(() => (typeof seq !== 'undefined') && this.dropRef(seq))
         return (options && options.checkError === false) ? x :
-            x.then(x => (checkError(x[0]), x))
+            x.then(x => (checkError(x[0][0]), x))
     }
 
-    // FIXME: reexpose rest of API
+    /**
+     * If true is passed, the socket will be kept referenced
+     * (preventing the event loop from exiting) even when there
+     * are no pending messages. Otherwise, the socket will be
+     * dereferenced when there are no pending messages.
+     * 
+     * @param ref Socket ref state
+     */
+    ref(ref: boolean) {
+        this.referenced = ref
+        if (!this.requests.size) {
+            ref ? this.socket.ref() : this.socket.unref()
+        }
+    }
+
+    protected makeRef(seq: number, callback: (msg: NetlinkMessage[], rinfo: MessageInfo) => any) {
+        if (!this.referenced && !this.requests.size)
+            this.socket.ref()
+        if (this.requests.has(seq))
+            throw Error('Sequence number is already being waited for')
+        this.requests.set(seq, callback)
+        return seq
+    }
+    
+    /**
+     * If the message is a reply, and its sequence number has an
+     * associated (i.e. request) callback, call it.
+     * Otherwise, a 'message' event is emitted.
+     */
+    protected emitMessage(msg: NetlinkMessage[], rinfo: MessageInfo) {
+        const m = (msg instanceof Array) ? msg[0] : msg
+        const cb = this.requests.get(m.seq)
+        if (!(m.flags & FLAGS.REQUEST) && cb) {
+            return cb(msg, rinfo)
+        }
+        this.emit('message', msg, rinfo)
+    }
+
+    protected dropRef(seq: number) {
+        if (!this.requests.has(seq))
+            throw Error('Should never happen')
+        this.requests.delete(seq)
+        if (!this.referenced && !this.requests.size)
+            this.socket.unref()
+    }
+
+    /** Equivalent to `socket.ref(false)`, see [[ref]] */
+    unref() {
+        return this.ref(false)
+    }
+
+
+    // RE-EXPOSED API
+
+    /** Joins the specified multicast group */
+    addMembership(group: number) {
+        return this.socket.addMembership(group)
+    }
+
+    /** Leaves the specified multicast group */
+    dropMembership(group: number) {
+        return this.socket.dropMembership(group)
+    }
+
+    /** Returns the `SO_RCVBUF` socket receive buffer size in bytes */
+    getRecvBufferSize(): number {
+        return this.socket.getRecvBufferSize()
+    }
+
+    /** Returns the `SO_SNDBUF` socket send buffer size in bytes */
+    getSendBufferSize(): number {
+        return this.socket.getSendBufferSize()
+    }
+
+    /** Sets the `SO_RCVBUF` socket option. Sets the maximum socket receive buffer in bytes. */
+    setRecvBufferSize(size: number) {
+        return this.socket.setRecvBufferSize(size)
+    }
+
+    /** Sets the `SO_SNDBUF` socket option. Sets the maximum socket send buffer in bytes. */
+    setSendBufferSize(size: number) {
+        return this.socket.setSendBufferSize(size)
+    }
 }
 
 export function checkError(x: NetlinkMessage) {

@@ -58,14 +58,18 @@ export class GenericNetlinkSocket extends EventEmitter {
         this.socket.on('message', this._receive.bind(this))
     }
 
-    private _receive(omsg: NetlinkMessage, rinfo: MessageInfo) {
-        // FIXME: send to invalid on error
+    protected parseMessage(omsg: NetlinkMessage): GenericNetlinkMessage {
         const { type: family, flags, seq, port } = omsg
         let { data } = omsg
         const { x: { cmd, version }, consumed } = parseGenlHeader(data)
         data = data.slice(consumed)
         const msg: GenericNetlinkMessage = { family, flags, seq, port, cmd, version, data }
-        this.emit('message', msg, rinfo)
+        return msg
+    }
+
+    private _receive(omsg: NetlinkMessage[], rinfo: MessageInfo) {
+        this.emit('message', omsg.map(x =>
+            (x.type >= GENL_MIN_ID && x.type <= GENL_MAX_ID) ? this.parseMessage(x) : x), rinfo)
     }
 
     send(
@@ -86,10 +90,16 @@ export class GenericNetlinkSocket extends EventEmitter {
         version: number,
         data: Uint8Array | Uint8Array[],
         options?: GenericNetlinkSendOptions & SendRequestOptions
-    ) {
+    ): Promise<[GenericNetlinkMessage[], MessageInfo]> {
         const header = formatGenlHeader({ cmd, version })
         data = [header as Uint8Array].concat(ensureArray(data))
-        return this.socket.sendRequest(family, data, options)
+        return this.socket.sendRequest(family, data, options).then(([msg, rinfo]) => {
+            return [msg.map(x => {
+                if (msg[0].type !== family)
+                    throw Error(`Received reply with different family (${msg[0].type}) than original (${family})`)
+                return this.parseMessage(x)
+            }), rinfo]
+        })
     }
 }
 
