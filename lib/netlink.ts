@@ -15,7 +15,7 @@ import { RawNetlinkSocket,
          RawNetlinkSendOptions, 
          MessageInfo } from './raw'
 import { FLAGS, FLAGS_ACK, TYPES } from './constants'
-import { parseMessages, formatMessage, NetlinkMessage, parseError } from './message'
+import { parseMessages, formatMessage, NetlinkMessage, parseError } from './structs'
 
 export interface NetlinkSocketOptions {
 }

@@ -9,6 +9,7 @@
 /** */
 
 import { readU16, readU32, writeU16, writeU32, readU8, writeU8 } from './util/buffer'
+import * as buf from './util/buffer'
 
 export const ensureArray = (x: Uint8Array | Uint8Array[]): Uint8Array[] =>
     (x instanceof Array) ? x : [x]
@@ -199,6 +200,40 @@ export interface NetlinkAttribute extends NetlinkAttribute_ {
     data: Buffer
 }
 
+/**
+ * Object allowing efficient construction of an attribute stream.
+ */
+export class AttrStream {
+    readonly bufs: Uint8Array[] = []
+    private offset: number = 0
+    private emit = (data: Uint8Array) =>
+        (this.bufs.push(data), this.offset += data.length)
+    push(type: number, data: Uint8Array | Uint8Array[] | ((out: this) => any)) {
+        // Emit padding (make sure to start on aligned offset)
+        const p = padding(this.offset)
+        if (p) this.emit(Buffer.alloc(p))
+
+        // Emit header
+        const start = this.offset
+        const header = Buffer.alloc(4)
+        writeU16.call(header, (type & ((1 << 14) - 1)), 2)
+        this.emit(header)
+
+        // Emit data
+        if (data instanceof Uint8Array || data instanceof Array) {
+            (data instanceof Array) ? data.forEach(x => this.emit(x)) : this.emit(data)
+        } else {
+            data(this)
+        }
+
+        // Patch length in header
+        const length = this.offset - start
+        if (length <= 0x10000)
+            throw Error(`Maximum attribute length exceeded (${length})`)
+        writeU16.call(header, length, 0)
+    }
+}
+
 export function formatAttribute(x: NetlinkAttribute_): Uint8Array[] {
     const data = ensureArray(x.data)
     const header = Buffer.alloc(4)
@@ -227,79 +262,141 @@ export function parseAttribute(r: Buffer): ParseResult<NetlinkAttribute> {
 }
 
 /**
- * Calls [[parseMessage]] repeatedly, ignoring padding
- * between attributes, until there's no data left (other than padding).
+ * Calls [[parseMessage]] repeatedly, supplying each result to
+ * the passed callback and ignoring padding, until there's no
+ * data left (other than padding).
  *
  * @param x Attributes stream data
  * @retrns Array of parsed messages
  */
-export function parseAttributes(r: Buffer): NetlinkAttribute[] {
-    const x: NetlinkAttribute[] = []
+export function parseAttributes(r: Buffer, fn: (item: NetlinkAttribute) => any) {
     while (r.length) {
         const { x: msg, consumed } = parseAttribute(r)
-        x.push(msg)
+        fn(msg)
         r = r.slice(align(consumed))
     }
+}
+
+// Convenience value parsers / formatters
+
+function checkLength(x: Buffer, n: number): Buffer {
+    if (x.length === n) return x
+    throw Error(`Unexpected length (got ${x.length}, expected ${n})`)
+}
+function callAt<T>(x: T, fn: (this: T, ...args: any[]) => any, ...args: any[]): T {
+    fn.call(x, ...args)
     return x
 }
 
-/**
- * Like [[parseMessages]], but returns a map indexed by attribute
- * type. If there are many attributes of a certain type, the last
- * one will be returned.
- */
-export const parseAttributeMap = (r: Buffer): Map<number, NetlinkAttribute> =>
-    new Map(parseAttributes(r).map(x => [ x.type, x ]))
+export const getU8 = (x: Buffer): number => buf.readU8.call(checkLength(x, 1), 0)
+export const putU8 = (x: number): Buffer => callAt(Buffer.alloc(1), buf.writeU8, x, 0)
+export const getU16 = (x: Buffer): number => buf.readU16.call(checkLength(x, 2), 0)
+export const putU16 = (x: number): Buffer => callAt(Buffer.alloc(2), buf.writeU16, x, 0)
+export const getU32 = (x: Buffer): number => buf.readU32.call(checkLength(x, 4), 0)
+export const putU32 = (x: number): Buffer => callAt(Buffer.alloc(4), buf.writeU32, x, 0)
+export const getU64 = (x: Buffer): bigint => buf.readU64.call(checkLength(x, 8), 0)
+export const putU64 = (x: bigint): Buffer => callAt(Buffer.alloc(8), buf.writeU64, x, 0)
+export const getS8 = (x: Buffer): number => buf.readS8.call(checkLength(x, 1), 0)
+export const putS8 = (x: number): Buffer => callAt(Buffer.alloc(1), buf.writeS8, x, 0)
+export const getS16 = (x: Buffer): number => buf.readS16.call(checkLength(x, 2), 0)
+export const putS16 = (x: number): Buffer => callAt(Buffer.alloc(2), buf.writeS16, x, 0)
+export const getS32 = (x: Buffer): number => buf.readS32.call(checkLength(x, 4), 0)
+export const putS32 = (x: number): Buffer => callAt(Buffer.alloc(4), buf.writeS32, x, 0)
+export const getS64 = (x: Buffer): bigint => buf.readS64.call(checkLength(x, 8), 0)
+export const putS64 = (x: bigint): Buffer => callAt(Buffer.alloc(8), buf.writeS64, x, 0)
 
-// Convenience attribute parsers / formatters
-// (formatters return padded result for convenience)
+export const getF32 = (x: Buffer): number => buf.readF32.call(checkLength(x, 4), 0)
+export const putF32 = (x: number): Buffer => callAt(Buffer.alloc(4), buf.writeF32, x, 0)
+export const getF64 = (x: Buffer): number => buf.readF64.call(checkLength(x, 8), 0)
+export const putF64 = (x: number): Buffer => callAt(Buffer.alloc(8), buf.writeF64, x, 0)
 
-function checkLength(x: NetlinkAttribute, n: number) {
-    if (x.nested || x.no) throw Error('Not implemented yet')
-    if (x.data.length !== n) throw Error('Unexpected length')
-    return x.data
+export const getFlag = (x: Buffer): true => (checkLength(x, 0), true)
+export const putFlag = (x: true): Buffer => Buffer.alloc(0)
+export function getBool(x: Buffer): boolean {
+    const b = getU8(x)
+    if (b === 1 || b === 0) return Boolean(b)
+    throw Error(`Expected 0 or 1, got ${b}`)
 }
-export const getAttrU8 = (x: NetlinkAttribute) => readU8.call(checkLength(x, 1), 0)
-export const getAttrU16 = (x: NetlinkAttribute) => readU16.call(checkLength(x, 2), 0)
-export const getAttrU32 = (x: NetlinkAttribute) => readU32.call(checkLength(x, 4), 0)
-export function getAttrStr(x: NetlinkAttribute, encoding?: BufferEncoding): string {
-    if (x.nested || x.no) throw Error('Not implemented yet')
-    if (x.data[x.data.length-1] !== 0)
-        throw Error('Not a null-terminated string')
-    return x.data.toString(encoding, 0, x.data.length-1)
+export const putBool = (x: boolean): Buffer => putU8(Number(x))
+
+export function getString(x: Buffer, options?: { encoding?: BufferEncoding, maxLength: number }): string {
+    if (options && options.maxLength && x.length > options.maxLength)
+        throw Error(`Maximum length exceeded (max ${options.maxLength}, got ${x.length})`)
+    if (x[x.length - 1] !== 0)
+        throw Error('Not null terminated')
+    return x.toString(options && options.encoding, 0, x.length - 1)
+}
+export function putString(x: string, options?: { encoding?: BufferEncoding, maxLength: number }): Buffer {
+    const b = Buffer.alloc(Buffer.byteLength(x, options && options.encoding) + 1)
+    if (options && options.maxLength && b.length > options.maxLength)
+        throw Error(`Maximum length exceeded (max ${options.maxLength}, got ${b.length})`)
+    b.write(x, options && options.encoding)
+    return b
 }
 
-function applyBuffer(type: number, n: number, f: (r: Buffer) => any): Buffer {
-    const data = Buffer.alloc(n)
-    f(data)
-    return Buffer.concat(pad(formatAttribute({ type, data })))
-}
-export const putAttrU8 = (type: number, x: number) => applyBuffer(type, 1, r => writeU8.call(r, x, 0))
-export const putAttrU16 = (type: number, x: number) => applyBuffer(type, 1, r => writeU16.call(r, x, 0))
-export const putAttrU32 = (type: number, x: number) => applyBuffer(type, 1, r => writeU32.call(r, x, 0))
-export const putAttrStr = (type: number, x: string, encoding?: BufferEncoding) =>
-    Buffer.concat(pad(formatAttribute({
-        type, data: [ Buffer.from(x, encoding), Buffer.alloc(1) ]
-    })))
+// Nested attribute parsers / formatters
 
-function getAttrNested(x: NetlinkAttribute): Buffer {
-    //if (!x.nested) throw Error('Expected nested data') // nested is not set in practice
-    if (x.no) throw Error('Not implemented') 
-    return x.data
+function checkNO(x: NetlinkAttribute): NetlinkAttribute {
+    if (!x.no) return x
+    throw Error('Unexpected attribute with NO set')
 }
-const putAttrNested = (type: number, data: Uint8Array | Uint8Array[]) =>
-    pad(formatAttribute({ type, data, nested: true }))
+export function getMap<T>(x: Buffer, fn: (item: Buffer) => T): Map<number, T> {
+    const res: Map<number, T> = new Map()
+    parseAttributes(x, item => res.set(item.type, fn(checkNO(item).data)))
+    return res
+}
+export function getArray<T>(x: Buffer, fn: (item: Buffer) => T): T[] {
+    const res: T[] = []
+    parseAttributes(x, item => {
+        if (item.type !== res.length + 1)
+            throw Error(`Non-sequential array types (expected ${res.length + 1}, got ${item.type})`)
+        res.push(fn(checkNO(item).data))
+    })
+    return res
+}
+export type AttributeResult = ArgsType<AttrStream['push']>[1]
+export function putArray<T>(x: T[], fn: (item: T) => AttributeResult): AttributeResult {
+    return out => x.forEach((item, n) => out.push(n + 1, fn(item)))
+}
+export function putMap<T>(x: Map<number, T>, fn: (item: T) => AttributeResult): AttributeResult {
+    return out => x.forEach((item, n) => out.push(n, fn(item)))
+}
 
-export const getAttrArray = (x: NetlinkAttribute): Buffer[] => parseAttributes(getAttrNested(x)).map((t, n) => {
-    if (t.type !== n + 1)
-        throw Error(`Item ${n} has unexpected type ${t.type}`)
-    return getAttrNested(t)
-})
-export function putAttrArray(type: number, x: (Uint8Array|Uint8Array[])[]): Uint8Array[] {
-    if (x.length >= (1 << 14))
-        throw Error(`Maximum array length exceeded (${x.length})`)
-    const data = x.map((t, n) => putAttrNested(n + 1, t))
-    return putAttrNested(type, ([] as Uint8Array[]).concat(...data))
+// Object parsing
+
+export interface BaseObject {
+    __unparsed?: [number, Buffer][],
+}
+export function getObject<T extends BaseObject>(
+    x: Buffer, fns: { [key: number]: (data: Buffer, obj: T) => any }
+): T {
+    let obj: T = {} as T
+    let unparsed: BaseObject['__unparsed'] = []
+    parseAttributes(x, item => {
+        if ({}.hasOwnProperty.call(fns, item.type)) {
+            fns[item.type](checkNO(item).data, obj)
+        } else {
+            obj.__unparsed?.push([ item.type, checkNO(item).data ])
+        }
+    })
+    if (unparsed.length)
+        obj.__unparsed = unparsed
+    return obj
+}
+export function putObject<T extends BaseObject>(
+    x: T, fns: { [key: string]: (data: AttrStream, obj: T) => any }
+): AttributeResult {
+    return out => {
+        Object.keys(fns).forEach(key => {
+            if ({}.hasOwnProperty.call(fns, key)) {
+                fns[key](out, x)
+            } else {
+                throw Error(`Unknown key "${key}"`)
+            }
+        })
+        if (x.__unparsed)
+            x.__unparsed.forEach(([n, data]) => out.push(n, data))
+    }
 }
 
 

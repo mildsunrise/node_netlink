@@ -1,5 +1,5 @@
 export * from './constants'
 export * from './raw'
-export * from './message'
+export * from './structs'
 export * from './netlink'
 export * from './genl'
