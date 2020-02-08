@@ -29,7 +29,7 @@ export interface ValueDef {
     docs?: string[]
 }
 
-export type TypeExpr = string | { kind: 'array' | 'map' | 'flags', type: TypeExpr }
+export type TypeExpr = string | { kind: 'array' | 'map' | 'flags', type: TypeExpr, zero?: boolean }
 
 // Standard types
 export const u8 = 'u8'
@@ -50,7 +50,7 @@ export const flag = 'flag'
 /** binary data */
 export const data = 'data'
 /** derivate types */
-export const array = (x: TypeExpr): TypeExpr => ({ kind: 'array', type: x })
+export const array = (x: TypeExpr, opts?: { zero?: boolean }): TypeExpr => ({ kind: 'array', type: x, zero: opts?.zero })
 export const map = (x: TypeExpr): TypeExpr => ({ kind: 'map', type: x })
 export const asflags = (x: string): TypeExpr & { kind: 'flags', type: string } => ({ kind: 'flags', type: x })
 

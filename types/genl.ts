@@ -20,7 +20,7 @@ const types: TypeStore = {
         { name: 'GET_MCAST_GROUP', value: 9 },
     ]},
 
-    Family: { root: true, attrs: [
+    Message: { root: true, attrs: [
         [ 'familyId', u16 ],
         [ 'familyName', string, { maxLength: GENL_NAMSIZ } ],
         [ 'version', u32 ],

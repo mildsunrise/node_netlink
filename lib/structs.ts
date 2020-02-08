@@ -348,17 +348,20 @@ export function getMap<T>(x: Buffer, fn: (item: Buffer) => T): Map<number, T> {
     parseAttributes(x, item => res.set(item.type, fn(checkNO(item).data)))
     return res
 }
-export function getArray<T>(x: Buffer, fn: (item: Buffer) => T): T[] {
+export type GetArrayOptions = { zero?: boolean }
+export function getArray<T>(x: Buffer, fn: (item: Buffer) => T, options?: GetArrayOptions): T[] {
     const res: T[] = []
+    const offset = (options && options.zero) ? 0 : 1
     parseAttributes(x, item => {
-        if (item.type !== res.length + 1)
-            throw Error(`Non-sequential array types (expected ${res.length + 1}, got ${item.type})`)
+        if (item.type !== res.length + offset)
+            throw Error(`Non-sequential array types (expected ${res.length + offset}, got ${item.type})`)
         res.push(fn(checkNO(item).data))
     })
     return res
 }
-export function putArray<T>(x: T[], fn: (item: T) => StreamData): StreamData {
-    return out => x.forEach((item, n) => out.push(n + 1, fn(item)))
+export function putArray<T>(x: T[], fn: (item: T) => StreamData, options?: GetArrayOptions): StreamData {
+    const offset = (options && options.zero) ? 0 : 1
+    return out => x.forEach((item, n) => out.push(n + offset, fn(item)))
 }
 export function putMap<T>(x: Map<number, T>, fn: (item: T) => StreamData): StreamData {
     return out => x.forEach((item, n) => out.push(n, fn(item)))

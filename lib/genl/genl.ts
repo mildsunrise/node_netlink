@@ -5,10 +5,11 @@
 
 import { EventEmitter } from 'events'
 
-import { MessageInfo, RawNetlinkSocketOptions } from './raw'
-import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, SendRequestOptions } from './netlink'
-import { PROTOCOLS, MIN_TYPE } from './constants'
-import { formatGenlHeader, ensureArray, NetlinkMessage, parseGenlHeader } from './structs'
+import { MessageInfo, RawNetlinkSocketOptions } from '../raw'
+import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, SendRequestOptions } from '../netlink'
+import { PROTOCOLS, MIN_TYPE } from '../constants'
+import { formatGenlHeader, ensureArray, NetlinkMessage, parseGenlHeader, AttrStream } from '../structs'
+import { Commands, Message, formatMessage, parseMessage } from './structs'
 
 // Based on <linux/genetlink.h> at 6f52b16
 
@@ -100,6 +101,17 @@ export class GenericNetlinkSocket extends EventEmitter {
                 return this.parseMessage(x)
             }), rinfo]
         })
+    }
+
+    sendCtrlRequest(
+        cmd: Commands,
+        msg?: Message,
+        options?: GenericNetlinkSendOptions & SendRequestOptions
+    ): Promise<Message[]> {
+        const data = new AttrStream()
+        data.emit(formatMessage(msg || {}))
+        const x = this.sendRequest(GENL_ID_CTRL, cmd, CTRL_VERSION, data.bufs, options)
+        return x.then(([ msg, _ ]) => msg.map(x => parseMessage(x.data)))
     }
 }
 
