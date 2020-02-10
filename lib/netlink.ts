@@ -41,7 +41,7 @@ export interface NetlinkSendOptions extends RawNetlinkSendOptions {
     localPort?: number
 }
 
-export interface SendRequestOptions {
+export interface RequestOptions {
     /** Timeout in ms (default: no timeout) */
     timeout?: number
     /** Whether to reject the promise on ERROR message (default: true) */
@@ -181,10 +181,10 @@ export class NetlinkSocket extends EventEmitter {
      * the received message. The promise rejects if the message
      * coudln't be sent or if the timeout expires.
      */
-    sendRequest(
+    request(
         type: number,
         data: Uint8Array | Uint8Array[],
-        options?: NetlinkSendOptions & SendRequestOptions
+        options?: NetlinkSendOptions & RequestOptions
     ): Promise<[NetlinkMessage[], MessageInfo]> {
         const flags = Number(options && options.flags) | FLAGS.REQUEST | FLAGS.ACK
         let seq: number

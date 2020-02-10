@@ -6,7 +6,7 @@
 import { EventEmitter } from 'events'
 
 import { MessageInfo, RawNetlinkSocketOptions } from '../raw'
-import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, SendRequestOptions } from '../netlink'
+import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, RequestOptions } from '../netlink'
 import { PROTOCOLS, MIN_TYPE } from '../constants'
 import { formatGenlHeader, ensureArray, NetlinkMessage, parseGenlHeader, AttrStream } from '../structs'
 import { Commands, Message, formatMessage, parseMessage } from './structs'
@@ -85,16 +85,16 @@ export class GenericNetlinkSocket extends EventEmitter {
         return this.socket.send(family, data, options)
     }
 
-    sendRequest(
+    request(
         family: number,
         cmd: number,
         version: number,
         data: Uint8Array | Uint8Array[],
-        options?: GenericNetlinkSendOptions & SendRequestOptions
+        options?: GenericNetlinkSendOptions & RequestOptions
     ): Promise<[GenericNetlinkMessage[], MessageInfo]> {
         const header = formatGenlHeader({ cmd, version })
         data = [header as Uint8Array].concat(ensureArray(data))
-        return this.socket.sendRequest(family, data, options).then(([msg, rinfo]) => {
+        return this.socket.request(family, data, options).then(([msg, rinfo]) => {
             return [msg.map(x => {
                 if (msg[0].type !== family)
                     throw Error(`Received reply with different family (${msg[0].type}) than original (${family})`)
@@ -103,15 +103,21 @@ export class GenericNetlinkSocket extends EventEmitter {
         })
     }
 
-    sendCtrlRequest(
+    /**
+     * Send a request to the controller
+     * @param cmd 
+     * @param msg 
+     * @param options 
+     */
+    async ctrlRequest(
         cmd: Commands,
         msg?: Message,
-        options?: GenericNetlinkSendOptions & SendRequestOptions
+        options?: GenericNetlinkSendOptions & RequestOptions
     ): Promise<Message[]> {
         const data = new AttrStream()
         data.emit(formatMessage(msg || {}))
-        const x = this.sendRequest(GENL_ID_CTRL, cmd, CTRL_VERSION, data.bufs, options)
-        return x.then(([ msg, _ ]) => msg.map(x => parseMessage(x.data)))
+        const [omsg, _] = await this.request(GENL_ID_CTRL, cmd, CTRL_VERSION, data.bufs, options)
+        return omsg.map(x => parseMessage(x.data))
     }
 }
 
