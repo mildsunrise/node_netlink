@@ -7,7 +7,7 @@ import { EventEmitter } from 'events'
 
 import { MessageInfo, RawNetlinkSocketOptions } from '../raw'
 import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, RequestOptions } from '../netlink'
-import { PROTOCOLS, MIN_TYPE } from '../constants'
+import { Protocol, MIN_TYPE } from '../constants'
 import { formatGenlHeader, ensureArray, NetlinkMessage, parseGenlHeader, AttrStream } from '../structs'
 import { Commands, Message, formatMessage, parseMessage } from './structs'
 
@@ -124,6 +124,6 @@ export class GenericNetlinkSocket extends EventEmitter {
 export function createGenericNetlink(
     options?: GenericNetlinkSocketOptions & NetlinkSocketOptions & RawNetlinkSocketOptions
 ): GenericNetlinkSocket {
-    const socket = createNetlink(PROTOCOLS.GENERIC)
+    const socket = createNetlink(Protocol.GENERIC, options)
     return new GenericNetlinkSocket(socket, options)
 }

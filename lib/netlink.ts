@@ -14,7 +14,7 @@ import { RawNetlinkSocket,
          RawNetlinkSocketOptions,
          RawNetlinkSendOptions, 
          MessageInfo } from './raw'
-import { FLAGS, FLAGS_ACK, TYPES } from './constants'
+import { Flags, FlagsAck, MessageType } from './constants'
 import { parseMessages, formatMessage, NetlinkMessage, parseError, NetlinkMessage_ } from './structs'
 
 export interface NetlinkSocketOptions {
@@ -88,17 +88,17 @@ export class NetlinkSocket extends EventEmitter {
         // FIXME: do actual sequence checking, etc
         msgs.forEach(msg => {
             if (this.multipartMessage) {
-                if (msg.type === TYPES.DONE && msg.seq === this.multipartMessage[0].seq) {
+                if (msg.type === MessageType.DONE && msg.seq === this.multipartMessage[0].seq) {
                     this.emitMessage(this.multipartMessage, rinfo)
                     this.multipartMessage = undefined
                     return
-                } else if (msg.flags & FLAGS.MULTI && msg.seq === this.multipartMessage[0].seq) {
+                } else if (msg.flags & Flags.MULTI && msg.seq === this.multipartMessage[0].seq) {
                     return this.multipartMessage.push(msg)
                 }
                 this.emit('invalid', Error('Multipart message not terminated'), this.multipartMessage, rinfo)
                 this.multipartMessage = undefined
             }
-            if (msg.flags & FLAGS.MULTI) {
+            if (msg.flags & Flags.MULTI) {
                 this.multipartMessage = [msg]
                 return
             }
@@ -193,7 +193,7 @@ export class NetlinkSocket extends EventEmitter {
         data: Uint8Array | Uint8Array[],
         options?: NetlinkSendOptions & RequestOptions
     ): Promise<[NetlinkMessage[], MessageInfo]> {
-        const flags = Number(options && options.flags) | FLAGS.REQUEST | FLAGS.ACK
+        const flags = Number(options && options.flags) | Flags.REQUEST | Flags.ACK
         let seq: number
         let timeout: NodeJS.Timeout
         let x: Promise<[NetlinkMessage[], MessageInfo]> = new Promise((resolve, reject) => {
@@ -244,7 +244,7 @@ export class NetlinkSocket extends EventEmitter {
     protected emitMessage(msg: NetlinkMessage[], rinfo: MessageInfo) {
         const m = (msg instanceof Array) ? msg[0] : msg
         const cb = this.requests.get(m.seq)
-        if (!(m.flags & FLAGS.REQUEST) && cb) {
+        if (!(m.flags & Flags.REQUEST) && cb) {
             return cb(msg, rinfo)
         }
         this.emit('message', msg, rinfo)
@@ -306,7 +306,7 @@ export class NetlinkSocket extends EventEmitter {
  * @param x Message to check
  */
 export function checkError(x: NetlinkMessage) {
-    if (x.type !== TYPES.ERROR) return
+    if (x.type !== MessageType.ERROR) return
     const { errno } = parseError(x.data, x.flags)
     if (errno === 0) return true
 
