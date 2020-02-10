@@ -97,22 +97,24 @@ export interface OperationFlags {
     cmdCapDump?: true
     cmdCapHaspol?: true
     unsAdminPerm?: true
+    __unknown?: number
 }
 
 /** Parses the flags in a [[OperationFlags]] bitmask */
 export function parseOperationFlags(r: number): OperationFlags {
     const x: OperationFlags = {}
-    if (r & (1)) x.adminPerm = true
-    if (r & (2)) x.cmdCapDo = true
-    if (r & (4)) x.cmdCapDump = true
-    if (r & (8)) x.cmdCapHaspol = true
-    if (r & (16)) x.unsAdminPerm = true
+    if (r & (1)) (x.adminPerm = true, r &= ~(1))
+    if (r & (2)) (x.cmdCapDo = true, r &= ~(2))
+    if (r & (4)) (x.cmdCapDump = true, r &= ~(4))
+    if (r & (8)) (x.cmdCapHaspol = true, r &= ~(8))
+    if (r & (16)) (x.unsAdminPerm = true, r &= ~(16))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[OperationFlags]] bitmask */
 export function formatOperationFlags(x: OperationFlags): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.adminPerm) r |= 1
     if (x.cmdCapDo) r |= 2
     if (x.cmdCapDump) r |= 4

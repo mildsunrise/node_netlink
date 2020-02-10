@@ -4662,22 +4662,25 @@ export interface MpathFlags {
     
     /** the mesh path discovery process succeeded */
     resolved?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[MpathFlags]] bitmask */
 export function parseMpathFlags(r: number): MpathFlags {
     const x: MpathFlags = {}
-    if (r & (1)) x.active = true
-    if (r & (2)) x.resolving = true
-    if (r & (4)) x.snValid = true
-    if (r & (8)) x.fixed = true
-    if (r & (16)) x.resolved = true
+    if (r & (1)) (x.active = true, r &= ~(1))
+    if (r & (2)) (x.resolving = true, r &= ~(2))
+    if (r & (4)) (x.snValid = true, r &= ~(4))
+    if (r & (8)) (x.fixed = true, r &= ~(8))
+    if (r & (16)) (x.resolved = true, r &= ~(16))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[MpathFlags]] bitmask */
 export function formatMpathFlags(x: MpathFlags): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.active) r |= 1
     if (x.resolving) r |= 2
     if (x.snValid) r |= 4
@@ -5409,32 +5412,35 @@ export interface RegulatoryRuleFlags {
     
     /** 160MHz operation not allowed */
     no160mhz?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[RegulatoryRuleFlags]] bitmask */
 export function parseRegulatoryRuleFlags(r: number): RegulatoryRuleFlags {
     const x: RegulatoryRuleFlags = {}
-    if (r & (1)) x.noOfdm = true
-    if (r & (2)) x.noCck = true
-    if (r & (4)) x.noIndoor = true
-    if (r & (8)) x.noOutdoor = true
-    if (r & (16)) x.dfs = true
-    if (r & (32)) x.ptpOnly = true
-    if (r & (64)) x.ptmpOnly = true
-    if (r & (128)) x.noIr = true
-    if (r & (256)) x.__noIbss = true
-    if (r & (2048)) x.autoBw = true
-    if (r & (4096)) x.irConcurrent = true
-    if (r & (8192)) x.noHt40minus = true
-    if (r & (16384)) x.noHt40plus = true
-    if (r & (32768)) x.no80mhz = true
-    if (r & (65536)) x.no160mhz = true
+    if (r & (1)) (x.noOfdm = true, r &= ~(1))
+    if (r & (2)) (x.noCck = true, r &= ~(2))
+    if (r & (4)) (x.noIndoor = true, r &= ~(4))
+    if (r & (8)) (x.noOutdoor = true, r &= ~(8))
+    if (r & (16)) (x.dfs = true, r &= ~(16))
+    if (r & (32)) (x.ptpOnly = true, r &= ~(32))
+    if (r & (64)) (x.ptmpOnly = true, r &= ~(64))
+    if (r & (128)) (x.noIr = true, r &= ~(128))
+    if (r & (256)) (x.__noIbss = true, r &= ~(256))
+    if (r & (2048)) (x.autoBw = true, r &= ~(2048))
+    if (r & (4096)) (x.irConcurrent = true, r &= ~(4096))
+    if (r & (8192)) (x.noHt40minus = true, r &= ~(8192))
+    if (r & (16384)) (x.noHt40plus = true, r &= ~(16384))
+    if (r & (32768)) (x.no80mhz = true, r &= ~(32768))
+    if (r & (65536)) (x.no160mhz = true, r &= ~(65536))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[RegulatoryRuleFlags]] bitmask */
 export function formatRegulatoryRuleFlags(x: RegulatoryRuleFlags): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.noOfdm) r |= 1
     if (x.noCck) r |= 2
     if (x.noIndoor) r |= 4
@@ -6518,20 +6524,23 @@ export interface WpaVersions {
     _2?: true
     
     _3?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[WpaVersions]] bitmask */
 export function parseWpaVersions(r: number): WpaVersions {
     const x: WpaVersions = {}
-    if (r & (1)) x._1 = true
-    if (r & (2)) x._2 = true
-    if (r & (4)) x._3 = true
+    if (r & (1)) (x._1 = true, r &= ~(1))
+    if (r & (2)) (x._2 = true, r &= ~(2))
+    if (r & (4)) (x._3 = true, r &= ~(4))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[WpaVersions]] bitmask */
 export function formatWpaVersions(x: WpaVersions): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x._1) r |= 1
     if (x._2) r |= 2
     if (x._3) r |= 4
@@ -7822,48 +7831,51 @@ export interface FeatureFlags {
      * be set for scheduled scan and the MAC address mask/value will be used.
      */
     ndRandomMacAddr?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[FeatureFlags]] bitmask */
 export function parseFeatureFlags(r: number): FeatureFlags {
     const x: FeatureFlags = {}
-    if (r & (1)) x.skTxStatus = true
-    if (r & (2)) x.htIbss = true
-    if (r & (4)) x.inactivityTimer = true
-    if (r & (8)) x.cellBaseRegHints = true
-    if (r & (16)) x.p2pDeviceNeedsChannel = true
-    if (r & (32)) x.sae = true
-    if (r & (64)) x.lowPriorityScan = true
-    if (r & (128)) x.scanFlush = true
-    if (r & (256)) x.apScan = true
-    if (r & (512)) x.vifTxpower = true
-    if (r & (1024)) x.needObssScan = true
-    if (r & (2048)) x.p2pGoCtwin = true
-    if (r & (4096)) x.p2pGoOppps = true
-    if (r & (16384)) x.advertiseChanLimits = true
-    if (r & (32768)) x.fullApClientState = true
-    if (r & (65536)) x.userspaceMpm = true
-    if (r & (131072)) x.activeMonitor = true
-    if (r & (262144)) x.apModeChanWidthChange = true
-    if (r & (524288)) x.dsParamSetIeInProbes = true
-    if (r & (1048576)) x.wfaTpcIeInProbes = true
-    if (r & (2097152)) x.quiet = true
-    if (r & (4194304)) x.txPowerInsertion = true
-    if (r & (8388608)) x.acktoEstimation = true
-    if (r & (16777216)) x.staticSmps = true
-    if (r & (33554432)) x.dynamicSmps = true
-    if (r & (67108864)) x.supportsWmmAdmission = true
-    if (r & (134217728)) x.macOnCreate = true
-    if (r & (268435456)) x.tdlsChannelSwitch = true
-    if (r & (536870912)) x.scanRandomMacAddr = true
-    if (r & (1073741824)) x.schedScanRandomMacAddr = true
-    if (r & (-2147483648)) x.ndRandomMacAddr = true
+    if (r & (1)) (x.skTxStatus = true, r &= ~(1))
+    if (r & (2)) (x.htIbss = true, r &= ~(2))
+    if (r & (4)) (x.inactivityTimer = true, r &= ~(4))
+    if (r & (8)) (x.cellBaseRegHints = true, r &= ~(8))
+    if (r & (16)) (x.p2pDeviceNeedsChannel = true, r &= ~(16))
+    if (r & (32)) (x.sae = true, r &= ~(32))
+    if (r & (64)) (x.lowPriorityScan = true, r &= ~(64))
+    if (r & (128)) (x.scanFlush = true, r &= ~(128))
+    if (r & (256)) (x.apScan = true, r &= ~(256))
+    if (r & (512)) (x.vifTxpower = true, r &= ~(512))
+    if (r & (1024)) (x.needObssScan = true, r &= ~(1024))
+    if (r & (2048)) (x.p2pGoCtwin = true, r &= ~(2048))
+    if (r & (4096)) (x.p2pGoOppps = true, r &= ~(4096))
+    if (r & (16384)) (x.advertiseChanLimits = true, r &= ~(16384))
+    if (r & (32768)) (x.fullApClientState = true, r &= ~(32768))
+    if (r & (65536)) (x.userspaceMpm = true, r &= ~(65536))
+    if (r & (131072)) (x.activeMonitor = true, r &= ~(131072))
+    if (r & (262144)) (x.apModeChanWidthChange = true, r &= ~(262144))
+    if (r & (524288)) (x.dsParamSetIeInProbes = true, r &= ~(524288))
+    if (r & (1048576)) (x.wfaTpcIeInProbes = true, r &= ~(1048576))
+    if (r & (2097152)) (x.quiet = true, r &= ~(2097152))
+    if (r & (4194304)) (x.txPowerInsertion = true, r &= ~(4194304))
+    if (r & (8388608)) (x.acktoEstimation = true, r &= ~(8388608))
+    if (r & (16777216)) (x.staticSmps = true, r &= ~(16777216))
+    if (r & (33554432)) (x.dynamicSmps = true, r &= ~(33554432))
+    if (r & (67108864)) (x.supportsWmmAdmission = true, r &= ~(67108864))
+    if (r & (134217728)) (x.macOnCreate = true, r &= ~(134217728))
+    if (r & (268435456)) (x.tdlsChannelSwitch = true, r &= ~(268435456))
+    if (r & (536870912)) (x.scanRandomMacAddr = true, r &= ~(536870912))
+    if (r & (1073741824)) (x.schedScanRandomMacAddr = true, r &= ~(1073741824))
+    if (r & (-2147483648)) (x.ndRandomMacAddr = true, r &= ~(-2147483648))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[FeatureFlags]] bitmask */
 export function formatFeatureFlags(x: FeatureFlags): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.skTxStatus) r |= 1
     if (x.htIbss) r |= 2
     if (x.inactivityTimer) r |= 4
@@ -8176,21 +8188,24 @@ export interface ProbeResponseOffloadSupport {
     
     /** Support for 802.11u */
     _80211u?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[ProbeResponseOffloadSupport]] bitmask */
 export function parseProbeResponseOffloadSupport(r: number): ProbeResponseOffloadSupport {
     const x: ProbeResponseOffloadSupport = {}
-    if (r & (1)) x.wps = true
-    if (r & (2)) x.wps2 = true
-    if (r & (4)) x.p2p = true
-    if (r & (8)) x._80211u = true
+    if (r & (1)) (x.wps = true, r &= ~(1))
+    if (r & (2)) (x.wps2 = true, r &= ~(2))
+    if (r & (4)) (x.p2p = true, r &= ~(4))
+    if (r & (8)) (x._80211u = true, r &= ~(8))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[ProbeResponseOffloadSupport]] bitmask */
 export function formatProbeResponseOffloadSupport(x: ProbeResponseOffloadSupport): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.wps) r |= 1
     if (x.wps2) r |= 2
     if (x.p2p) r |= 4
@@ -8329,30 +8344,33 @@ export interface ScanFlags {
      * added by userspace explicitly.)
      */
     minPreqContent?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[ScanFlags]] bitmask */
 export function parseScanFlags(r: number): ScanFlags {
     const x: ScanFlags = {}
-    if (r & (1)) x.lowPriority = true
-    if (r & (2)) x.flush = true
-    if (r & (4)) x.ap = true
-    if (r & (8)) x.randomAddr = true
-    if (r & (16)) x.filsMaxChannelTime = true
-    if (r & (32)) x.acceptBcastProbeResp = true
-    if (r & (64)) x.oceProbeReqHighTxRate = true
-    if (r & (128)) x.oceProbeReqDeferralSuppression = true
-    if (r & (256)) x.lowSpan = true
-    if (r & (512)) x.lowPower = true
-    if (r & (1024)) x.highAccuracy = true
-    if (r & (2048)) x.randomSn = true
-    if (r & (4096)) x.minPreqContent = true
+    if (r & (1)) (x.lowPriority = true, r &= ~(1))
+    if (r & (2)) (x.flush = true, r &= ~(2))
+    if (r & (4)) (x.ap = true, r &= ~(4))
+    if (r & (8)) (x.randomAddr = true, r &= ~(8))
+    if (r & (16)) (x.filsMaxChannelTime = true, r &= ~(16))
+    if (r & (32)) (x.acceptBcastProbeResp = true, r &= ~(32))
+    if (r & (64)) (x.oceProbeReqHighTxRate = true, r &= ~(64))
+    if (r & (128)) (x.oceProbeReqDeferralSuppression = true, r &= ~(128))
+    if (r & (256)) (x.lowSpan = true, r &= ~(256))
+    if (r & (512)) (x.lowPower = true, r &= ~(512))
+    if (r & (1024)) (x.highAccuracy = true, r &= ~(1024))
+    if (r & (2048)) (x.randomSn = true, r &= ~(2048))
+    if (r & (4096)) (x.minPreqContent = true, r &= ~(4096))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[ScanFlags]] bitmask */
 export function formatScanFlags(x: ScanFlags): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.lowPriority) r |= 1
     if (x.flush) r |= 2
     if (x.ap) r |= 4
@@ -8488,18 +8506,21 @@ export interface ProtocolFeatures {
      * %NL80211_ATTR_WDEV.
      */
     phyDump?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[ProtocolFeatures]] bitmask */
 export function parseProtocolFeatures(r: number): ProtocolFeatures {
     const x: ProtocolFeatures = {}
-    if (r & (1)) x.phyDump = true
+    if (r & (1)) (x.phyDump = true, r &= ~(1))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[ProtocolFeatures]] bitmask */
 export function formatProtocolFeatures(x: ProtocolFeatures): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.phyDump) r |= 1
     return r
 }
@@ -8532,19 +8553,22 @@ export interface RxmgmtFlags {
      * to handle certain authentication algorithms (e.g. SAE).
      */
     externalAuth?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[RxmgmtFlags]] bitmask */
 export function parseRxmgmtFlags(r: number): RxmgmtFlags {
     const x: RxmgmtFlags = {}
-    if (r & (1)) x.answered = true
-    if (r & (2)) x.externalAuth = true
+    if (r & (1)) (x.answered = true, r &= ~(1))
+    if (r & (2)) (x.externalAuth = true, r &= ~(2))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[RxmgmtFlags]] bitmask */
 export function formatRxmgmtFlags(x: RxmgmtFlags): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.answered) r |= 1
     if (x.externalAuth) r |= 2
     return r
@@ -8565,20 +8589,23 @@ export interface TdlsPeerCapability {
     
     /** TDLS peer is WMM capable. */
     wmm?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[TdlsPeerCapability]] bitmask */
 export function parseTdlsPeerCapability(r: number): TdlsPeerCapability {
     const x: TdlsPeerCapability = {}
-    if (r & (1)) x.ht = true
-    if (r & (2)) x.vht = true
-    if (r & (4)) x.wmm = true
+    if (r & (1)) (x.ht = true, r &= ~(1))
+    if (r & (2)) (x.vht = true, r &= ~(2))
+    if (r & (4)) (x.wmm = true, r &= ~(4))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[TdlsPeerCapability]] bitmask */
 export function formatTdlsPeerCapability(x: TdlsPeerCapability): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.ht) r |= 1
     if (x.vht) r |= 2
     if (x.wmm) r |= 4
@@ -8695,19 +8722,22 @@ export interface NanPublishType {
     
     /** publish function is unsolicited */
     unsolicitedPublish?: true
+    
+    __unknown?: number
 }
 
 /** Parses the flags in a [[NanPublishType]] bitmask */
 export function parseNanPublishType(r: number): NanPublishType {
     const x: NanPublishType = {}
-    if (r & (1)) x.solicitedPublish = true
-    if (r & (2)) x.unsolicitedPublish = true
+    if (r & (1)) (x.solicitedPublish = true, r &= ~(1))
+    if (r & (2)) (x.unsolicitedPublish = true, r &= ~(2))
+    if (r) x.__unknown = r
     return x
 }
 
 /** Encodes a [[NanPublishType]] bitmask */
 export function formatNanPublishType(x: NanPublishType): number {
-    let r = 0
+    let r = x.__unknown || 0
     if (x.solicitedPublish) r |= 1
     if (x.unsolicitedPublish) r |= 2
     return r
