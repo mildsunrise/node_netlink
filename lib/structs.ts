@@ -8,8 +8,36 @@
  */
 /** */
 
-import { readU16, readU32, writeU16, writeU32, readU8, writeU8 } from './util/buffer'
-import * as buf from './util/buffer'
+import { endianness } from 'os'
+
+// Buffer read functions from host order
+
+const isLE = endianness() === 'LE'
+const __BP = Buffer.prototype
+
+export const readF64 = isLE ? __BP.readDoubleLE : __BP.readDoubleBE
+export const readF32 = isLE ? __BP.readFloatLE : __BP.readFloatBE
+export const readU64 = isLE ? __BP.readBigUInt64LE : __BP.readBigUInt64BE
+export const readS64 = isLE ? __BP.readBigInt64LE : __BP.readBigInt64BE
+export const readU32 = isLE ? __BP.readUInt32LE : __BP.readUInt32BE
+export const readS32 = isLE ? __BP.readInt32LE : __BP.readInt32BE
+export const readU16 = isLE ? __BP.readUInt16LE : __BP.readUInt16BE
+export const readS16 = isLE ? __BP.readInt16LE : __BP.readInt16BE
+export const readU8 = __BP.readUInt8
+export const readS8 = __BP.readInt8
+
+export const writeF64 = isLE ? __BP.writeDoubleLE : __BP.writeDoubleBE
+export const writeF32 = isLE ? __BP.writeFloatLE : __BP.writeFloatBE
+export const writeU64 = isLE ? __BP.writeBigUInt64LE : __BP.writeBigUInt64BE
+export const writeS64 = isLE ? __BP.writeBigInt64LE : __BP.writeBigInt64BE
+export const writeU32 = isLE ? __BP.writeUInt32LE : __BP.writeUInt32BE
+export const writeS32 = isLE ? __BP.writeInt32LE : __BP.writeInt32BE
+export const writeU16 = isLE ? __BP.writeUInt16LE : __BP.writeUInt16BE
+export const writeS16 = isLE ? __BP.writeInt16LE : __BP.writeInt16BE
+export const writeU8 = __BP.writeUInt8
+export const writeS8 = __BP.writeInt8
+
+// Dealing with buffer arrays and padding
 
 export const ensureArray = (x: Uint8Array | Uint8Array[]): Uint8Array[] =>
     (x instanceof Array) ? x : [x]
@@ -172,7 +200,7 @@ export function parseError(r: Buffer, flags: number): NetlinkErrorMessage {
     if (r.length < 4 + 16)
         throw Error('Invalid ERROR message length')
     let x: NetlinkErrorMessage = {
-        errno: buf.readS32.call(r, 0),
+        errno: readS32.call(r, 0),
         header: parseHeader(r.slice(4)).x,
     }
     // FIXME: TLV?
@@ -291,27 +319,27 @@ function callAt<T>(x: T, fn: (this: T, ...args: any[]) => any, ...args: any[]): 
     return x
 }
 
-export const getU8 = (x: Buffer): number => buf.readU8.call(checkLength(x, 1), 0)
-export const putU8 = (x: number): Buffer => callAt(Buffer.alloc(1), buf.writeU8, x, 0)
-export const getU16 = (x: Buffer): number => buf.readU16.call(checkLength(x, 2), 0)
-export const putU16 = (x: number): Buffer => callAt(Buffer.alloc(2), buf.writeU16, x, 0)
-export const getU32 = (x: Buffer): number => buf.readU32.call(checkLength(x, 4), 0)
-export const putU32 = (x: number): Buffer => callAt(Buffer.alloc(4), buf.writeU32, x, 0)
-export const getU64 = (x: Buffer): bigint => buf.readU64.call(checkLength(x, 8), 0)
-export const putU64 = (x: bigint): Buffer => callAt(Buffer.alloc(8), buf.writeU64, x, 0)
-export const getS8 = (x: Buffer): number => buf.readS8.call(checkLength(x, 1), 0)
-export const putS8 = (x: number): Buffer => callAt(Buffer.alloc(1), buf.writeS8, x, 0)
-export const getS16 = (x: Buffer): number => buf.readS16.call(checkLength(x, 2), 0)
-export const putS16 = (x: number): Buffer => callAt(Buffer.alloc(2), buf.writeS16, x, 0)
-export const getS32 = (x: Buffer): number => buf.readS32.call(checkLength(x, 4), 0)
-export const putS32 = (x: number): Buffer => callAt(Buffer.alloc(4), buf.writeS32, x, 0)
-export const getS64 = (x: Buffer): bigint => buf.readS64.call(checkLength(x, 8), 0)
-export const putS64 = (x: bigint): Buffer => callAt(Buffer.alloc(8), buf.writeS64, x, 0)
+export const getU8 = (x: Buffer): number => readU8.call(checkLength(x, 1), 0)
+export const putU8 = (x: number): Buffer => callAt(Buffer.alloc(1), writeU8, x, 0)
+export const getU16 = (x: Buffer): number => readU16.call(checkLength(x, 2), 0)
+export const putU16 = (x: number): Buffer => callAt(Buffer.alloc(2), writeU16, x, 0)
+export const getU32 = (x: Buffer): number => readU32.call(checkLength(x, 4), 0)
+export const putU32 = (x: number): Buffer => callAt(Buffer.alloc(4), writeU32, x, 0)
+export const getU64 = (x: Buffer): bigint => readU64.call(checkLength(x, 8), 0)
+export const putU64 = (x: bigint): Buffer => callAt(Buffer.alloc(8), writeU64, x, 0)
+export const getS8 = (x: Buffer): number => readS8.call(checkLength(x, 1), 0)
+export const putS8 = (x: number): Buffer => callAt(Buffer.alloc(1), writeS8, x, 0)
+export const getS16 = (x: Buffer): number => readS16.call(checkLength(x, 2), 0)
+export const putS16 = (x: number): Buffer => callAt(Buffer.alloc(2), writeS16, x, 0)
+export const getS32 = (x: Buffer): number => readS32.call(checkLength(x, 4), 0)
+export const putS32 = (x: number): Buffer => callAt(Buffer.alloc(4), writeS32, x, 0)
+export const getS64 = (x: Buffer): bigint => readS64.call(checkLength(x, 8), 0)
+export const putS64 = (x: bigint): Buffer => callAt(Buffer.alloc(8), writeS64, x, 0)
 
-export const getF32 = (x: Buffer): number => buf.readF32.call(checkLength(x, 4), 0)
-export const putF32 = (x: number): Buffer => callAt(Buffer.alloc(4), buf.writeF32, x, 0)
-export const getF64 = (x: Buffer): number => buf.readF64.call(checkLength(x, 8), 0)
-export const putF64 = (x: number): Buffer => callAt(Buffer.alloc(8), buf.writeF64, x, 0)
+export const getF32 = (x: Buffer): number => readF32.call(checkLength(x, 4), 0)
+export const putF32 = (x: number): Buffer => callAt(Buffer.alloc(4), writeF32, x, 0)
+export const getF64 = (x: Buffer): number => readF64.call(checkLength(x, 8), 0)
+export const putF64 = (x: number): Buffer => callAt(Buffer.alloc(8), writeF64, x, 0)
 
 export const getFlag = (x: Buffer): true => (checkLength(x, 0), true)
 export const putFlag = (x: true): Buffer => Buffer.alloc(0)
