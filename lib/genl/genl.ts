@@ -85,7 +85,7 @@ export class GenericNetlinkSocket extends EventEmitter {
         return this.socket.send(family, data, options)
     }
 
-    request(
+    async request(
         family: number,
         cmd: number,
         version: number,
@@ -94,13 +94,13 @@ export class GenericNetlinkSocket extends EventEmitter {
     ): Promise<[GenericNetlinkMessage[], MessageInfo]> {
         const header = formatGenlHeader({ cmd, version })
         data = [header as Uint8Array].concat(ensureArray(data))
-        return this.socket.request(family, data, options).then(([msg, rinfo]) => {
-            return [msg.map(x => {
-                if (msg[0].type !== family)
-                    throw Error(`Received reply with different family (${msg[0].type}) than original (${family})`)
-                return this.parseMessage(x)
-            }), rinfo]
+        const [msg, rinfo] = await this.socket.request(family, data, options)
+        const parsed = msg.map(x => {
+            if (msg[0].type !== family)
+                throw Error(`Received reply with different family (${msg[0].type}) than original (${family})`)
+            return this.parseMessage(x)
         })
+        return [parsed, rinfo]
     }
 
     /**
