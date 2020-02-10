@@ -3,14 +3,19 @@ export interface TypeStore {
 }
 
 export interface TypeDef {
-    kind?: "attrs" | "enum" | "flags"
+    kind?: "attrs" | "struct" | "enum" | "flags"
+    /** Original declaration name in headers */
     orig?: string
+    /** Optional docs */
     docs?: string[]
+    /** True if this is the type included in the message payload */
     root?: boolean
-    /** For attrs, the attribute definition */
+    /** For attrs and structs, the attributes */
     attrs?: AttributeDef[]
     /** For flags and enums, the list of values (for flags, specify bitmask as value) */
     values?: ValueDef[]
+    /** For attrs, true if attribute indexes start at zero */
+    zero?: boolean
 }
 
 export type AttributeDef = [ string, TypeExpr, AttributeOptions? ]
@@ -24,6 +29,10 @@ export interface AttributeOptions {
     maxLength?: number
     /** Original constant name in headers */
     orig?: string
+    /** The attribute may appear multiple times; save array instead of item */
+    repeated?: boolean
+    /** Struct fields only: if field is an array, its size */
+    count?: number
 }
 
 export interface ValueDef {

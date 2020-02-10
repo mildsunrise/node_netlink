@@ -67,10 +67,10 @@ const genDocstring = (content: string, block?: boolean) => {
     return '/**\n' + lines.map(x => (' * ' + x).trimRight()).join('\n') + '\n */'
 }
 const withDocstring = (docs: string | undefined, x: string) => (docs ? genDocstring(docs) + '\n' : '') + x
-const genFunction = (name: string, args: string, ret: string, body: string, docs?: string) =>
+const genFunction = (name: string, args: string, ret: string | null, body: string, docs?: string) =>
     withDocstring(docs, `export function ${name}(${args})${ret ? ': ' + ret : ''} {\n${indent(body)}\n}`)
-interface TSField { name: string, type: string, docs?: string }
-const genField = (x: TSField) => withDocstring(x.docs, `${x.name}?: ${x.type}`)
+interface TSField { name: string, type: string, docs?: string, required?: boolean }
+const genField = (x: TSField) => withDocstring(x.docs, `${x.name}${x.required ? '' : '?'}: ${x.type}`)
 const genInterface = (name: string, fields: TSField[], docs?: string) =>
     withDocstring(docs, `export interface ${name} {\n${indent(fields.map(genField).join('\n\n'))}\n}`)
 
@@ -91,6 +91,8 @@ const enumFlagsNeeded: Set<string> = new Set()
 const enumAttrFlagsNeeded: Set<string> = new Set()
 for (const name of Object.keys(types)) {
     const type = types[name]
+    if (type.kind === 'struct')
+        blocks[name] = processStruct(name, type)
     if (type.kind === 'flags')
         blocks[name] = processFlags(name, type)
     if (!type.kind || type.kind === 'attrs')
@@ -150,10 +152,12 @@ function processLower(lower?: AttributeOptions['type']): TypeResult {
 
 function processType(t: TypeExpr, lower?: AttributeOptions['type']): TypeResult {
     if (typeof t === 'string') {
-        if (/^[su](8|16|32|64)$/.test(t)) {
+        if (/^[su](8|16|32|64)([bl]e)?$/.test(t)) {
+            if (/64/.test(t) && lower)
+                console.warn('Warning: Lower type specified over a 64-bit value')
             const { type, parse, format } = processLower(lower)
             const tname = t[0].toUpperCase() + t.substr(1)
-            return { type: type || (/^[su]64$/.test(t) ? 'bigint' : 'number'),
+            return { type: type || (/64/.test(t) ? 'bigint' : 'number'),
                 parse: x => parse(`structs.get${tname}(${x})`),
                 format: x => `structs.put${tname}(${format(x)})` }
         } else if (t === 'data') {
@@ -168,7 +172,7 @@ function processType(t: TypeExpr, lower?: AttributeOptions['type']): TypeResult 
         } else if ({}.hasOwnProperty.call(types, t)) {
             const type = types[t]
             if (lower) throw Error(`Lower type ${lower} specified over attr type`)
-            if (type.kind && type.kind !== 'attrs')
+            if (type.kind && type.kind !== 'attrs' && type.kind !== 'struct')
                 throw Error(`Invalid type ${t} specified as attr type`)
             return { type: t, parse: x => `parse${t}(${x})`, format: x => `format${t}(${x})` }
         }
@@ -209,13 +213,15 @@ function initialValidation(types: TypeStore) {
 function processFlags(name: string, type: TypeDef) {
     const fields: TSField[] = [], parseCode: string[] = [], formatCode: string[] = []
     parseCode.push(`const x: ${name} = {}`)
-    formatCode.push(`let r = 0`)
+    formatCode.push(`let r = x.__unknown || 0`)
     for (const { value, name: fname, docs } of type.values!) {
         if (!value) throw Error(`Flag has no value: ${name}.${fname}`)
         fields.push({ name: fname, type: 'true', docs: docs && docs.join('\n') })
-        parseCode.push(`if (r & (${value})) x.${fname} = true`)
+        parseCode.push(`if (r & (${value})) (x.${fname} = true, r &= ~(${value}))`)
         formatCode.push(`if (x.${fname}) r |= ${value}`)
     }
+    fields.push({ type: 'number', name: '__unknown' })
+    parseCode.push('if (r) x.__unknown = r')
     parseCode.push('return x')
     formatCode.push('return r')
 
@@ -266,12 +272,18 @@ function processEnum(name: string, type: TypeDef, emitFlags: boolean, emitAttrFl
 
 function processAttr(name: string, type: TypeDef) {
     const fields: TSField[] = [], parseCode: string[] = [], formatCode: string[] = []
-    let index = 1
+    let index = type.zero ? 0 : 1
     for (const [ name, ftype, opts ] of type.attrs!) {
         const built = processType(ftype, opts && opts.type)
-        fields.push({ name, type: built.type!, docs: opts &&  opts.docs && opts.docs.join('\n') })
-        parseCode.push(`${index}: (data, obj) => obj.${name} = ${built.parse('data')},`)
-        formatCode.push(`${name}: (data, obj) => data.push(${index}, ${built.format(`obj.${name}!`)}),`)
+        if (opts && opts.repeated) {
+            fields.push({ name, type: built.type! + '[]', docs: opts &&  opts.docs && opts.docs.join('\n') })
+            parseCode.push(`${index}: (data, obj) => (obj.${name} = obj.${name} || []).push(${built.parse('data')}),`)
+            formatCode.push(`${name}: (data, obj) => obj.${name}!.forEach(x => data.push(${index}, ${built.format('x')})),`)
+        } else {
+            fields.push({ name, type: built.type!, docs: opts &&  opts.docs && opts.docs.join('\n') })
+            parseCode.push(`${index}: (data, obj) => obj.${name} = ${built.parse('data')},`)
+            formatCode.push(`${name}: (data, obj) => data.push(${index}, ${built.format(`obj.${name}!`)}),`)
+        }
         index++
     }
     const fullParseCode = `return structs.getObject(r, {\n${indent(parseCode.join('\n'))}\n})`
@@ -282,4 +294,120 @@ function processAttr(name: string, type: TypeDef) {
     const format = genFunction(`format${name}`, `x: ${name}`, 'StreamData', fullFormatCode,
         `Encodes a [[${name}]] object into a stream of attributes`)
     return iface + '\n\n' + parse + '\n\n' + format
+}
+
+type StructTypeResult = { type: null | string, length: number | string, parse: (o: string) => string, format: (x: string, o: string) => string }
+
+function getLengthName(t: string) {
+    return `__LENGTH_${t}`
+}
+
+function processStructType(t: TypeExpr, lower?: AttributeOptions['type']): StructTypeResult {
+    if (typeof t !== 'string')
+        throw Error('Complex types not supported on struct members')
+    if (/^[su](8|16|32|64)([bl]e)?$/.test(t) || t === 'bool') {
+        let isbool = t === 'bool'
+        if (isbool) t = 'u8'
+        if (/64/.test(t) && lower)
+            console.warn('Warning: Lower type specified over a 64-bit value')
+        const { type, parse, format } = processLower(lower)
+        const tname = t[0].toUpperCase() + t.substr(1)
+        return { type: type || (/64/.test(t) ? 'bigint' : 'number'),
+            length: Number(/^[su](8|16|32|64)([bl]e)?$/.exec(t)![1]) / 8,
+            parse: (o) => parse(`structs.read${tname}.call(r, ${o})`),
+            format: (x, o) => `structs.write${tname}.call(r, ${format(x)}, ${o})` }
+        // FIXME: handle isbool
+    } else if ({}.hasOwnProperty.call(types, t)) {
+        const type = types[t]
+        if (lower) throw Error(`Lower type ${lower} specified over struct type`)
+        if (type.kind && type.kind !== 'struct')
+            throw Error(`Invalid type ${t} specified as struct type`)
+        const length = getLengthName(t)
+        return { type: t, length,
+                 parse: (o) => `parse${t}(r.slice(${o}, ${o} + ${length}))`,
+                 format: (x, o) => `format${t}(${x}, r.slice(${o}, ${o} + ${length}))` }
+    }
+    throw Error(`Unknown type: ${t}`)
+}
+
+function calculateLength(lengths: (string | number)[]): number | string {
+    let length = 0
+    const strLengths: string[] = []
+    for (const x of lengths) {
+        if (typeof x === 'number') {
+            length += x
+        } else {
+            strLengths.push(x)
+        }
+    }
+    if (strLengths.length === 0) return length
+    return [`${length}`].concat(strLengths).join(' + ')
+}
+
+function processStruct(name: string, type: TypeDef) {
+    const fields: TSField[] = [], parseCode: ((o: string) => string)[] = [], formatCode: ((o: string) => string)[] = []
+    const lengths: (string | number)[] = []
+    for (const [ name, ftype, opts ] of type.attrs!) {
+        if (ftype === 'data' || ftype === 'string') {
+            if (opts && opts.type)
+                console.warn('Warning: Lower type ignored on struct data member')
+            if (!(opts && opts.count))
+                throw Error(`Struct (${name}) data member defined without count`)
+            fields.push({ name, type: 'Buffer', docs: opts && opts.docs && opts.docs.join('\n') })
+            parseCode.push(o => `x.${name} = r.slice(${o}, ${o} + ${opts.count})`)
+            formatCode.push(o => 
+                `if (x.${name} && x.${name}.length !== ${opts.count})\n` +
+                indent(`throw Error('${name}: Unexpected buffer length')\n`) +
+                `x.${name} && x.${name}.copy(r, ${o})`)
+            lengths.push(opts && opts.count)
+            // FIXME: support for string
+            continue
+        }
+        const built = processStructType(ftype, opts && opts.type)
+        if (opts && opts.count !== undefined) {
+            // FIXME: we could have an optimized version for number types (using typed arrays)
+            fields.push({ name, type: built.type! + '[]', docs: opts && opts.docs && opts.docs.join('\n') })
+            parseCode.push(o => `x.${name} = [...Array(${opts.count}).keys()].map(i => ${built.parse(`${o} + ${built.length} * i`)})`)
+            formatCode.push(o =>
+                `if (x.${name} && x.${name}.length !== ${opts.count})\n` +
+                indent(`throw Error('${name}: Unexpected array length')\n`) +
+                `x.${name} && x.${name}.forEach((x, i) => ${built.format('x', `${o} + ${built.length} * i`)})`)
+            lengths.push(typeof built.length === 'number' ? built.length * opts.count : `${built.length} * ${opts.count}`)
+        } else {
+            fields.push({ name, type: built.type!, docs: opts && opts.docs && opts.docs.join('\n') })
+            parseCode.push(o => `x.${name} = ${built.parse(o)}`)
+            formatCode.push(o => `x.${name} && ` + built.format(`x.${name}`, o))
+            lengths.push(built.length)
+        }
+    }
+    const lengthName = getLengthName(name)
+    const length = calculateLength(lengths)
+    const check = `if (r.length !== ${lengthName}) throw Error('Unexpected length for ${name}')`
+    let fullParseCode = [check, `const x: ${name} = {}` ]
+    let fullFormatCode = [check]
+    if (typeof length === 'number') {
+        // All lengths known in advance, we don't need to add offset
+        let offset = 0
+        lengths.forEach((l, i) => {
+            fullParseCode.push(parseCode[i](offset.toString()))
+            fullFormatCode.push(formatCode[i](offset.toString()))
+            offset += l as number
+        })
+    } else {
+        // Some lengths are strings (runtime expressions), declare offset
+        fullParseCode.push(`let pos = 0`)
+        fullFormatCode.push(`let pos = 0`)
+        lengths.forEach((l, i) => {
+            fullParseCode.push(`${parseCode[i]('pos')}; pos += ${l}`)
+            fullFormatCode.push(`${formatCode[i]('pos')}; pos += ${l}`)
+        })
+    }
+    fullParseCode.push('return x')
+    fullFormatCode.push('return r')
+    const iface = genInterface(name, fields, type.docs && type.docs.join('\n'))
+    const parse = genFunction(`parse${name}`, `r: Buffer`, name, fullParseCode.join('\n'),
+        `Parses the attributes of a [[${name}]] object`)
+    const format = genFunction(`format${name}`, `x: ${name}, r: Buffer = Buffer.alloc(${lengthName})`, 'Buffer', fullFormatCode.join('\n'),
+        `Encodes a [[${name}]] object into a stream of attributes`)
+    return iface + '\n\n' + parse + '\n\n' + format + '\n\n' + `export const ${lengthName} = ${length}`
 }
