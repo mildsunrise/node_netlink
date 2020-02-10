@@ -174,12 +174,19 @@ export class NetlinkSocket extends EventEmitter {
      * Note that this method doesn't check the origin of
      * the reply, you should do that yourself.
      * 
+     * An array of mesages is returned. This will contain
+     * many items for multipart messages, zero if an ACK
+     * is received (and `checkError` isn't disabled) and
+     * one for other messages.
+     * 
      * @param type Message type
      * @param data Message payload
      * @param options Options
      * @returns Promise that resolves with `[msg, rinfo]` of
      * the received message. The promise rejects if the message
-     * coudln't be sent or if the timeout expires.
+     * coudln't be sent or if the timeout expires. If
+     * `checkError` isn't disabled, the promise will also
+     * reject if an ERROR message is received.
      */
     request(
         type: number,
@@ -202,7 +209,7 @@ export class NetlinkSocket extends EventEmitter {
         x = x.finally(() => (typeof timeout !== 'undefined') && clearTimeout(timeout))
         x = x.finally(() => (typeof seq !== 'undefined') && this.dropRef(seq))
         return (options && options.checkError === false) ? x :
-            x.then(x => (checkError(x[0][0]), x))
+            x.then(x => (checkError(x[0][0]) ? [[], x[1]] : x))
     }
 
     /**
@@ -290,6 +297,14 @@ export class NetlinkSocket extends EventEmitter {
     }
 }
 
+/**
+ * Checks if the passed message is an ERROR message.
+ * If it is, an error will be thrown. If it's an ACK
+ * (aka error = 0) then `true` is returned. Otherwise
+ * nothing is returned.
+ *
+ * @param x Message to check
+ */
 export function checkError(x: NetlinkMessage) {
     if (x.type !== TYPES.ERROR) return
     const { errno } = parseError(x.data, x.flags)
