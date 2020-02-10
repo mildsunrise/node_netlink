@@ -456,8 +456,8 @@ export function putEnum<R>(mapping: {[key in keyof R]: number }, x: number | key
 }
 
 
-// NETLINK HEADER
-// --------------
+// GENERIC NETLINK HEADER
+// ----------------------
 
 /** Length of generic netlink headers */
 export const GENL_HEADER_LENGTH = 4
@@ -491,7 +491,7 @@ export function parseGenlHeader(r: Buffer): ParseResult<GenericNetlinkHeader> {
  * @returns Serialized header
  */
 export function formatGenlHeader(x: GenericNetlinkHeader): Buffer {
-    const r = Buffer.alloc(HEADER_LENGTH)
+    const r = Buffer.alloc(GENL_HEADER_LENGTH)
     writeU8.call(r, x.cmd, 0)
     writeU8.call(r, x.version, 1)
     writeU16.call(r, x.reserved || 0, 2)

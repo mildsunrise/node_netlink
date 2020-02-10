@@ -1209,7 +1209,7 @@ const types: TypeStore = {
             '%NL80211_ATTR_CHANNEL_WIDTH and if needed %NL80211_ATTR_CENTER_FREQ1',
             'and %NL80211_ATTR_CENTER_FREQ2',
         ] }],
-        ['wiphyChannelType', u32, { orig: 'NL80211_ATTR_WIPHY_CHANNEL_TYPE', docs: [
+        ['wiphyChannelType', u32, { type: 'ChannelType', orig: 'NL80211_ATTR_WIPHY_CHANNEL_TYPE', docs: [
             'included with NL80211_ATTR_WIPHY_FREQ',
             'if HT20 or HT40 are to be used (i.e., HT disabled if not included):',
             'NL80211_CHAN_NO_HT = HT not allowed (i.e., same as not including',
@@ -1501,18 +1501,18 @@ const types: TypeStore = {
             'This is used in association with @NL80211_ATTR_WIPHY_TX_POWER_SETTING',
             'for non-automatic settings.',
         ] }],
-        ['txFrameTypes', array(data, { zero: true }), { orig: 'NL80211_ATTR_TX_FRAME_TYPES', docs: [
+        ['txFrameTypes', array('Message', { zero: true }), { orig: 'NL80211_ATTR_TX_FRAME_TYPES', docs: [
             'wiphy capability attribute, which is a',
             'nested attribute of %NL80211_ATTR_FRAME_TYPE attributes, containing',
             'information about which frame types can be transmitted with',
             '%NL80211_CMD_FRAME.',
         ] }],
-        ['rxFrameTypes', array(data, { zero: true }), { orig: 'NL80211_ATTR_RX_FRAME_TYPES', docs: [
+        ['rxFrameTypes', array('Message', { zero: true }), { orig: 'NL80211_ATTR_RX_FRAME_TYPES', docs: [
             'wiphy capability attribute, which is a',
             'nested attribute of %NL80211_ATTR_FRAME_TYPE attributes, containing',
             'information about which frame types can be registered for RX.',
         ] }],
-        ['frameType', u16, { orig: 'NL80211_ATTR_FRAME_TYPE', docs: [
+        ['frameType', u16, { repeated: true, orig: 'NL80211_ATTR_FRAME_TYPE', docs: [
             'A u16 indicating the frame type/subtype for the',
             '@NL80211_CMD_REGISTER_FRAME command.',
         ] }],

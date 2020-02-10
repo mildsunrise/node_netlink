@@ -6,12 +6,12 @@
 import { EventEmitter } from 'events'
 
 import { MessageInfo, RawNetlinkSocketOptions } from '../raw'
-import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, RequestOptions } from '../netlink'
-import { Protocol, MIN_TYPE, Flags, FlagsGet } from '../constants'
-import { formatGenlHeader, ensureArray, NetlinkMessage, parseGenlHeader, AttrStream } from '../structs'
+import { NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, RequestOptions } from '../netlink'
+import { Flags, FlagsGet } from '../constants'
+import { NetlinkMessage, AttrStream } from '../structs'
 import { Commands, Message, formatMessage, parseMessage } from './structs'
 import { GenericNetlinkSocketOptions, GenericNetlinkSocket, GenericNetlinkSendOptions, createGenericNetlink } from '../genl/genl'
-import { genl } from '..'
+import { genl, nl80211 } from '..'
 
 // Based on <linux/nl80211.h> at 14f34e3
 
@@ -92,15 +92,76 @@ export class Nl80211Socket extends EventEmitter {
 
     async request(
         cmd: Commands,
-        msg: Message,
+        msg?: Message,
         options?: Nl80211SendOptions & RequestOptions
     ): Promise<Message[]> {
         const attrs = new AttrStream()
-        attrs.emit(formatMessage(msg))
+        attrs.emit(formatMessage(msg || {}))
         // rinfo isn't very useful here; this is a kernel interface
         const [omsg, _] = await this.socket.request(
             this.familyId, cmd, this.version, attrs.bufs, options)
         return omsg.map(x => parseMessage(x.data))
+    }
+
+    async getPhys() {
+        const parts = await this.request(
+            Commands.GET_WIPHY, {}, { flags: FlagsGet.DUMP })
+        const objs: Map<number, Message> = new Map()
+        parts.forEach(part => {
+            const key = part.wiphy
+            if (typeof key === 'undefined')
+                throw Error('Invalid message part -- no wiphy')
+            if (!objs.has(key))
+                return objs.set(key, part)
+            const obj = objs.get(key)!
+            Object.keys(part).forEach(field => {
+                // FIXME: perform some consistency check?
+                (obj as any)[field] = (part as any)[field]
+            })
+        })
+        return objs
+    }
+
+    async getInterfaces() {
+        const parts = await this.request(
+            Commands.GET_INTERFACE, {}, { flags: FlagsGet.DUMP })
+        const objs: Map<number, Message> = new Map()
+        parts.forEach(part => {
+            const key = part.ifindex
+            if (typeof key === 'undefined')
+                throw Error('Invalid message part -- no ifindex')
+            if (!objs.has(key))
+                return objs.set(key, part)
+            const obj = objs.get(key)!
+            Object.keys(part).forEach(field => {
+                // FIXME: perform some consistency check?
+                (obj as any)[field] = (part as any)[field]
+            })
+        })
+        return objs
+    }
+
+    async newInterface(
+        wiphy: Message['wiphy'],
+        ifname: Message['ifname'],
+        iftype: Message['iftype'],
+        attrs?: Message,
+        options?: Nl80211SendOptions & RequestOptions,
+    ): Promise<Message & { ifindex: Message['ifindex'] }> {
+        const parts = await this.request(
+            Commands.NEW_INTERFACE, { ...attrs, wiphy, ifname, iftype })
+        if (typeof parts[0]?.ifindex === 'undefined')
+            throw Error('Invalid message -- no ifindex')
+        return parts[0] as any
+    }
+
+    async delInterface(
+        ifindex: Message['ifindex'],
+        attrs?: Message,
+        options?: Nl80211SendOptions & RequestOptions,
+    ): Promise<void> {
+        const parts = await this.request(
+            Commands.DEL_INTERFACE, { ...attrs, ifindex })
     }
 }
 

@@ -59,7 +59,7 @@ export class NetlinkSocket extends EventEmitter {
     readonly socket: RawNetlinkSocket
     seq: number = 1
     protected referenced: boolean = false
-    protected requests: Map<number, (msg: NetlinkMessage[], rinfo: MessageInfo) => any> = new Map()
+    protected requests: Map<number, (err: Error|null, msg?: NetlinkMessage[], rinfo?: MessageInfo) => any> = new Map()
     protected multipartMessage?: NetlinkMessage[]
 
     constructor(socket: RawNetlinkSocket, options?: NetlinkSocketOptions) {
@@ -81,28 +81,34 @@ export class NetlinkSocket extends EventEmitter {
 
     /**
      * Handles zero or more messages received over the socket,
-     * doing multipart grouping and emitting 'message' events
-     * for every message.
+     * doing multipart grouping and calling [[emitMessage]] as
+     * appropriate.
      */
     protected handleMessages(msgs: NetlinkMessage[], rinfo: MessageInfo) {
         // FIXME: do actual sequence checking, etc
         msgs.forEach(msg => {
+            // We do NOT check for the MULTI flag, since
+            // apparently some broken kernels don't set it on DONE
+            if (msg.type === MessageType.DONE) {
+                // DONE can be the only message in a multipart message
+                const parts = this.multipartMessage || []
+                delete this.multipartMessage
+                parts.push(msg)
+                this.emitMessage(parts, rinfo)
+                return
+            }
             if (this.multipartMessage) {
-                if (msg.type === MessageType.DONE && msg.seq === this.multipartMessage[0].seq) {
-                    this.emitMessage(this.multipartMessage, rinfo)
-                    this.multipartMessage = undefined
-                    return
-                } else if (msg.flags & Flags.MULTI && msg.seq === this.multipartMessage[0].seq) {
+                if (msg.flags & Flags.MULTI && msg.seq === this.multipartMessage[0].seq)
                     return this.multipartMessage.push(msg)
-                }
-                this.emit('invalid', Error('Multipart message not terminated'), this.multipartMessage, rinfo)
-                this.multipartMessage = undefined
+                const parts = this.multipartMessage
+                delete this.multipartMessage
+                this.emitMessage(parts, rinfo)
             }
             if (msg.flags & Flags.MULTI) {
                 this.multipartMessage = [msg]
                 return
             }
-            this.emitMessage([msg], rinfo)
+            this.emitMessage(msg, rinfo)
         })
     }
 
@@ -199,8 +205,8 @@ export class NetlinkSocket extends EventEmitter {
         let x: Promise<[NetlinkMessage[], MessageInfo]> = new Promise((resolve, reject) => {
             seq = this.makeRef(this.send(type, data, { ...options, flags }, error => {
                 error && reject(error)
-            }), (msg: NetlinkMessage[], rinfo: MessageInfo) => {
-                resolve([msg, rinfo])
+            }), (err, msg, rinfo) => {
+                err ? reject(err) : resolve([msg!, rinfo!])
             })
             if (options && options.timeout) {
                 timeout = setTimeout(() => reject(Error('Timeout has been reached')), options.timeout)
@@ -209,7 +215,7 @@ export class NetlinkSocket extends EventEmitter {
         x = x.finally(() => (typeof timeout !== 'undefined') && clearTimeout(timeout))
         x = x.finally(() => (typeof seq !== 'undefined') && this.dropRef(seq))
         return (options && options.checkError === false) ? x :
-            x.then(x => (checkError(x[0][0]) ? [[], x[1]] : x))
+            x.then(x => (x[0].length && !checkError(x[0][0])) ? x : [[], x[1]])
     }
 
     /**
@@ -220,14 +226,14 @@ export class NetlinkSocket extends EventEmitter {
      * 
      * @param ref Socket ref state
      */
-    ref(ref: boolean) {
-        this.referenced = ref
+    ref(ref?: boolean) {
+        this.referenced = ref !== false
         if (!this.requests.size) {
-            ref ? this.socket.ref() : this.socket.unref()
+            this.referenced ? this.socket.ref() : this.socket.unref()
         }
     }
 
-    protected makeRef(seq: number, callback: (msg: NetlinkMessage[], rinfo: MessageInfo) => any) {
+    protected makeRef(seq: number, callback: (err: Error|null, msg?: NetlinkMessage[], rinfo?: MessageInfo) => any) {
         if (!this.referenced && !this.requests.size)
             this.socket.ref()
         if (this.requests.has(seq))
@@ -237,17 +243,43 @@ export class NetlinkSocket extends EventEmitter {
     }
     
     /**
-     * If the message is a reply, and its sequence number has an
+     * This method must, if the message is multipart, separate the
+     * last DONE message from the rest (if there's no DONE message)
+     * this is considered an error.
+     * 
+     * Then, if the message is a reply and its sequence number has an
      * associated (i.e. request) callback, call it.
-     * Otherwise, a 'message' event is emitted.
+     * Otherwise, a 'message' or 'invalid' event is emitted.
+     * 
+     * @param msg Single message object, or array of messages for
+     * multipart messages.
      */
-    protected emitMessage(msg: NetlinkMessage[], rinfo: MessageInfo) {
-        const m = (msg instanceof Array) ? msg[0] : msg
-        const cb = this.requests.get(m.seq)
-        if (!(m.flags & Flags.REQUEST) && cb) {
-            return cb(msg, rinfo)
+    protected emitMessage(msg: NetlinkMessage | NetlinkMessage[], rinfo: MessageInfo) {
+        const first = (msg instanceof Array) ? msg[0] : msg
+        // If message is multipart, check and remove last DONE message, otherwise turn into array
+        let err = null
+        if (msg instanceof Array) {
+            if (msg[msg.length - 1].type !== MessageType.DONE) {
+                err = Error('Multipart message not terminated properly')
+            } else {
+                msg = msg.slice(0, msg.length - 1)
+            }
+        } else {
+            msg = [msg]
         }
-        this.emit('message', msg, rinfo)
+
+        // Lookup & call appropriate callback
+        const cb = this.requests.get(first.seq)
+        if (!(first.flags & Flags.REQUEST) && cb) {
+            return cb(err, msg, rinfo)
+        }
+
+        // No associated callback, emit event
+        if (err) {
+            this.emit('invalid', err, msg, rinfo)
+        } else {
+            this.emit('message', msg, rinfo)
+        }
     }
 
     protected dropRef(seq: number) {
@@ -314,7 +346,8 @@ export function checkError(x: NetlinkMessage) {
     try {
         code = getSystemErrorName(errno)
     } catch (e) {}
-    throw Error(`Request rejected: ${code}`) // FIXME: do this correctly
+    // FIXME: do this correctly
+    throw Error(`Request rejected: ${code}`)
 }
 
 export function createNetlink(

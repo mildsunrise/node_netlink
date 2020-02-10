@@ -1504,7 +1504,7 @@ export interface Message extends BaseObject {
      * NL80211_CHAN_HT40PLUS = secondary channel is above the primary channel
      * This attribute is now deprecated.
      */
-    wiphyChannelType?: number
+    wiphyChannelType?: ChannelType | keyof typeof ChannelType
     
     /**
      * Flag attribute indicating the key is the
@@ -1894,20 +1894,20 @@ export interface Message extends BaseObject {
      * information about which frame types can be transmitted with
      * %NL80211_CMD_FRAME.
      */
-    txFrameTypes?: Buffer[]
+    txFrameTypes?: Message[]
     
     /**
      * wiphy capability attribute, which is a
      * nested attribute of %NL80211_ATTR_FRAME_TYPE attributes, containing
      * information about which frame types can be registered for RX.
      */
-    rxFrameTypes?: Buffer[]
+    rxFrameTypes?: Message[]
     
     /**
      * A u16 indicating the frame type/subtype for the
      * @NL80211_CMD_REGISTER_FRAME command.
      */
-    frameType?: number
+    frameType?: number[]
     
     /**
      * A 16-bit value indicating the
@@ -3225,7 +3225,7 @@ export function parseMessage(r: Buffer): Message {
         36: (data, obj) => obj.bssBasicRates = data,
         37: (data, obj) => obj.wiphyTxqParams = structs.getArray(data, x => parseTxq(x)),
         38: (data, obj) => obj.wiphyFreq = structs.getU32(data),
-        39: (data, obj) => obj.wiphyChannelType = structs.getU32(data),
+        39: (data, obj) => obj.wiphyChannelType = structs.getEnum(ChannelType, structs.getU32(data)),
         40: (data, obj) => obj.keyDefaultMgmt = structs.getFlag(data),
         41: (data, obj) => obj.mgmtSubtype = structs.getU8(data),
         42: (data, obj) => obj.ie = data,
@@ -3285,9 +3285,9 @@ export function parseMessage(r: Buffer): Message {
         96: (data, obj) => obj.apIsolate = structs.getFlag(data),
         97: (data, obj) => obj.wiphyTxPowerSetting = structs.getEnum(TxPowerSetting, structs.getU32(data)),
         98: (data, obj) => obj.wiphyTxPowerLevel = structs.getS32(data),
-        99: (data, obj) => obj.txFrameTypes = structs.getArray(data, x => x, { zero: true }),
-        100: (data, obj) => obj.rxFrameTypes = structs.getArray(data, x => x, { zero: true }),
-        101: (data, obj) => obj.frameType = structs.getU16(data),
+        99: (data, obj) => obj.txFrameTypes = structs.getArray(data, x => parseMessage(x), { zero: true }),
+        100: (data, obj) => obj.rxFrameTypes = structs.getArray(data, x => parseMessage(x), { zero: true }),
+        101: (data, obj) => (obj.frameType = obj.frameType || []).push(structs.getU16(data)),
         102: (data, obj) => obj.controlPortEthertype = data,
         103: (data, obj) => obj.controlPortNoEncrypt = structs.getFlag(data),
         104: (data, obj) => obj.supportIbssRsn = structs.getFlag(data),
@@ -3513,7 +3513,7 @@ export function formatMessage(x: Message): StreamData {
         bssBasicRates: (data, obj) => data.push(36, obj.bssBasicRates!),
         wiphyTxqParams: (data, obj) => data.push(37, structs.putArray(obj.wiphyTxqParams!, x => formatTxq(x))),
         wiphyFreq: (data, obj) => data.push(38, structs.putU32(obj.wiphyFreq!)),
-        wiphyChannelType: (data, obj) => data.push(39, structs.putU32(obj.wiphyChannelType!)),
+        wiphyChannelType: (data, obj) => data.push(39, structs.putU32(structs.putEnum(ChannelType, obj.wiphyChannelType!))),
         keyDefaultMgmt: (data, obj) => data.push(40, structs.putFlag(obj.keyDefaultMgmt!)),
         mgmtSubtype: (data, obj) => data.push(41, structs.putU8(obj.mgmtSubtype!)),
         ie: (data, obj) => data.push(42, obj.ie!),
@@ -3573,9 +3573,9 @@ export function formatMessage(x: Message): StreamData {
         apIsolate: (data, obj) => data.push(96, structs.putFlag(obj.apIsolate!)),
         wiphyTxPowerSetting: (data, obj) => data.push(97, structs.putU32(structs.putEnum(TxPowerSetting, obj.wiphyTxPowerSetting!))),
         wiphyTxPowerLevel: (data, obj) => data.push(98, structs.putS32(obj.wiphyTxPowerLevel!)),
-        txFrameTypes: (data, obj) => data.push(99, structs.putArray(obj.txFrameTypes!, x => x, { zero: true })),
-        rxFrameTypes: (data, obj) => data.push(100, structs.putArray(obj.rxFrameTypes!, x => x, { zero: true })),
-        frameType: (data, obj) => data.push(101, structs.putU16(obj.frameType!)),
+        txFrameTypes: (data, obj) => data.push(99, structs.putArray(obj.txFrameTypes!, x => formatMessage(x), { zero: true })),
+        rxFrameTypes: (data, obj) => data.push(100, structs.putArray(obj.rxFrameTypes!, x => formatMessage(x), { zero: true })),
+        frameType: (data, obj) => obj.frameType!.forEach(x => data.push(101, structs.putU16(x))),
         controlPortEthertype: (data, obj) => data.push(102, obj.controlPortEthertype!),
         controlPortNoEncrypt: (data, obj) => data.push(103, structs.putFlag(obj.controlPortNoEncrypt!)),
         supportIbssRsn: (data, obj) => data.push(104, structs.putFlag(obj.supportIbssRsn!)),
