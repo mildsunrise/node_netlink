@@ -6,11 +6,26 @@ to perform administrative operations (manage firewall, network, etc.)
 and listen for related notifications from the kernel, but also serves
 as a generic IPC mechanism.
 
-It also implements the Generic Netlink protocol, and includes a few
-common messages / operations.
+It also implements the Generic Netlink protocol.
 
 **Note:** This is early stage; API compatibility is not maintained.
 If you are going to use this, pin to a specific version.
+
+
+## System APIs
+
+In addition to plain Netlink and Generic Netlink, the following
+APIs are implemented:
+
+ - `rtnetlink`: manages network configuration (routes, addresses, links,
+   neighbors, traffic control, etc.)
+
+ - `nl80211`: 802.11 aka wifi interface (`iw`, `hostapd`, `wpa_supplicant`, etc.)
+
+The point is to wrap these interface in a high-level way, complete
+with TypeScript typings. However some fields will be set to
+`Buffer` (i.e. unparsed) because its type is not yet known. You can
+help by [improving the type definitions](./types).
 
 
 ## Usage
@@ -47,29 +62,75 @@ socket.sendRequest(type, data, { timeout: 1000 })
     })
 ~~~
 
+### Managing network configuration (rtnetlink)
+
+~~~ js
+const { rt, ifla, createRtNetlink } = require('netlink')
+const socket = createRtNetlink()
+
+// List addresses
+const addrs = await socket.getAddresses()
+console.log('Addresses:', addrs)
+
+// List routes
+const routes = await socket.getRoutes()
+console.log('Routes:', routes)
+
+// Set eth0 up
+const links = await socket.getLinks()
+const eth0 = links.filter(x => x.attrs.ifname === 'eth0')[0]
+await socket.setLink({
+  index: eth0.index,
+  change: { up: true },
+  flags: { up: true },
+})
+~~~
+
 ### Managing 802.11 (aka wifi) interfaces
+
+~~~ js
+const { nl80211: iw, createNl80211 } = require('netlink')
+
+// Prepare a socket (a promise is returned)
+const socket = await createNl80211()
+
+// List interfaces
+const ifaces = await socket.getInterfaces()
+for (const iface of ifaces.values())
+  console.log(`Found inferface ${iface.ifindex}: ${iface.ifname} type ${iface.iftype}`)
+
+// Operate on the first interface we find
+const ifindex = [...ifaces.values()][0].ifindex
+
+// Switch to a different frequency
+await socket.request(iw.Commands.SET_CHANNEL, {
+  ifindex,
+  wiphyFreq: 5520,
+  wiphyChannelType: 'HT40MINUS',
+})
+
+// Trigger a scan
+await socket.request(iw.Commands.TRIGGER_SCAN, { ifindex })
+~~~
+
+### Listing Generic Netlink families
 
 ~~~ js
 const { createGenericNetlink, AttrStream, FLAGS_GET, genl, nl80211 } = require('netlink')
 const socket = createGenericNetlink()
 
-// Get family ID
 const families = await socket.sendCtrlRequest(
     genl.Commands.GET_FAMILY, {}, { flags: FLAGS_GET.DUMP })
-const { familyId, version } = families.filter(x => x.familyName === 'nl80211')[0]
 
-// Function to send 802.11 requests easily
-async function nl80211_req(cmd, msg, options) {
-  const data = new AttrStream()
-  data.emit(nl80211.formatMessage(msg))
-  const [omsg, rinfo] = await socket.sendRequest(familyId, cmd, version, data.bufs, options)
-  return omsg.map(x => nl80211.parseMessage(x.data))
+console.log(`Listing ${families.length} families:`)
+for (const family of families) {
+    console.log(` - ${family.familyId}: ${JSON.stringify(family.familyName)}`)
+    console.log(`   ${(family.ops || []).length} operations`)
+    console.log(`   multicast groups:`)
+    for (const mg of family.mcastGroups || []) {
+        console.log(`    - ${mg.id}: ${JSON.stringify(mg.name)}`)
+    }
 }
-
-// Get interfaces info
-const ifaces = await nl80211_req(nl80211.Commands.GET_INTERFACE, {}, { flags: FLAGS_GET.DUMP })
-for (const iface of ifaces)
-  console.log(`Found inferface ${iface.ifindex}: ${iface.ifname} type ${iface.iftype}`)
 ~~~
 
 ### Communication between sockets
@@ -139,6 +200,3 @@ The module is composed of several layers:
   - `generic_netlink`: this implements the Generic Netlink protocol
     on top of `netlink`.
 
-
-
-FIXME: cache layer
