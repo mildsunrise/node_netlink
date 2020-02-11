@@ -169,7 +169,7 @@ const types: TypeStore = {
         ['wireless', data, { orig: 'IFLA_WIRELESS', docs: [
             'Wireless Extension event - see wireless.h',
         ] }],
-        ['protinfo', data, { orig: 'IFLA_PROTINFO', docs: [
+        ['protinfo', map(data), { orig: 'IFLA_PROTINFO', docs: [
             'Protocol specific information for a link',
         ] }],
         ['txqlen', u32, { orig: 'IFLA_TXQLEN' }],
@@ -213,15 +213,15 @@ const types: TypeStore = {
         ['xdp', 'Xdp', { orig: 'IFLA_XDP' }],
         ['event', data, { type: 'Event', orig: 'IFLA_EVENT' }],
         ['newNetnsid', data, { orig: 'IFLA_NEW_NETNSID' }],
-        ['ifNetnsid', data, { orig: 'IFLA_IF_NETNSID' }],
-        ['targetNetnsid', data, { orig: 'IFLA_TARGET_NETNSID', docs: [
+        ['ifNetnsid', u32, { orig: 'IFLA_IF_NETNSID' }],
+        ['targetNetnsid', u32, { orig: 'IFLA_TARGET_NETNSID', docs: [
             'new alias',
         ] }],
-        ['carrierUpCount', data, { orig: 'IFLA_CARRIER_UP_COUNT' }],
-        ['carrierDownCount', data, { orig: 'IFLA_CARRIER_DOWN_COUNT' }],
-        ['newIfindex', data, { orig: 'IFLA_NEW_IFINDEX' }],
-        ['minMtu', data, { orig: 'IFLA_MIN_MTU' }],
-        ['maxMtu', data, { orig: 'IFLA_MAX_MTU' }],
+        ['carrierUpCount', u32, { orig: 'IFLA_CARRIER_UP_COUNT' }],
+        ['carrierDownCount', u32, { orig: 'IFLA_CARRIER_DOWN_COUNT' }],
+        ['newIfindex', u32, { orig: 'IFLA_NEW_IFINDEX' }],
+        ['minMtu', u32, { orig: 'IFLA_MIN_MTU' }],
+        ['maxMtu', u32, { orig: 'IFLA_MAX_MTU' }],
         ['propList', data, { orig: 'IFLA_PROP_LIST' }],
         ['altIfname', string, { orig: 'IFLA_ALT_IFNAME', docs: [
             'Alternative ifname',
@@ -229,11 +229,11 @@ const types: TypeStore = {
         ['permAddress', data, { orig: 'IFLA_PERM_ADDRESS' }],
     ]},
 
-    Inet: { attrs: [
+    LinkProtocolInfoInet: { attrs: [
         ['conf', data, { orig: 'IFLA_INET_CONF' }],
     ]},
 
-    Inet6: { docs: [
+    LinkProtocolInfoInet6: { docs: [
         'Subtype attributes for IFLA_PROTINFO',
     ], attrs: [
         ['flags', u32, { orig: 'IFLA_INET6_FLAGS', docs: [
@@ -980,8 +980,8 @@ const types: TypeStore = {
 
     Xdp: { attrs: [
         ['fd', data, { orig: 'IFLA_XDP_FD' }],
-        ['attached', data, { orig: 'IFLA_XDP_ATTACHED' }],
-        ['flags', data, { orig: 'IFLA_XDP_FLAGS' }],
+        ['attached', u8, { type: 'XdpAttached', orig: 'IFLA_XDP_ATTACHED' }],
+        ['flags', data, { type: 'XdpFlags', orig: 'IFLA_XDP_FLAGS' }],
         ['progId', data, { orig: 'IFLA_XDP_PROG_ID' }],
         ['drvProgId', data, { orig: 'IFLA_XDP_DRV_PROG_ID' }],
         ['skbProgId', data, { orig: 'IFLA_XDP_SKB_PROG_ID' }],

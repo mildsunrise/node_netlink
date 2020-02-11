@@ -303,7 +303,7 @@ export enum RouteType {
 export enum RouteProtocol {
     /**
      * Route installed by ICMP redirects;
-     *  * not used by current IPv4
+     * not used by current IPv4
      */
     REDIRECT = 1,
     
@@ -1146,16 +1146,16 @@ export interface Link {
     __pad?: number
     
     /** ARPHRD_* */
-    type?: number
+    type?: LinkType | keyof typeof LinkType
     
     /** Link index */
     index?: number
     
     /** IFF_* flags */
-    flags?: number
+    flags?: DeviceFlags
     
     /** IFF_* change mask */
-    change?: number
+    change?: DeviceFlags
 }
 
 /** Parses the attributes of a [[Link]] object */
@@ -1164,10 +1164,10 @@ export function parseLink(r: Buffer): Link {
     const x: Link = {}
     x.family = structs.readU8.call(r, 0)
     x.__pad = structs.readU8.call(r, 1)
-    x.type = structs.readU16.call(r, 2)
+    x.type = structs.getEnum(LinkType, structs.readU16.call(r, 2))
     x.index = structs.readS32.call(r, 4)
-    x.flags = structs.readU32.call(r, 8)
-    x.change = structs.readU32.call(r, 12)
+    x.flags = parseDeviceFlags(structs.readU32.call(r, 8))
+    x.change = parseDeviceFlags(structs.readU32.call(r, 12))
     return x
 }
 
@@ -1176,10 +1176,10 @@ export function formatLink(x: Link, r: Buffer = Buffer.alloc(__LENGTH_Link)): Bu
     if (r.length !== __LENGTH_Link) throw Error('Unexpected length for Link')
     x.family && structs.writeU8.call(r, x.family, 0)
     x.__pad && structs.writeU8.call(r, x.__pad, 1)
-    x.type && structs.writeU16.call(r, x.type, 2)
+    x.type && structs.writeU16.call(r, structs.putEnum(LinkType, x.type), 2)
     x.index && structs.writeS32.call(r, x.index, 4)
-    x.flags && structs.writeU32.call(r, x.flags, 8)
-    x.change && structs.writeU32.call(r, x.change, 12)
+    x.flags && structs.writeU32.call(r, formatDeviceFlags(x.flags), 8)
+    x.change && structs.writeU32.call(r, formatDeviceFlags(x.change), 12)
     return r
 }
 
@@ -1353,6 +1353,202 @@ export function formatDeviceFlags(x: DeviceFlags): number {
     if (x.dormant) r |= 131072
     if (x.echo) r |= 262144
     return r
+}
+
+/**
+ * ARP protocol HARDWARE identifiers.
+ * for >= 256: Dummy types for non ARP hardware
+ */
+export enum LinkType {
+    /** from KA9Q: NET/ROM pseudo */
+    NETROM,
+    
+    /** Ethernet 10Mbps */
+    ETHER = 1,
+    
+    /** Experimental Ethernet */
+    EETHER = 2,
+    
+    /** AX.25 Level 2 */
+    AX25 = 3,
+    
+    /** PROnet token ring */
+    PRONET = 4,
+    
+    /** Chaosnet */
+    CHAOS = 5,
+    
+    /** IEEE 802.2 Ethernet/TR/TB */
+    IEEE802 = 6,
+    
+    /** ARCnet */
+    ARCNET = 7,
+    
+    /** APPLEtalk */
+    APPLETLK = 8,
+    
+    /** Frame Relay DLCI */
+    DLCI = 15,
+    
+    /** ATM */
+    ATM = 19,
+    
+    /** Metricom STRIP (new IANA id) */
+    METRICOM = 23,
+    
+    /** IEEE 1394 IPv4 - RFC 2734 */
+    IEEE1394 = 24,
+    
+    /** EUI-64 */
+    EUI64 = 27,
+    
+    /** InfiniBand */
+    INFINIBAND = 32,
+    
+    SLIP = 256,
+    
+    CSLIP = 257,
+    
+    SLIP6 = 258,
+    
+    CSLIP6 = 259,
+    
+    /** Notional KISS type */
+    RSRVD = 260,
+    
+    ADAPT = 264,
+    
+    ROSE = 270,
+    
+    /** CCITT X.25 */
+    X25 = 271,
+    
+    /** Boards with X.25 in firmware */
+    HWX25 = 272,
+    
+    /** Controller Area Network */
+    CAN = 280,
+    
+    PPP = 512,
+    
+    /** Cisco HDLC */
+    CISCO = 513,
+    
+    /** LAPB */
+    LAPB = 516,
+    
+    /** Digital's DDCMP protocol */
+    DDCMP = 517,
+    
+    /** Raw HDLC */
+    RAWHDLC = 518,
+    
+    /** Raw IP */
+    RAWIP = 519,
+    
+    /** IPIP tunnel */
+    TUNNEL = 768,
+    
+    /** IP6IP6 tunnel */
+    TUNNEL6 = 769,
+    
+    /** Frame Relay Access Device */
+    FRAD = 770,
+    
+    /** SKIP vif */
+    SKIP = 771,
+    
+    /** Loopback device */
+    LOOPBACK = 772,
+    
+    /** Localtalk device */
+    LOCALTLK = 773,
+    
+    /** Fiber Distributed Data Interface */
+    FDDI = 774,
+    
+    /** AP1000 BIF */
+    BIF = 775,
+    
+    /** sit0 device - IPv6-in-IPv4 */
+    SIT = 776,
+    
+    /** IP over DDP tunneller */
+    IPDDP = 777,
+    
+    /** GRE over IP */
+    IPGRE = 778,
+    
+    /** PIMSM register interface */
+    PIMREG = 779,
+    
+    /** High Performance Parallel Interface */
+    HIPPI = 780,
+    
+    /** Nexus 64Mbps Ash */
+    ASH = 781,
+    
+    /** Acorn Econet */
+    ECONET = 782,
+    
+    /** Linux-IrDA */
+    IRDA = 783,
+    
+    /** Point to point fibrechannel */
+    FCPP = 784,
+    
+    /** Fibrechannel arbitrated loop */
+    FCAL = 785,
+    
+    /** Fibrechannel public loop */
+    FCPL = 786,
+    
+    /** Fibrechannel fabric */
+    FCFABRIC = 787,
+    
+    /** Magic type ident for TR */
+    IEEE802_TR = 800,
+    
+    /** IEEE 802.11 */
+    IEEE80211 = 801,
+    
+    /** IEEE 802.11 + Prism2 header */
+    IEEE80211_PRISM = 802,
+    
+    /** IEEE 802.11 + radiotap header */
+    IEEE80211_RADIOTAP = 803,
+    
+    IEEE802154 = 804,
+    
+    /** IEEE 802.15.4 network monitor */
+    IEEE802154_MONITOR = 805,
+    
+    /** PhoNet media type */
+    PHONET = 820,
+    
+    /** PhoNet pipe header */
+    PHONET_PIPE = 821,
+    
+    /** CAIF media type */
+    CAIF = 822,
+    
+    /** GRE over IPv6 */
+    IP6GRE = 823,
+    
+    /** Netlink header */
+    NETLINK = 824,
+    
+    /** IPv6 over LoWPAN */
+    _6LOWPAN = 825,
+    
+    /** Vsock monitor header */
+    VSOCKMON = 826,
+    
+    /** Void type, nothing is known */
+    VOID = 65535,
+    
+    /** zero header length */
+    NONE = 65534,
 }
 
 /** prefix information */

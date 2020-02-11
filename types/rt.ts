@@ -9,6 +9,7 @@
  *   <linux/rtnetlink.h>
  *   <linux/neighbour.h>
  *   <linux/if_addr.h>
+ *   <linux/if_arp.h>
  *   <linux/if.h>
  *   
  * at d1ea35f
@@ -187,7 +188,7 @@ const types: TypeStore = {
     ], values: [
         { value: 1, name: 'REDIRECT', orig: 'RTPROT_REDIRECT', docs: [
             'Route installed by ICMP redirects;',
-            ' * not used by current IPv4',
+            'not used by current IPv4',
         ] },
         { value: 2, name: 'KERNEL', orig: 'RTPROT_KERNEL', docs: [
             'Route installed by kernel',
@@ -507,16 +508,16 @@ const types: TypeStore = {
     Link: { root: true, kind: 'struct', orig: 'ifinfomsg', attrs: [
         ['family', u8, { orig: 'ifi_family' }],
         ['__pad', u8, { orig: '__ifi_pad' }],
-        ['type', u16, { orig: 'ifi_type', docs: [
+        ['type', u16, { type: 'LinkType', orig: 'ifi_type', docs: [
             'ARPHRD_*',
         ] }],
         ['index', s32, { orig: 'ifi_index', docs: [
             'Link index',
         ] }],
-        ['flags', u32, { orig: 'ifi_flags', docs: [
+        ['flags', u32, { type: 'DeviceFlags', orig: 'ifi_flags', docs: [
             'IFF_* flags',
         ] }],
-        ['change', u32, { orig: 'ifi_change', docs: [
+        ['change', u32, { type: 'DeviceFlags', orig: 'ifi_change', docs: [
             'IFF_* change mask',
         ] }],
     ]},
@@ -605,6 +606,194 @@ const types: TypeStore = {
         ] },
         { value: 1<<18, name: 'echo', orig: 'IFF_ECHO', docs: [
             'echo sent packets. Volatile.',
+        ] },
+    ]},
+
+    LinkType: { kind: 'enum', docs: [
+        'ARP protocol HARDWARE identifiers.',
+        'for >= 256: Dummy types for non ARP hardware',
+    ], values: [
+        { value: 0, name: 'NETROM', orig: 'ARPHRD_NETROM', docs: [
+            'from KA9Q: NET/ROM pseudo',
+        ] },
+        { value: 1, name: 'ETHER', orig: 'ARPHRD_ETHER', docs: [
+            'Ethernet 10Mbps',
+        ] },
+        { value: 2, name: 'EETHER', orig: 'ARPHRD_EETHER', docs: [
+            'Experimental Ethernet',
+        ] },
+        { value: 3, name: 'AX25', orig: 'ARPHRD_AX25', docs: [
+            'AX.25 Level 2',
+        ] },
+        { value: 4, name: 'PRONET', orig: 'ARPHRD_PRONET', docs: [
+            'PROnet token ring',
+        ] },
+        { value: 5, name: 'CHAOS', orig: 'ARPHRD_CHAOS', docs: [
+            'Chaosnet',
+        ] },
+        { value: 6, name: 'IEEE802', orig: 'ARPHRD_IEEE802', docs: [
+            'IEEE 802.2 Ethernet/TR/TB',
+        ] },
+        { value: 7, name: 'ARCNET', orig: 'ARPHRD_ARCNET', docs: [
+            'ARCnet',
+        ] },
+        { value: 8, name: 'APPLETLK', orig: 'ARPHRD_APPLETLK', docs: [
+            'APPLEtalk',
+        ] },
+        { value: 15, name: 'DLCI', orig: 'ARPHRD_DLCI', docs: [
+            'Frame Relay DLCI',
+        ] },
+        { value: 19, name: 'ATM', orig: 'ARPHRD_ATM', docs: [
+            'ATM',
+        ] },
+        { value: 23, name: 'METRICOM', orig: 'ARPHRD_METRICOM', docs: [
+            'Metricom STRIP (new IANA id)',
+        ] },
+        { value: 24, name: 'IEEE1394', orig: 'ARPHRD_IEEE1394', docs: [
+            'IEEE 1394 IPv4 - RFC 2734',
+        ] },
+        { value: 27, name: 'EUI64', orig: 'ARPHRD_EUI64', docs: [
+            'EUI-64',
+        ] },
+        { value: 32, name: 'INFINIBAND', orig: 'ARPHRD_INFINIBAND', docs: [
+            'InfiniBand',
+        ] },
+        { value: 256, name: 'SLIP', orig: 'ARPHRD_SLIP' },
+        { value: 257, name: 'CSLIP', orig: 'ARPHRD_CSLIP' },
+        { value: 258, name: 'SLIP6', orig: 'ARPHRD_SLIP6' },
+        { value: 259, name: 'CSLIP6', orig: 'ARPHRD_CSLIP6' },
+        { value: 260, name: 'RSRVD', orig: 'ARPHRD_RSRVD', docs: [
+            'Notional KISS type',
+        ] },
+        { value: 264, name: 'ADAPT', orig: 'ARPHRD_ADAPT' },
+        { value: 270, name: 'ROSE', orig: 'ARPHRD_ROSE' },
+        { value: 271, name: 'X25', orig: 'ARPHRD_X25', docs: [
+            'CCITT X.25',
+        ] },
+        { value: 272, name: 'HWX25', orig: 'ARPHRD_HWX25', docs: [
+            'Boards with X.25 in firmware',
+        ] },
+        { value: 280, name: 'CAN', orig: 'ARPHRD_CAN', docs: [
+            'Controller Area Network',
+        ] },
+        { value: 512, name: 'PPP', orig: 'ARPHRD_PPP' },
+        { value: 513, name: 'CISCO', orig: 'ARPHRD_CISCO', docs: [
+            'Cisco HDLC',
+        ] },
+        { value: 516, name: 'LAPB', orig: 'ARPHRD_LAPB', docs: [
+            'LAPB',
+        ] },
+        { value: 517, name: 'DDCMP', orig: 'ARPHRD_DDCMP', docs: [
+            "Digital's DDCMP protocol",
+        ] },
+        { value: 518, name: 'RAWHDLC', orig: 'ARPHRD_RAWHDLC', docs: [
+            'Raw HDLC',
+        ] },
+        { value: 519, name: 'RAWIP', orig: 'ARPHRD_RAWIP', docs: [
+            'Raw IP',
+        ] },
+        { value: 768, name: 'TUNNEL', orig: 'ARPHRD_TUNNEL', docs: [
+            'IPIP tunnel',
+        ] },
+        { value: 769, name: 'TUNNEL6', orig: 'ARPHRD_TUNNEL6', docs: [
+            'IP6IP6 tunnel',
+        ] },
+        { value: 770, name: 'FRAD', orig: 'ARPHRD_FRAD', docs: [
+            'Frame Relay Access Device',
+        ] },
+        { value: 771, name: 'SKIP', orig: 'ARPHRD_SKIP', docs: [
+            'SKIP vif',
+        ] },
+        { value: 772, name: 'LOOPBACK', orig: 'ARPHRD_LOOPBACK', docs: [
+            'Loopback device',
+        ] },
+        { value: 773, name: 'LOCALTLK', orig: 'ARPHRD_LOCALTLK', docs: [
+            'Localtalk device',
+        ] },
+        { value: 774, name: 'FDDI', orig: 'ARPHRD_FDDI', docs: [
+            'Fiber Distributed Data Interface',
+        ] },
+        { value: 775, name: 'BIF', orig: 'ARPHRD_BIF', docs: [
+            'AP1000 BIF',
+        ] },
+        { value: 776, name: 'SIT', orig: 'ARPHRD_SIT', docs: [
+            'sit0 device - IPv6-in-IPv4',
+        ] },
+        { value: 777, name: 'IPDDP', orig: 'ARPHRD_IPDDP', docs: [
+            'IP over DDP tunneller',
+        ] },
+        { value: 778, name: 'IPGRE', orig: 'ARPHRD_IPGRE', docs: [
+            'GRE over IP',
+        ] },
+        { value: 779, name: 'PIMREG', orig: 'ARPHRD_PIMREG', docs: [
+            'PIMSM register interface',
+        ] },
+        { value: 780, name: 'HIPPI', orig: 'ARPHRD_HIPPI', docs: [
+            'High Performance Parallel Interface',
+        ] },
+        { value: 781, name: 'ASH', orig: 'ARPHRD_ASH', docs: [
+            'Nexus 64Mbps Ash',
+        ] },
+        { value: 782, name: 'ECONET', orig: 'ARPHRD_ECONET', docs: [
+            'Acorn Econet',
+        ] },
+        { value: 783, name: 'IRDA', orig: 'ARPHRD_IRDA', docs: [
+            'Linux-IrDA',
+        ] },
+        { value: 784, name: 'FCPP', orig: 'ARPHRD_FCPP', docs: [
+            'Point to point fibrechannel',
+        ] },
+        { value: 785, name: 'FCAL', orig: 'ARPHRD_FCAL', docs: [
+            'Fibrechannel arbitrated loop',
+        ] },
+        { value: 786, name: 'FCPL', orig: 'ARPHRD_FCPL', docs: [
+            'Fibrechannel public loop',
+        ] },
+        { value: 787, name: 'FCFABRIC', orig: 'ARPHRD_FCFABRIC', docs: [
+            'Fibrechannel fabric',
+        ] },
+        { value: 800, name: 'IEEE802_TR', orig: 'ARPHRD_IEEE802_TR', docs: [
+            'Magic type ident for TR',
+        ] },
+        { value: 801, name: 'IEEE80211', orig: 'ARPHRD_IEEE80211', docs: [
+            'IEEE 802.11',
+        ] },
+        { value: 802, name: 'IEEE80211_PRISM', orig: 'ARPHRD_IEEE80211_PRISM', docs: [
+            'IEEE 802.11 + Prism2 header',
+        ] },
+        { value: 803, name: 'IEEE80211_RADIOTAP', orig: 'ARPHRD_IEEE80211_RADIOTAP', docs: [
+            'IEEE 802.11 + radiotap header',
+        ] },
+        { value: 804, name: 'IEEE802154', orig: 'ARPHRD_IEEE802154' },
+        { value: 805, name: 'IEEE802154_MONITOR', orig: 'ARPHRD_IEEE802154_MONITOR', docs: [
+            'IEEE 802.15.4 network monitor',
+        ] },
+        { value: 820, name: 'PHONET', orig: 'ARPHRD_PHONET', docs: [
+            'PhoNet media type',
+        ] },
+        { value: 821, name: 'PHONET_PIPE', orig: 'ARPHRD_PHONET_PIPE', docs: [
+            'PhoNet pipe header',
+        ] },
+        { value: 822, name: 'CAIF', orig: 'ARPHRD_CAIF', docs: [
+            'CAIF media type',
+        ] },
+        { value: 823, name: 'IP6GRE', orig: 'ARPHRD_IP6GRE', docs: [
+            'GRE over IPv6',
+        ] },
+        { value: 824, name: 'NETLINK', orig: 'ARPHRD_NETLINK', docs: [
+            'Netlink header',
+        ] },
+        { value: 825, name: '_6LOWPAN', orig: 'ARPHRD_6LOWPAN', docs: [
+            'IPv6 over LoWPAN',
+        ] },
+        { value: 826, name: 'VSOCKMON', orig: 'ARPHRD_VSOCKMON', docs: [
+            'Vsock monitor header',
+        ] },
+        { value: 0xFFFF, name: 'VOID', orig: 'ARPHRD_VOID', docs: [
+            'Void type, nothing is known',
+        ] },
+        { value: 0xFFFE, name: 'NONE', orig: 'ARPHRD_NONE', docs: [
+            'zero header length',
         ] },
     ]},
 
@@ -869,10 +1058,10 @@ const types: TypeStore = {
         ['ifindex', u32, { orig: 'NDTPA_IFINDEX', docs: [
             'u32, unchangeable',
         ] }],
-        ['refcnt', data, { orig: 'NDTPA_REFCNT', docs: [
+        ['refcnt', u32, { orig: 'NDTPA_REFCNT', docs: [
             'u32, read-only',
         ] }],
-        ['reachableTime', data, { orig: 'NDTPA_REACHABLE_TIME', docs: [
+        ['reachableTime', u64, { orig: 'NDTPA_REACHABLE_TIME', docs: [
             'u64, read-only, msecs',
         ] }],
         ['baseReachableTime', u64, { orig: 'NDTPA_BASE_REACHABLE_TIME', docs: [
@@ -897,10 +1086,10 @@ const types: TypeStore = {
         ['locktime', u64, { orig: 'NDTPA_LOCKTIME', docs: [
             'u64, msecs',
         ] }],
-        ['queueLenbytes', data, { orig: 'NDTPA_QUEUE_LENBYTES', docs: [
+        ['queueLenbytes', u32, { orig: 'NDTPA_QUEUE_LENBYTES', docs: [
             'u32',
         ] }],
-        ['mcastReprobes', data, { orig: 'NDTPA_MCAST_REPROBES' }],
+        ['mcastReprobes', u32, { orig: 'NDTPA_MCAST_REPROBES' }],
         ['pad', data, { orig: 'NDTPA_PAD' }],
     ]},
 }

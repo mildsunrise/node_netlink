@@ -110,9 +110,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getTrafficActions(data: rt.TcAction, attrs?: {}, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcActionMessage[]> {
+    getTrafficActions(data?: rt.TcAction, attrs?: {}, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcActionMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getTrafficAction(data, attrs, options)
+        return this.getTrafficAction(data || {}, attrs, options)
     }
 
     async newAddress(data: rt.Address, attrs?: rt.AddressAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.AddressMessage[]> {
@@ -148,9 +148,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getAddresss(data: rt.Address, attrs?: rt.AddressAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.AddressMessage[]> {
+    getAddresses(data?: rt.Address, attrs?: rt.AddressAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.AddressMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getAddress(data, attrs, options)
+        return this.getAddress(data || {}, attrs, options)
     }
 
     async newLink(data: rt.Link, attrs?: ifla.LinkAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.LinkMessage[]> {
@@ -197,9 +197,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getLinks(data: rt.Link, attrs?: ifla.LinkAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.LinkMessage[]> {
+    getLinks(data?: rt.Link, attrs?: ifla.LinkAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.LinkMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getLink(data, attrs, options)
+        return this.getLink(data || {}, attrs, options)
     }
 
     async newNdUserOption(data: rt.NdUserOption, attrs?: rt.NdUserOptionAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NdUserOptionMessage[]> {
@@ -246,9 +246,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getNeighbors(data: rt.Neighbor, attrs?: rt.NeighborAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NeighborMessage[]> {
+    getNeighbors(data?: rt.Neighbor, attrs?: rt.NeighborAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NeighborMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getNeighbor(data, attrs, options)
+        return this.getNeighbor(data || {}, attrs, options)
     }
 
     async newNeighborTable(data: rt.NeighborTable, attrs?: rt.NeighborTableAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NeighborTableMessage[]> {
@@ -284,9 +284,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getNeighborTables(data: rt.NeighborTable, attrs?: rt.NeighborTableAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NeighborTableMessage[]> {
+    getNeighborTables(data?: rt.NeighborTable, attrs?: rt.NeighborTableAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NeighborTableMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getNeighborTable(data, attrs, options)
+        return this.getNeighborTable(data || {}, attrs, options)
     }
 
     async newPrefix(data: rt.Prefix, attrs?: rt.PrefixAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.PrefixMessage[]> {
@@ -333,9 +333,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getQdiscs(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
+    getQdiscs(data?: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getQdisc(data, attrs, options)
+        return this.getQdisc(data || {}, attrs, options)
     }
 
     async newRoute(data: rt.Route, attrs?: rt.RouteAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RouteMessage[]> {
@@ -371,9 +371,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getRoutes(data: rt.Route, attrs?: rt.RouteAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RouteMessage[]> {
+    getRoutes(data?: rt.Route, attrs?: rt.RouteAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RouteMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getRoute(data, attrs, options)
+        return this.getRoute(data || {}, attrs, options)
     }
 
     async newTrafficClass(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
@@ -409,9 +409,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getTrafficClasses(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
+    getTrafficClasses(data?: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getTrafficClass(data, attrs, options)
+        return this.getTrafficClass(data || {}, attrs, options)
     }
 
     async newTrafficFilter(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
@@ -447,9 +447,9 @@ export class RtNetlinkSocket extends EventEmitter {
         })
     }
 
-    getTrafficFilters(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
+    getTrafficFilters(data?: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
         options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
-        return this.getTrafficFilter(data, attrs, options)
+        return this.getTrafficFilter(data || {}, attrs, options)
     }
 }
 

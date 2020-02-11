@@ -332,7 +332,7 @@ export interface LinkAttrs extends BaseObject {
     wireless?: Buffer
     
     /** Protocol specific information for a link */
-    protinfo?: Buffer
+    protinfo?: Map<number, Buffer>
     
     txqlen?: number
     
@@ -404,20 +404,20 @@ export interface LinkAttrs extends BaseObject {
     
     newNetnsid?: Buffer
     
-    ifNetnsid?: Buffer
+    ifNetnsid?: number
     
     /** new alias */
-    targetNetnsid?: Buffer
+    targetNetnsid?: number
     
-    carrierUpCount?: Buffer
+    carrierUpCount?: number
     
-    carrierDownCount?: Buffer
+    carrierDownCount?: number
     
-    newIfindex?: Buffer
+    newIfindex?: number
     
-    minMtu?: Buffer
+    minMtu?: number
     
-    maxMtu?: Buffer
+    maxMtu?: number
     
     propList?: Buffer
     
@@ -441,7 +441,7 @@ export function parseLinkAttrs(r: Buffer): LinkAttrs {
         9: (data, obj) => obj.priority = data,
         10: (data, obj) => obj.master = structs.getU32(data),
         11: (data, obj) => obj.wireless = data,
-        12: (data, obj) => obj.protinfo = data,
+        12: (data, obj) => obj.protinfo = structs.getMap(data, x => x),
         13: (data, obj) => obj.txqlen = structs.getU32(data),
         14: (data, obj) => obj.map = data,
         15: (data, obj) => obj.weight = structs.getU32(data),
@@ -475,13 +475,13 @@ export function parseLinkAttrs(r: Buffer): LinkAttrs {
         43: (data, obj) => obj.xdp = parseXdp(data),
         44: (data, obj) => obj.event = data,
         45: (data, obj) => obj.newNetnsid = data,
-        46: (data, obj) => obj.ifNetnsid = data,
-        47: (data, obj) => obj.targetNetnsid = data,
-        48: (data, obj) => obj.carrierUpCount = data,
-        49: (data, obj) => obj.carrierDownCount = data,
-        50: (data, obj) => obj.newIfindex = data,
-        51: (data, obj) => obj.minMtu = data,
-        52: (data, obj) => obj.maxMtu = data,
+        46: (data, obj) => obj.ifNetnsid = structs.getU32(data),
+        47: (data, obj) => obj.targetNetnsid = structs.getU32(data),
+        48: (data, obj) => obj.carrierUpCount = structs.getU32(data),
+        49: (data, obj) => obj.carrierDownCount = structs.getU32(data),
+        50: (data, obj) => obj.newIfindex = structs.getU32(data),
+        51: (data, obj) => obj.minMtu = structs.getU32(data),
+        52: (data, obj) => obj.maxMtu = structs.getU32(data),
         53: (data, obj) => obj.propList = data,
         54: (data, obj) => obj.altIfname = structs.getString(data),
         55: (data, obj) => obj.permAddress = data,
@@ -502,7 +502,7 @@ export function formatLinkAttrs(x: LinkAttrs): StreamData {
         priority: (data, obj) => data.push(9, obj.priority!),
         master: (data, obj) => data.push(10, structs.putU32(obj.master!)),
         wireless: (data, obj) => data.push(11, obj.wireless!),
-        protinfo: (data, obj) => data.push(12, obj.protinfo!),
+        protinfo: (data, obj) => data.push(12, structs.putMap(obj.protinfo!, x => x)),
         txqlen: (data, obj) => data.push(13, structs.putU32(obj.txqlen!)),
         map: (data, obj) => data.push(14, obj.map!),
         weight: (data, obj) => data.push(15, structs.putU32(obj.weight!)),
@@ -536,39 +536,39 @@ export function formatLinkAttrs(x: LinkAttrs): StreamData {
         xdp: (data, obj) => data.push(43, formatXdp(obj.xdp!)),
         event: (data, obj) => data.push(44, obj.event!),
         newNetnsid: (data, obj) => data.push(45, obj.newNetnsid!),
-        ifNetnsid: (data, obj) => data.push(46, obj.ifNetnsid!),
-        targetNetnsid: (data, obj) => data.push(47, obj.targetNetnsid!),
-        carrierUpCount: (data, obj) => data.push(48, obj.carrierUpCount!),
-        carrierDownCount: (data, obj) => data.push(49, obj.carrierDownCount!),
-        newIfindex: (data, obj) => data.push(50, obj.newIfindex!),
-        minMtu: (data, obj) => data.push(51, obj.minMtu!),
-        maxMtu: (data, obj) => data.push(52, obj.maxMtu!),
+        ifNetnsid: (data, obj) => data.push(46, structs.putU32(obj.ifNetnsid!)),
+        targetNetnsid: (data, obj) => data.push(47, structs.putU32(obj.targetNetnsid!)),
+        carrierUpCount: (data, obj) => data.push(48, structs.putU32(obj.carrierUpCount!)),
+        carrierDownCount: (data, obj) => data.push(49, structs.putU32(obj.carrierDownCount!)),
+        newIfindex: (data, obj) => data.push(50, structs.putU32(obj.newIfindex!)),
+        minMtu: (data, obj) => data.push(51, structs.putU32(obj.minMtu!)),
+        maxMtu: (data, obj) => data.push(52, structs.putU32(obj.maxMtu!)),
         propList: (data, obj) => data.push(53, obj.propList!),
         altIfname: (data, obj) => data.push(54, structs.putString(obj.altIfname!)),
         permAddress: (data, obj) => data.push(55, obj.permAddress!),
     })
 }
 
-export interface Inet extends BaseObject {
+export interface LinkProtocolInfoInet extends BaseObject {
     conf?: Buffer
 }
 
-/** Parses the attributes of a [[Inet]] object */
-export function parseInet(r: Buffer): Inet {
+/** Parses the attributes of a [[LinkProtocolInfoInet]] object */
+export function parseLinkProtocolInfoInet(r: Buffer): LinkProtocolInfoInet {
     return structs.getObject(r, {
         1: (data, obj) => obj.conf = data,
     })
 }
 
-/** Encodes a [[Inet]] object into a stream of attributes */
-export function formatInet(x: Inet): StreamData {
+/** Encodes a [[LinkProtocolInfoInet]] object into a stream of attributes */
+export function formatLinkProtocolInfoInet(x: LinkProtocolInfoInet): StreamData {
     return structs.putObject(x, {
         conf: (data, obj) => data.push(1, obj.conf!),
     })
 }
 
 /** Subtype attributes for IFLA_PROTINFO */
-export interface Inet6 extends BaseObject {
+export interface LinkProtocolInfoInet6 extends BaseObject {
     /** link flags */
     flags?: number
     
@@ -594,8 +594,8 @@ export interface Inet6 extends BaseObject {
     addrGenMode?: number
 }
 
-/** Parses the attributes of a [[Inet6]] object */
-export function parseInet6(r: Buffer): Inet6 {
+/** Parses the attributes of a [[LinkProtocolInfoInet6]] object */
+export function parseLinkProtocolInfoInet6(r: Buffer): LinkProtocolInfoInet6 {
     return structs.getObject(r, {
         1: (data, obj) => obj.flags = structs.getU32(data),
         2: (data, obj) => obj.conf = data,
@@ -608,8 +608,8 @@ export function parseInet6(r: Buffer): Inet6 {
     })
 }
 
-/** Encodes a [[Inet6]] object into a stream of attributes */
-export function formatInet6(x: Inet6): StreamData {
+/** Encodes a [[LinkProtocolInfoInet6]] object into a stream of attributes */
+export function formatLinkProtocolInfoInet6(x: LinkProtocolInfoInet6): StreamData {
     return structs.putObject(x, {
         flags: (data, obj) => data.push(1, structs.putU32(obj.flags!)),
         conf: (data, obj) => data.push(2, obj.conf!),
@@ -2836,7 +2836,7 @@ export enum XdpAttached {
 export interface Xdp extends BaseObject {
     fd?: Buffer
     
-    attached?: Buffer
+    attached?: XdpAttached | keyof typeof XdpAttached
     
     flags?: Buffer
     
@@ -2853,7 +2853,7 @@ export interface Xdp extends BaseObject {
 export function parseXdp(r: Buffer): Xdp {
     return structs.getObject(r, {
         1: (data, obj) => obj.fd = data,
-        2: (data, obj) => obj.attached = data,
+        2: (data, obj) => obj.attached = structs.getEnum(XdpAttached, structs.getU8(data)),
         3: (data, obj) => obj.flags = data,
         4: (data, obj) => obj.progId = data,
         5: (data, obj) => obj.drvProgId = data,
@@ -2866,7 +2866,7 @@ export function parseXdp(r: Buffer): Xdp {
 export function formatXdp(x: Xdp): StreamData {
     return structs.putObject(x, {
         fd: (data, obj) => data.push(1, obj.fd!),
-        attached: (data, obj) => data.push(2, obj.attached!),
+        attached: (data, obj) => data.push(2, structs.putU8(structs.putEnum(XdpAttached, obj.attached!))),
         flags: (data, obj) => data.push(3, obj.flags!),
         progId: (data, obj) => data.push(4, obj.progId!),
         drvProgId: (data, obj) => data.push(5, obj.drvProgId!),
