@@ -307,7 +307,7 @@ export function formatLinkInterfaceMap(x: LinkInterfaceMap, r: Buffer = Buffer.a
 
 export const __LENGTH_LinkInterfaceMap = 28
 
-export interface Message extends BaseObject {
+export interface LinkAttrs extends BaseObject {
     address?: Buffer
     
     broadcast?: Buffer
@@ -427,8 +427,8 @@ export interface Message extends BaseObject {
     permAddress?: Buffer
 }
 
-/** Parses the attributes of a [[Message]] object */
-export function parseMessage(r: Buffer): Message {
+/** Parses the attributes of a [[LinkAttrs]] object */
+export function parseLinkAttrs(r: Buffer): LinkAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.address = data,
         2: (data, obj) => obj.broadcast = data,
@@ -488,8 +488,8 @@ export function parseMessage(r: Buffer): Message {
     })
 }
 
-/** Encodes a [[Message]] object into a stream of attributes */
-export function formatMessage(x: Message): StreamData {
+/** Encodes a [[LinkAttrs]] object into a stream of attributes */
+export function formatLinkAttrs(x: LinkAttrs): StreamData {
     return structs.putObject(x, {
         address: (data, obj) => data.push(1, obj.address!),
         broadcast: (data, obj) => data.push(2, obj.broadcast!),

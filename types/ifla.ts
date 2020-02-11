@@ -155,7 +155,7 @@ const types: TypeStore = {
         ['port', u8, { orig: 'port' }],
     ]},
 
-    Message: { root: true, attrs: [
+    LinkAttrs: { root: true, attrs: [
         ['address', data, { orig: 'IFLA_ADDRESS' }],
         ['broadcast', data, { orig: 'IFLA_BROADCAST' }],
         ['ifname', string, { orig: 'IFLA_IFNAME' }],
