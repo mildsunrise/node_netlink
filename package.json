@@ -1,6 +1,6 @@
 {
   "name": "netlink",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Bindings / implementation of the Netlink protocol",
   "author": "Alba Mendez <me@alba.sh>",
   "keywords": [
