@@ -8666,7 +8666,7 @@ export interface BssSelect extends BaseObject {
      * shall use RSSI-based BSS selection as a second step. The value of
      * this attribute is according to &enum nl80211_band (u32).
      */
-    bandPref?: BandId | keyof typeof BandId
+    bandPref?: Buffer
     
     /**
      * When present the RSSI level for
@@ -8681,7 +8681,7 @@ export interface BssSelect extends BaseObject {
 export function parseBssSelect(r: Buffer): BssSelect {
     return structs.getObject(r, {
         1: (data, obj) => obj.rssi = structs.getFlag(data),
-        2: (data, obj) => obj.bandPref = structs.getEnum(BandId, structs.getU32(data)),
+        2: (data, obj) => obj.bandPref = data,
         3: (data, obj) => obj.rssiAdjust = data,
     })
 }
@@ -8690,7 +8690,7 @@ export function parseBssSelect(r: Buffer): BssSelect {
 export function formatBssSelect(x: BssSelect): StreamData {
     return structs.putObject(x, {
         rssi: (data, obj) => data.push(1, structs.putFlag(obj.rssi!)),
-        bandPref: (data, obj) => data.push(2, structs.putU32(structs.putEnum(BandId, obj.bandPref!))),
+        bandPref: (data, obj) => data.push(2, obj.bandPref!),
         rssiAdjust: (data, obj) => data.push(3, obj.rssiAdjust!),
     })
 }
