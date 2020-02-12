@@ -41,8 +41,8 @@ npm install netlink
 ### Sending messages over a Netlink socket
 
 ~~~ js
-const { createNetlink, PROTOCOLS } = require('netlink')
-const socket = createNetlink(PROTOCOLS.ROUTE)
+const { createNetlink, Protocol } = require('netlink')
+const socket = createNetlink(Protocol.ROUTE)
 
 socket.on('message', (msg, rinfo) => {
   console.log(`Received message from ${rinfo.port}:`, msg)
@@ -54,7 +54,7 @@ socket.send(type, data, { flags: ..., port: 1 })
 
 // Send message with REQUEST and ACK flags set, wait for a reply
 const data = Buffer.from('...')
-socket.sendRequest(type, data, { timeout: 1000 })
+socket.request(type, data, { timeout: 1000 })
     .then(([ reply, rinfo ]) => {
         console.log('Received a reply:', reply)
     }, error => {
@@ -116,11 +116,11 @@ await socket.request(iw.Commands.TRIGGER_SCAN, { ifindex })
 ### Listing Generic Netlink families
 
 ~~~ js
-const { createGenericNetlink, AttrStream, FLAGS_GET, genl, nl80211 } = require('netlink')
+const { createGenericNetlink, FlagsGet, genl } = require('netlink')
 const socket = createGenericNetlink()
 
-const families = await socket.sendCtrlRequest(
-    genl.Commands.GET_FAMILY, {}, { flags: FLAGS_GET.DUMP })
+const families = await socket.ctrlRequest(
+    genl.Commands.GET_FAMILY, {}, { flags: FlagsGet.DUMP })
 
 console.log(`Listing ${families.length} families:`)
 for (const family of families) {
@@ -136,13 +136,13 @@ for (const family of families) {
 ### Communication between sockets
 
 ~~~ js
-const { createNetlink, PROTOCOLS } = require('netlink')
+const { createNetlink, Protocol } = require('netlink')
 
-const socket1 = createNetlink(PROTOCOLS.ROUTE)
-const socket2 = createNetlink(PROTOCOLS.ROUTE)
+const socket1 = createNetlink(Protocol.ROUTE)
+const socket2 = createNetlink(Protocol.ROUTE)
 // module automatically generates unique IDs, but
 // you can also pass a specific address to bind to
-const socket3 = createNetlink(PROTOCOLS.ROUTE, { localPort: 5000 })
+const socket3 = createNetlink(Protocol.ROUTE, { localPort: 5000 })
 
 const port1 = socket1.address().port
 const port2 = socket2.address().port
@@ -160,8 +160,8 @@ socket3.send(100, Buffer.from('Hello!'), { port: port1 })
 ### Sending raw data over a Netlink socket
 
 ~~~ js
-const { createNetlink, RawNetlinkSocket, PROTOCOLS } = require('netlink')
-const socket = new RawNetlinkSocket(PROTOCOLS.ROUTE)
+const { createNetlink, RawNetlinkSocket, Protocol } = require('netlink')
+const socket = new RawNetlinkSocket(Protocol.ROUTE)
 
 // TODO
 ~~~
