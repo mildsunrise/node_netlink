@@ -5277,11 +5277,13 @@ const types: TypeStore = {
         'for %NL80211_CMD_CONNECT. It specifies the required BSS selection behaviour',
         'which the driver shall use.',
     ], attrs: [
+        // IMPORTANT: BssSelect can also appear in GET_WIPHY, in this case
+        //            all of this attributes are flags
         ['rssi', flag, { orig: 'NL80211_BSS_SELECT_ATTR_RSSI', docs: [
             'Flag indicating only RSSI-based BSS selection',
             'is requested.',
         ] }],
-        ['bandPref', u32, { type: 'BandId', orig: 'NL80211_BSS_SELECT_ATTR_BAND_PREF', docs: [
+        ['bandPref', data, { type: 'BandId', orig: 'NL80211_BSS_SELECT_ATTR_BAND_PREF', docs: [
             'attribute indicating BSS',
             'selection should be done such that the specified band is preferred.',
             'When there are multiple BSS-es in the preferred band, the driver',
