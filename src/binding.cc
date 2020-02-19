@@ -34,7 +34,7 @@ class SendRequest : public Nan::AsyncResource {
     struct msghdr msg {};
     struct sockaddr_nl addr {};
     std::unique_ptr<struct iovec[]> buffers;
-    Nan::Persistent<v8::Value> data; // Not really used, just to keep the buffers memory alive
+    Nan::Global<v8::Value> data; // Not really used, just to keep the buffers memory alive
     Nan::Callback callback;
     int status;
 };
