@@ -275,7 +275,7 @@ export function formatAttribute(x: NetlinkAttribute_): Uint8Array[] {
     const data = ensureArray(x.data)
     const header = Buffer.alloc(4)
     let length = header.length + countLength(x.data)
-    if (length <= 0x10000)
+    if (length >= 0x10000)
         throw Error('Maximum attribute length exceeded')
 
     const type = (x.type & ((1 << 14) - 1)) | (Number(!!x.nested) << 15) | (Number(!!x.no) << 14)
