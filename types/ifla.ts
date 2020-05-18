@@ -688,7 +688,7 @@ const types: TypeStore = {
     ]},
 
     VirtualFunction: { docs: [
-        '* SR-IOV virtual function management section',
+        'SR-IOV virtual function management section',
     ], attrs: [
         ['mac', data, { orig: 'IFLA_VF_MAC', docs: [
             'Hardware queue specific attributes',
@@ -1407,10 +1407,10 @@ const types: TypeStore = {
 
     CanBittiming: { kind: 'struct', orig: 'can_bittiming', docs: [
         'CAN bit-timing parameters',
-        ' *',
-        ' * For further information, please read chapter "8 BIT TIMING',
-        ' * REQUIREMENTS" of the "Bosch CAN Specification version 2.0"',
-        ' * at http://www.semiconductors.bosch.de/pdf/can2spec.pdf.',
+        '',
+        'For further information, please read chapter "8 BIT TIMING',
+        'REQUIREMENTS" of the "Bosch CAN Specification version 2.0"',
+        'at http://www.semiconductors.bosch.de/pdf/can2spec.pdf.',
     ], attrs: [
         ['bitrate', u32, { orig: 'bitrate', docs: [
             'Bit-rate in bits/second',
@@ -1440,8 +1440,8 @@ const types: TypeStore = {
 
     CanBittimingConst: { kind: 'struct', orig: 'can_bittiming_const', docs: [
         'CAN hardware-dependent bit-timing constant',
-        ' *',
-        ' * Used for calculating and checking bit-timing parameters',
+        '',
+        'Used for calculating and checking bit-timing parameters',
     ], attrs: [
         ['name', u8, { count: 16, orig: 'name', docs: [
             'Name of the CAN controller hardware',

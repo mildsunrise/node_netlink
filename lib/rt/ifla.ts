@@ -1993,7 +1993,7 @@ export function formatVirtualFunctionList(x: VirtualFunctionList): StreamData {
     })
 }
 
-/** * SR-IOV virtual function management section */
+/** SR-IOV virtual function management section */
 export interface VirtualFunction extends BaseObject {
     /** Hardware queue specific attributes */
     mac?: Buffer
@@ -4327,10 +4327,10 @@ export function formatTunnel(x: Tunnel): number {
 
 /**
  * CAN bit-timing parameters
- *  *
- *  * For further information, please read chapter "8 BIT TIMING
- *  * REQUIREMENTS" of the "Bosch CAN Specification version 2.0"
- *  * at http://www.semiconductors.bosch.de/pdf/can2spec.pdf.
+ *
+ * For further information, please read chapter "8 BIT TIMING
+ * REQUIREMENTS" of the "Bosch CAN Specification version 2.0"
+ * at http://www.semiconductors.bosch.de/pdf/can2spec.pdf.
  */
 export interface CanBittiming {
     /** Bit-rate in bits/second */
@@ -4391,8 +4391,8 @@ export const __LENGTH_CanBittiming = 32
 
 /**
  * CAN hardware-dependent bit-timing constant
- *  *
- *  * Used for calculating and checking bit-timing parameters
+ *
+ * Used for calculating and checking bit-timing parameters
  */
 export interface CanBittimingConst {
     /** Name of the CAN controller hardware */
