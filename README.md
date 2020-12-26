@@ -1,15 +1,17 @@
 # netlink
 
-This provides a Node.JS interface to Netlink, a websockets-like
-communication protocol available on Linux. Netlink is usually used
-to perform administrative operations (manage firewall, network, etc.)
-and listen for related notifications from the kernel, but also serves
-as a generic IPC mechanism.
+Node.js interface to Netlink, a Linux-specific socket
+protocol. Many management kernel APIs (firewall, network, etc.)
+are accessed through Netlink; as well as listening for related
+notifications from the kernel, but it also serves as a generic
+IPC mechanism.
 
 It also implements the Generic Netlink protocol.
 
 **Note:** This is early stage; API compatibility is not maintained.
 If you are going to use this, pin to a specific version.
+
+**[💡 Examples](#examples)** &nbsp;•&nbsp; **[📚 API reference](https://netlink.alba.sh/docs/)**
 
 
 ## System APIs
@@ -20,9 +22,9 @@ APIs are implemented:
  - `rtnetlink`: manages network configuration (routes, addresses, links,
    neighbors, traffic control, etc.)
 
- - `nl80211`: 802.11 aka wifi interface (`iw`, `hostapd`, `wpa_supplicant`, etc.)
+ - `nl80211`: 802.11 aka wifi interface (used by `iw`, `hostapd`, `wpa_supplicant`, etc.)
 
-The point is to wrap these interface in a high-level way, complete
+The point is to wrap these interfaces in a high-level way, complete
 with TypeScript typings. However some fields will be set to
 `Buffer` (i.e. unparsed) because its type is not yet known. You can
 help by [improving the type definitions](./types).
@@ -30,13 +32,29 @@ help by [improving the type definitions](./types).
 
 ## Usage
 
-Make sure that compiler and associated tools are installed, and then
-install the module, i.e.:
+There's prebuilds for x86, x64, arm32v7 and arm64v8, so you don't need anything in those cases.
+
+For other archs, you only need a compiler:
 
 ~~~ bash
 sudo apt install build-essential
+~~~
+
+Then, install this module:
+
+~~~ bash
 npm install netlink
 ~~~
+
+Netlink APIs are backwards-compatible, but the running kernel may
+have an older version of the APIs implemented. Thus, not all
+attributes, fields and commands listed in the typings are necessarily
+supported. For input, unknown attributes will be collected
+at the `__unparsed` field. For output, attempting to use
+unimplemented features will generally result in `EINVAL`.
+
+
+## Examples
 
 ### Sending messages over a Netlink socket
 
