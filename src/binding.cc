@@ -10,6 +10,10 @@
 #include <napi.h>
 #include <uv.h>
 
+#ifndef SOL_NETLINK
+#define SOL_NETLINK	270
+#endif
+
 using Napi::CallbackInfo;
 
 Napi::Error ErrnoException(Napi::Env env, int errnum, const char* syscall, std::string message) {
