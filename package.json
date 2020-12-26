@@ -20,6 +20,7 @@
     "url": "https://github.com/mildsunrise/node_netlink.git"
   },
   "scripts": {
+    "install": "node-gyp-build",
     "clean": "node-gyp clean; rm -rf dist",
     "configure": "node-gyp configure",
     "codegen": "scripts/generate_code.sh",
@@ -32,6 +33,7 @@
   },
   "files": [
     "dist",
+    "prebuilds",
     "src",
     "binding.gyp"
   ],
@@ -65,7 +67,8 @@
   },
   "dependencies": {
     "@types/node": "^12.0.0",
-    "node-addon-api": "*"
+    "node-addon-api": "*",
+    "node-gyp-build": "^4.2.3"
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",

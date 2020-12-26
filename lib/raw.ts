@@ -10,7 +10,7 @@ import { EventEmitter } from 'events'
 import { constants } from 'os'
 
 // Load the native binding
-const binding = require('../build/Release/netlink_binding.node')
+const binding = require('node-gyp-build')(__dirname + '/..')
 type NativeNetlink = any
 
 // Leave first 32 ports preferably for libnl-1
