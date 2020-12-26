@@ -4,25 +4,134 @@
 #include <errno.h>
 #include <queue>
 #include <memory>
+#include <sstream>
+#include <assert.h>
 
-#if defined(__GNUC__) && __GNUC__ >= 8
-#define DISABLE_WCAST_FUNCTION_TYPE _Pragma("GCC diagnostic push") _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
-#define DISABLE_WCAST_FUNCTION_TYPE_END _Pragma("GCC diagnostic pop")
-#else
-#define DISABLE_WCAST_FUNCTION_TYPE
-#define DISABLE_WCAST_FUNCTION_TYPE_END
-#endif
-
-DISABLE_WCAST_FUNCTION_TYPE
-#include <nan.h>
-DISABLE_WCAST_FUNCTION_TYPE_END
+#include <napi.h>
 #include <uv.h>
 
-class SendRequest : public Nan::AsyncResource {
+using Napi::CallbackInfo;
+
+Napi::Error ErrnoException(Napi::Env env, int errnum, const char* syscall, std::string message) {
+    char tmpbuf [128];
+    char* errcode = uv_err_name_r(-errnum, tmpbuf, sizeof(tmpbuf));
+    char tmpbuf2 [128];
+    char* errmsg = uv_strerror_r(-errnum, tmpbuf2, sizeof(tmpbuf2));
+
+    std::ostringstream msg;
+    msg << message << ": " << errmsg;
+    auto error = Napi::Error::New(env, msg.str());
+    error.Set("errno", Napi::Number::New(env, errnum));
+    error.Set("code", Napi::String::New(env, errcode));
+    error.Set("syscall", Napi::String::New(env, syscall));
+    return error;
+}
+
+Napi::Error ErrnoException(Napi::Env env, int errnum, const char* syscall) {
+    std::ostringstream msg;
+    msg << syscall << " failed";
+    return ErrnoException(env, errnum, syscall, msg.str());
+}
+
+
+template <class T> class UvHandle {
   public:
-    SendRequest(int port, int groups, v8::Local<v8::Value> data, v8::Local<v8::Function>& callback,
+    ~UvHandle() {
+        if (init) uv_close((uv_handle_t*) &handle, NULL);
+    }
+    inline bool isActive() {
+        return uv_is_active((uv_handle_t*) &handle);
+    }
+    inline void ref() {
+        uv_ref((uv_handle_t*) &handle);
+    }
+    inline void unref() {
+        uv_unref((uv_handle_t*) &handle);
+    }
+    inline void setData(void* data) {
+        handle.data = data;
+    }
+    UvHandle(const UvHandle&) = delete;
+    UvHandle& operator=(const UvHandle&) = delete;
+  protected:
+    UvHandle(): init(false) {};
+    bool init;
+    T handle;
+};
+
+class UvTimer : public UvHandle<uv_timer_t> {
+  public:
+    UvTimer(Napi::Env env, uv_loop_t* loop) {
+        if (auto err = uv_timer_init(loop, &handle))
+            throw ErrnoException(env, -err, "uv_timer_init");
+        init = true;
+    }
+    void start(Napi::Env env, uv_timer_cb cb, uint64_t timeout, uint64_t repeat) {
+        if (auto err = uv_timer_start(&handle, cb, timeout, repeat))
+            throw ErrnoException(env, -err, "uv_timer_start");
+    }
+};
+
+class UvPoll : public UvHandle<uv_poll_t> {
+  public:
+    UvPoll(Napi::Env env, uv_loop_t* loop, int fd) {
+        if (auto err = uv_poll_init(loop, &handle, fd))
+            throw ErrnoException(env, -err, "uv_poll_init");
+        init = true;
+    }
+    void start(Napi::Env env, int events, uv_poll_cb cb) {
+        if (auto err = uv_poll_start(&handle, events, cb))
+            throw ErrnoException(env, -err, "uv_poll_start");
+    }
+};
+
+class FileDescriptor {
+  public:
+    FileDescriptor(int fd): fd(fd) {}
+    FileDescriptor(): fd(-1) {}
+    ~FileDescriptor() {
+        reset();
+    }
+    void reset() {
+        if (fd != -1) {
+            close(fd);
+            fd = -1;
+        }
+    }
+    inline operator int() {
+        return fd;
+    }
+    inline FileDescriptor& operator=(int fd) {
+        reset();
+        this->fd = fd;
+        return *this;
+    }
+    FileDescriptor(const FileDescriptor&) = delete;
+    FileDescriptor& operator=(const FileDescriptor&) = delete;
+  private:
+    int fd;
+};
+
+
+Napi::Object nlsockaddrToObject(Napi::Env env, const struct sockaddr_nl& addr, size_t len) {
+    assert(addr.nl_family == AF_NETLINK && len == sizeof(addr));
+    auto res = Napi::Object::New(env);
+    res["port"] = Napi::Number::New(env, addr.nl_pid);
+    res["groups"] = Napi::Number::New(env, addr.nl_groups);
+    return res;
+}
+
+void deleteFinalizer(Napi::Env env, char* obj) {
+    delete[] obj;
+}
+
+class SendRequest : public Napi::AsyncContext {
+  public:
+    SendRequest(Napi::Env env, Napi::Object& res, int port, int groups, Napi::Value& data, Napi::Function& callback,
                 std::unique_ptr<struct iovec[]> buffers_, size_t nbufs):
-            Nan::AsyncResource("netlink::NativeNetlinkSend"), buffers(std::move(buffers_)), data(data), callback(callback) {
+            Napi::AsyncContext(env, "netlink::NativeNetlinkSend", res),
+            data(Napi::Persistent(data)), callback(Napi::Persistent(callback)),
+            buffers(std::move(buffers_)) {
         addr.nl_family = AF_NETLINK;
         addr.nl_pid = port;
         addr.nl_groups = groups;
@@ -31,188 +140,156 @@ class SendRequest : public Nan::AsyncResource {
         msg.msg_iovlen = nbufs;
         msg.msg_iov = buffers.get();
     }
+    Napi::Reference<Napi::Value> data; // Not really used, just to keep the buffers memory alive
+    Napi::FunctionReference callback;
+    std::unique_ptr<struct iovec[]> buffers;
     struct msghdr msg {};
     struct sockaddr_nl addr {};
-    std::unique_ptr<struct iovec[]> buffers;
-    Nan::Global<v8::Value> data; // Not really used, just to keep the buffers memory alive
-    Nan::Callback callback;
     int status;
 };
 
 // FIXME: do we need to try/catch when calling callbacks?
-// FIXME: handle allocation errors [better]
 
-class Socket : public Nan::ObjectWrap {
+class Socket : public Napi::ObjectWrap<Socket> {
   public:
-    static NAN_MODULE_INIT(Init) {
-        v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
-        tpl->SetClassName(Nan::New("NativeNetlink").ToLocalChecked());
-        tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    static Napi::Object Init(Napi::Env env, Napi::Object exports) {
+        Napi::Function func = DefineClass(env, "NativeNetlink", {
+            InstanceMethod<&Socket::Bind>("bind"),
+            InstanceMethod<&Socket::Send>("send"),
+            InstanceMethod<&Socket::Close>("close"),
+            InstanceMethod<&Socket::Ref_>("ref"),
+            InstanceMethod<&Socket::Unref_>("unref"),
+            InstanceMethod<&Socket::Address>("address"),
+            InstanceMethod<&Socket::AddMembership>("addMembership"),
+            InstanceMethod<&Socket::DropMembership>("dropMembership"),
+            InstanceMethod<&Socket::GetRecvBufferSize>("getRecvBufferSize"),
+            InstanceMethod<&Socket::SetRecvBufferSize>("setRecvBufferSize"),
+            InstanceMethod<&Socket::GetSendBufferSize>("getSendBufferSize"),
+            InstanceMethod<&Socket::SetSendBufferSize>("setSendBufferSize"),
+        });
 
-        Nan::SetPrototypeMethod(tpl, "bind", Bind);
-        Nan::SetPrototypeMethod(tpl, "send", Send);
-        Nan::SetPrototypeMethod(tpl, "close", Close);
-        Nan::SetPrototypeMethod(tpl, "ref", Ref_);
-        Nan::SetPrototypeMethod(tpl, "unref", Unref_);
-        Nan::SetPrototypeMethod(tpl, "address", Address);
-        Nan::SetPrototypeMethod(tpl, "addMembership", AddMembership);
-        Nan::SetPrototypeMethod(tpl, "dropMembership", DropMembership);
-        Nan::SetPrototypeMethod(tpl, "getRecvBufferSize", GetRecvBufferSize);
-        Nan::SetPrototypeMethod(tpl, "setRecvBufferSize", SetRecvBufferSize);
-        Nan::SetPrototypeMethod(tpl, "getSendBufferSize", GetSendBufferSize);
-        Nan::SetPrototypeMethod(tpl, "setSendBufferSize", SetSendBufferSize);
+        Napi::FunctionReference* constructor = new Napi::FunctionReference();
+        *constructor = Napi::Persistent(func);
+        exports.Set("NativeNetlink", func);
 
-        constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
-        Nan::Set(target, Nan::New("NativeNetlink").ToLocalChecked(), Nan::GetFunction(tpl).ToLocalChecked());
-    }
+        env.SetInstanceData<Napi::FunctionReference>(constructor);
 
-  private:
-    explicit Socket(
-        int fd,
-        size_t msg_buffer,
-        v8::Local<v8::Function>& read_callback,
-        v8::Local<v8::Function>& error_callback
-    ): fd(fd), msg_buffer(msg_buffer), read_callback(read_callback), error_callback(error_callback) {}
-    ~Socket() {
-        DoClose();
-    }
-    void DoClose() {
-        if (fd == -1) return;
-        uv_close((uv_handle_t*) &timer, NULL);
-        // watcher has to be closed before its fd
-        // closing should stop & unref it
-        uv_close((uv_handle_t*) &watcher, NULL);
-        close(fd);
-        fd = -1;
-        async_res.reset();
-    }
-    inline bool CheckOpen() {
-        if (fd != -1) return false;
-        Nan::ThrowError("Netlink socket is closed");
-        return true;
-    }
-    inline void Feed() {
-        if (!uv_is_active((uv_handle_t*) &timer))
-            uv_timer_start(&timer, TimerHandler, 0, 0); // FIXME: check
+        return exports;
     }
 
-    static NAN_METHOD(New) {
-        if (!info.IsConstructCall()) return;
-        int protocol = Nan::To<int>(info[0]).FromJust();
-        size_t msg_buffer = Nan::To<unsigned int>(info[1]).FromJust();
-        v8::Local<v8::Function> read_callback = info[2].As<v8::Function>();
-        v8::Local<v8::Function> error_callback = info[3].As<v8::Function>();
+    Socket(const CallbackInfo& info): Napi::ObjectWrap<Socket>(info) {
+        Napi::Env env = info.Env();
+        uv_loop_t* loop = nullptr;
+        NAPI_THROW_IF_FAILED_VOID(env, napi_get_uv_event_loop(env, &loop));
+
+        int protocol = Napi::Number(env, info[0]);
+        msg_buffer = (unsigned int) Napi::Number(env, info[1]);
+        read_callback = Napi::Persistent(Napi::Function(env, info[2]));
+        error_callback = Napi::Persistent(Napi::Function(env, info[3]));
 
         // Create the socket
         int flags = 0;
 #ifdef SOCK_CLOEXEC
 	    flags |= SOCK_CLOEXEC;
 #endif
-        int fd = socket(AF_NETLINK, SOCK_RAW | flags, protocol);
-        if (fd == -1) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "socket", "Couldn't create netlink socket"));
-            return;
-        }
+        fd = socket(AF_NETLINK, SOCK_RAW | flags, protocol);
+        if (fd == -1)
+            throw ErrnoException(env, errno, "socket", "Couldn't create netlink socket");
 
-        // Initialize wrapper & watcher
-        Socket *obj = new Socket(fd, msg_buffer, read_callback, error_callback);
-        int err = uv_poll_init(Nan::GetCurrentEventLoop(), &obj->watcher, obj->fd);
-        if (err != 0) {
-            delete obj;
-            Nan::ThrowError(Nan::ErrnoException(-err, "uv_poll_init", "Couldn't initialize uv_poll"));
-            return;
-        }
-        obj->watcher.data = obj;
-        err = uv_poll_start(&obj->watcher, UV_READABLE, PollHandler);
-        if (err != 0) {
-            delete obj;
-            Nan::ThrowError(Nan::ErrnoException(-err, "uv_poll_start", "Couldn't start uv_poll"));
-            return;
-        }
+        watcher = std::make_unique<UvPoll>(env, loop, fd);
+        watcher->setData(this);
 
-        err = uv_timer_init(Nan::GetCurrentEventLoop(), &obj->timer);
-        if (err != 0) {
-            delete obj;
-            Nan::ThrowError(Nan::ErrnoException(-err, "uv_timer_init", "Couldn't initialize uv_timer"));
-            return;
-        }
-        obj->timer.data = obj;
+        timer = std::make_unique<UvTimer>(env, loop);
+        timer->setData(this);
 
-        obj->async_res = std::make_unique<Nan::AsyncResource>("netlink:NativeNetlink", info.This());
-        obj->Wrap(info.This());
-        info.GetReturnValue().Set(info.This());
+        async_res = std::make_unique<Napi::AsyncContext>(env, "netlink:NativeNetlink", Value());
+
+        open = true;
     }
 
-    static NAN_METHOD(Bind) {
-        unsigned int port = Nan::To<unsigned int>(info[0]).FromJust();
-        unsigned int groups = Nan::To<unsigned int>(info[1]).FromJust();
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
+  private:
+    void DoClose() {
+        open = false;
+
+        timer.reset();
+        // watcher has to be closed before its fd
+        // closing should stop & unref it
+        watcher.reset();
+        fd.reset();
+        async_res.reset();
+
+        std::queue<std::unique_ptr<SendRequest>>().swap(write_queue);
+        std::queue<std::unique_ptr<SendRequest>>().swap(completed_queue);
+    }
+    inline void CheckOpen(Napi::Env env) {
+        if (!open)
+            throw Napi::Error::New(env, "Netlink socket is closed");
+    }
+    inline void Feed() {
+        if (!timer->isActive())
+            timer->start(Env(), TimerHandler, 0, 0);
+    }
+
+    void Bind(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        unsigned int port = Napi::Number(env, info[0]);
+        unsigned int groups = Napi::Number(env, info[1]);
+        CheckOpen(env);
 
         struct sockaddr_nl addr {};
         addr.nl_family = AF_NETLINK;
         addr.nl_pid = port;
         addr.nl_groups = groups;
-        int err = bind(obj->fd, (sockaddr*) &addr, sizeof(addr));
-        if (err) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "bind", "Couldn't bind netlink socket"));
-            return;
-        }
-        uv_ref((uv_handle_t*) &obj->watcher);
+        if (bind(fd, (sockaddr*) &addr, sizeof(addr)))
+            throw ErrnoException(env, errno, "bind", "Couldn't bind netlink socket");
+        watcher->ref();
     }
 
-    static NAN_METHOD(Send) {
-        unsigned int port = Nan::To<unsigned int>(info[0]).FromJust();
-        unsigned int groups = Nan::To<unsigned int>(info[1]).FromJust();
-        v8::Local<v8::Value> data = info[2];
-        v8::Local<v8::Function> callback = info[3].As<v8::Function>();
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
-        bool empty_queue = obj->write_queue.empty() && obj->completed_queue.empty();
+    void Send(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        unsigned int port = Napi::Number(env, info[0]);
+        unsigned int groups = Napi::Number(env, info[1]);
+        auto data = info[2];
+        auto callback = Napi::Function(env, info[3]);
+        CheckOpen(env);
 
         size_t nbufs;
         std::unique_ptr<struct iovec[]> buffers;
-        if (node::Buffer::HasInstance(data)) {
+        if (data.IsBuffer()) {
+            auto item = Napi::Buffer<char>(env, data);
             buffers = std::make_unique<struct iovec[]>(nbufs = 1);
-            buffers[0].iov_base = node::Buffer::Data(data);
-            buffers[0].iov_len = node::Buffer::Length(data);
-        } else if (data->IsArray()) {
-            v8::Local<v8::Array> array = data.As<v8::Array>();
-            nbufs = array->Length();
+            buffers[0].iov_base = item.Data();
+            buffers[0].iov_len = item.Length();
+        } else if (data.IsArray()) {
+            auto array = Napi::Array(env, data);
+            nbufs = array.Length();
             buffers = std::make_unique<struct iovec[]>(nbufs);
             for (size_t i = 0; i < nbufs; i++) {
-                v8::Local<v8::Value> item;
-                if (!Nan::Get(array, i).ToLocal(&item) || !node::Buffer::HasInstance(item)) {
-                    Nan::ThrowTypeError("Items must be buffer");
-                    return;
-                }
-                buffers[i].iov_base = node::Buffer::Data(item);
-                buffers[i].iov_len = node::Buffer::Length(item);
+                auto item = Napi::Buffer<char>(env, Napi::Value(array[i]));
+                buffers[i].iov_base = item.Data();
+                buffers[i].iov_len = item.Length();
             }
         } else {
-            Nan::ThrowTypeError("Invalid data -- must be Buffer or Array of Buffers");
-            return;
+            throw Napi::TypeError::New(env, "Invalid data -- must be Buffer or Array of Buffers");
         }
 
-        SendRequest* req = new SendRequest(port, groups, data, callback, std::move(buffers), nbufs);
-        obj->write_queue.push(req);
+        bool empty_queue = write_queue.empty() && completed_queue.empty();
+        Napi::Object res = Value();
+        write_queue.push(std::make_unique<SendRequest>(
+            env, res, port, groups, data, callback, std::move(buffers), nbufs));
 
-        if (empty_queue && !obj->processing) {
-            obj->Sendmsg();
-            if (obj->write_queue.empty())
+        if (empty_queue && !processing) {
+            Sendmsg();
+            if (write_queue.empty())
                 return;
         }
 
-        int err = uv_poll_start(&obj->watcher, UV_READABLE | UV_WRITABLE, PollHandler);
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "uv_poll_start"));
-            return;
-        }
+        watcher->start(env, UV_READABLE | UV_WRITABLE, PollHandler);
     }
 
     static void TimerHandler(uv_timer_t* handle) {
-        Nan::HandleScope scope;
         Socket* obj = static_cast<Socket*>(handle->data);
+        Napi::HandleScope scope (obj->Env());
         assert(obj->async_res);
         obj->Sendmsg();
         obj->RunCompleted();
@@ -220,17 +297,17 @@ class Socket : public Nan::ObjectWrap {
     }
 
     static void PollHandler(uv_poll_t* handle, int status, int events) {
-        Nan::HandleScope scope;
         Socket* obj = static_cast<Socket*>(handle->data);
+        Napi::HandleScope scope (obj->Env());
         assert(obj->async_res);
 
         if (status != 0) {
+            auto error = ErrnoException(obj->Env(), -status, NULL, "error when polling socket");
+            obj->error_callback.MakeCallback(obj->Value(), { error.Value() }, *obj->async_res);
             obj->DoClose();
-            v8::Local<v8::Value> error = Nan::ErrnoException(-status, NULL, "error when polling socket");
-            obj->error_callback(obj->async_res.get(), 1, &error);
             return;
         }
-        
+
         if (events & UV_READABLE)
             obj->Recvmsg();
 
@@ -246,6 +323,7 @@ class Socket : public Nan::ObjectWrap {
         int count = 32;
 
         while (count-- > 0) {
+            std::unique_ptr<char[]> data;
             struct sockaddr_nl addr {};
             struct iovec iov {};
             struct msghdr hdr {};
@@ -272,7 +350,8 @@ class Socket : public Nan::ObjectWrap {
 
             // allocate buffer, perform actual read
             if (size >= 0) {
-                iov.iov_base = malloc(iov.iov_len);
+                data = std::make_unique<char[]>(iov.iov_len);
+                iov.iov_base = data.get();
                 if (iov.iov_len > 0 && iov.iov_base == NULL) break;
 
                 do {
@@ -280,44 +359,28 @@ class Socket : public Nan::ObjectWrap {
                 } while (size == -1 && errno == EINTR);
             }
 
-            // shrink allocated buffer if message is smaller
-            if (size >= 0 && size < iov.iov_len) {
-                iov.iov_base = realloc(iov.iov_base, size);
-                iov.iov_len = size;
-                if (size > 0 && iov.iov_base == NULL) break;
-            }
-
             // break on error (calling error_callback if needed)
             if (size == -1) {
-                free(iov.iov_base);
                 if (!(errno == EAGAIN || errno == EWOULDBLOCK)) {
-                    Nan::HandleScope scope;
-                    v8::Local<v8::Value> error = Nan::ErrnoException(errno, "recvmsg", "Error when receiving Netlink message");
-                    error_callback(async_res.get(), 1, &error);
+                    Napi::Env env = Env();
+                    Napi::HandleScope scope (env);
+                    auto error = ErrnoException(env, errno, "recvmsg", "Error when receiving Netlink message");
+                    error_callback.MakeCallback(Value(), { error.Value() }, *async_res);
                 }
                 break;
             }
 
-            // wrap result into Buffer, call read_callback
-            Nan::HandleScope scope;
+            Napi::Env env = Env();
+            Napi::HandleScope scope (env);
 
-            v8::Local<v8::Value> buf;
-            if (!Nan::NewBuffer((char*) iov.iov_base, iov.iov_len).ToLocal(&buf)) {
-                free(iov.iov_base);
-                v8::Local<v8::Value> error = Nan::Error("Couldn't wrap buffer");
-                error_callback(async_res.get(), 1, &error);
-                return;
-            }
+            // wrap result into Buffer (transferring ownership), call read_callback
+            auto buf = Napi::Buffer<char>::New(env, data.release(), std::min((size_t)size, iov.iov_len), deleteFinalizer);
 
-            assert(addr.nl_family == AF_NETLINK && hdr.msg_namelen == sizeof(addr));
-            v8::Local<v8::Object> rinfo = Nan::New<v8::Object>();
-            Nan::Set(rinfo, Nan::New("port").ToLocalChecked(), Nan::New(addr.nl_pid));
-            Nan::Set(rinfo, Nan::New("groups").ToLocalChecked(), Nan::New(addr.nl_groups));
+            auto rinfo = nlsockaddrToObject(env, addr, hdr.msg_namelen);
             if (hdr.msg_flags & MSG_TRUNC)
-                Nan::Set(rinfo, Nan::New("truncated").ToLocalChecked(), Nan::New(size));
-            
-            v8::Local<v8::Value> argv [] = { buf, rinfo };
-            read_callback(async_res.get(), 2, argv);
+                rinfo["truncated"] = Napi::Number::New(env, size);
+
+            read_callback.MakeCallback(Value(), { buf, rinfo }, *async_res);
 
             // callback may decide to close the socket
             if (fd == -1) break;
@@ -326,7 +389,7 @@ class Socket : public Nan::ObjectWrap {
 
     void Sendmsg() {
         while (!write_queue.empty()) {
-            SendRequest* req = write_queue.front();
+            SendRequest* req = write_queue.front().get();
 
             int size;
             do {
@@ -339,165 +402,131 @@ class Socket : public Nan::ObjectWrap {
             }
 
             req->status = (size == -1 ? -errno : size);
+            completed_queue.push(std::move(write_queue.front()));
             write_queue.pop();
-            completed_queue.push(req);
             Feed();
         }
     }
 
     void RunCompleted() {
-        Nan::HandleScope scope;
+        Napi::HandleScope scope (Env());
         assert(!processing);
         processing = true;
 
         while (!completed_queue.empty()) {
-            std::unique_ptr<SendRequest> req (completed_queue.front());
+            std::unique_ptr<SendRequest> req = std::move(completed_queue.front());
             completed_queue.pop();
-            v8::Local<v8::Value> error = (req->status >= 0) ? Nan::Undefined().As<v8::Value>() :
-                Nan::ErrnoException(-req->status, "sendmsg", "Error when sending Netlink message");
-            req->callback(req.get(), 1, &error);
+            Napi::Value error = (req->status >= 0) ? Env().Undefined() :
+                ErrnoException(Env(), -req->status, "sendmsg", "Error when sending Netlink message").Value();
+            req->callback.MakeCallback(Value(), { error }, *req);
         }
 
-        if (write_queue.empty()) {
+        if (write_queue.empty())
             // Pending queue and completion queue empty, stop watching for write
-            int err = uv_poll_start(&watcher, UV_READABLE, PollHandler);
-            if (err != 0) {
-                v8::Local<v8::Value> error = Nan::ErrnoException(-err, "uv_poll_start");
-                error_callback(async_res.get(), 1, &error);
-            }
-        }
+            watcher->start(Env(), UV_READABLE, PollHandler);
+            // XXX: catch exceptions in PollHandler / TimerHandler, call error
 
         processing = false;
     }
 
-    static NAN_METHOD(Close) {
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
-        obj->DoClose();
+    void Close(const CallbackInfo& info) {
+        DoClose();
     }
 
-    static NAN_METHOD(Ref_) {
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
-        uv_ref((uv_handle_t*) &obj->watcher);
+    void Ref_(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        CheckOpen(env);
+        watcher->ref();
     }
 
-    static NAN_METHOD(Unref_) {
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
-        uv_unref((uv_handle_t*) &obj->watcher);
+    void Unref_(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        CheckOpen(env);
+        watcher->unref();
     }
 
-    static NAN_METHOD(Address) {
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
+    Napi::Value Address(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        CheckOpen(env);
         sockaddr_nl addr;
         unsigned int len = sizeof(addr);
-        int err = getsockname(obj->fd, (sockaddr*) &addr, &len);
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "getsockname"));
-            return;
-        }
-        assert(addr.nl_family == AF_NETLINK && len == sizeof(addr));
-        v8::Local<v8::Object> res = Nan::New<v8::Object>();
-        Nan::Set(res, Nan::New("port").ToLocalChecked(), Nan::New(addr.nl_pid));
-        Nan::Set(res, Nan::New("groups").ToLocalChecked(), Nan::New(addr.nl_groups));
-        info.GetReturnValue().Set(res);
+        if (getsockname(fd, (sockaddr*) &addr, &len))
+            throw ErrnoException(env, errno, "getsockname");
+        return nlsockaddrToObject(env, addr, len);
     }
 
-    static NAN_METHOD(AddMembership) {
-        unsigned int group = Nan::To<unsigned int>(info[0]).FromJust();
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
-        int err = setsockopt(obj->fd, SOL_NETLINK, NETLINK_ADD_MEMBERSHIP, &group, sizeof(group));
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "setsockopt", "Couldn't add membership"));
-            return;
-        }
+    void AddMembership(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        unsigned int group = Napi::Number(env, info[0]);
+        CheckOpen(env);
+        if (setsockopt(fd, SOL_NETLINK, NETLINK_ADD_MEMBERSHIP, &group, sizeof(group)))
+            throw ErrnoException(env, errno, "setsockopt", "Couldn't add membership");
     }
 
-    static NAN_METHOD(DropMembership) {
-        unsigned int group = Nan::To<unsigned int>(info[0]).FromJust();
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
-        int err = setsockopt(obj->fd, SOL_NETLINK, NETLINK_DROP_MEMBERSHIP, &group, sizeof(group));
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "setsockopt", "Couldn't drop membership"));
-            return;
-        }
+    void DropMembership(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        unsigned int group = Napi::Number(env, info[0]);
+        CheckOpen(env);
+        if (setsockopt(fd, SOL_NETLINK, NETLINK_DROP_MEMBERSHIP, &group, sizeof(group)))
+            throw ErrnoException(env, errno, "setsockopt", "Couldn't drop membership");
     }
 
-    static NAN_METHOD(SetRecvBufferSize) {
-        int size = Nan::To<int>(info[0]).FromJust();
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
+    void SetRecvBufferSize(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        int size = Napi::Number(env, info[0]);
+        CheckOpen(env);
         if (size <= 0) size = 32768;
-        int err = setsockopt(obj->fd, SOL_SOCKET, SO_RCVBUF, &size, sizeof(size));
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "setsockopt", "Couldn't set receive buffer size"));
-            return;
-        }
+        if (setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &size, sizeof(size)))
+            throw ErrnoException(env, errno, "setsockopt", "Couldn't set receive buffer size");
     }
 
-    static NAN_METHOD(GetRecvBufferSize) {
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
+    Napi::Value GetRecvBufferSize(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        CheckOpen(env);
         int size;
         socklen_t len = sizeof(size);
-        int err = getsockopt(obj->fd, SOL_SOCKET, SO_RCVBUF, &size, &len);
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "getsockopt", "Couldn't get receive buffer size"));
-            return;
-        }
+        if (getsockopt(fd, SOL_SOCKET, SO_RCVBUF, &size, &len))
+            throw ErrnoException(env, errno, "getsockopt", "Couldn't get receive buffer size");
         assert(len == sizeof(size));
-        info.GetReturnValue().Set(Nan::New(size));
+        return Napi::Number::New(env, size);
     }
 
-    static NAN_METHOD(SetSendBufferSize) {
-        int size = Nan::To<int>(info[0]).FromJust();
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
+    void SetSendBufferSize(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        int size = Napi::Number(env, info[0]);
+        CheckOpen(env);
         if (size <= 0) size = 32768;
-        int err = setsockopt(obj->fd, SOL_SOCKET, SO_SNDBUF, &size, sizeof(size));
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "setsockopt", "Couldn't set send buffer size"));
-            return;
-        }
+        if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &size, sizeof(size)))
+            throw ErrnoException(env, errno, "setsockopt", "Couldn't set send buffer size");
     }
 
-    static NAN_METHOD(GetSendBufferSize) {
-        Socket* obj = Nan::ObjectWrap::Unwrap<Socket>(info.This());
-        if (obj->CheckOpen()) return;
+    Napi::Value GetSendBufferSize(const CallbackInfo& info) {
+        Napi::Env env = info.Env();
+        CheckOpen(env);
         int size;
         socklen_t len = sizeof(size);
-        int err = getsockopt(obj->fd, SOL_SOCKET, SO_SNDBUF, &size, &len);
-        if (err != 0) {
-            Nan::ThrowError(Nan::ErrnoException(errno, "getsockopt", "Couldn't get send buffer size"));
-            return;
-        }
+        if (getsockopt(fd, SOL_SOCKET, SO_SNDBUF, &size, &len))
+            throw ErrnoException(env, errno, "getsockopt", "Couldn't get send buffer size");
         assert(len == sizeof(size));
-        info.GetReturnValue().Set(Nan::New(size));
+        return Napi::Number::New(env, size);
     }
 
-    static Nan::Persistent<v8::Function> constructor;
-
-    int fd;
+    bool open;
     size_t msg_buffer;
-    uv_timer_t timer;
-    uv_poll_t watcher;
-    Nan::Callback read_callback;
-    Nan::Callback error_callback;
-    std::unique_ptr<Nan::AsyncResource> async_res;
-    std::queue<SendRequest*> write_queue;
-    std::queue<SendRequest*> completed_queue;
+    Napi::FunctionReference read_callback;
+    Napi::FunctionReference error_callback;
+    FileDescriptor fd;
+    std::unique_ptr<UvTimer> timer;
+    std::unique_ptr<UvPoll> watcher;
+    std::unique_ptr<Napi::AsyncContext> async_res;
+    std::queue<std::unique_ptr<SendRequest>> write_queue;
+    std::queue<std::unique_ptr<SendRequest>> completed_queue;
     bool processing = false;
 };
-Nan::Persistent<v8::Function> Socket::constructor;
 
-NAN_MODULE_INIT(Init) {
-    Socket::Init(target);
+Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    Socket::Init(env, exports);
+    return exports;
 }
 
-DISABLE_WCAST_FUNCTION_TYPE
-NODE_MODULE(netlink_binding, Init)
-DISABLE_WCAST_FUNCTION_TYPE_END
+NODE_API_MODULE(NODE_GYP_MODULE_NAME, Init)
