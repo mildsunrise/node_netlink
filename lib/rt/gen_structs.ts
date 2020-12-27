@@ -2400,10 +2400,10 @@ export interface NeighborTableParams extends BaseObject {
     ifindex?: number
     
     /** u32, read-only */
-    refcnt?: Buffer
+    refcnt?: number
     
     /** u64, read-only, msecs */
-    reachableTime?: Buffer
+    reachableTime?: bigint
     
     /** u64, msecs */
     baseReachableTime?: bigint
@@ -2435,9 +2435,9 @@ export interface NeighborTableParams extends BaseObject {
     locktime?: bigint
     
     /** u32 */
-    queueLenbytes?: Buffer
+    queueLenbytes?: number
     
-    mcastReprobes?: Buffer
+    mcastReprobes?: number
     
     pad?: Buffer
 }
@@ -2446,8 +2446,8 @@ export interface NeighborTableParams extends BaseObject {
 export function parseNeighborTableParams(r: Buffer): NeighborTableParams {
     return structs.getObject(r, {
         1: (data, obj) => obj.ifindex = structs.getU32(data),
-        2: (data, obj) => obj.refcnt = data,
-        3: (data, obj) => obj.reachableTime = data,
+        2: (data, obj) => obj.refcnt = structs.getU32(data),
+        3: (data, obj) => obj.reachableTime = structs.getU64(data),
         4: (data, obj) => obj.baseReachableTime = structs.getU64(data),
         5: (data, obj) => obj.retransTime = structs.getU64(data),
         6: (data, obj) => obj.gcStaletime = structs.getU64(data),
@@ -2460,8 +2460,8 @@ export function parseNeighborTableParams(r: Buffer): NeighborTableParams {
         13: (data, obj) => obj.proxyDelay = structs.getU64(data),
         14: (data, obj) => obj.proxyQlen = structs.getU32(data),
         15: (data, obj) => obj.locktime = structs.getU64(data),
-        16: (data, obj) => obj.queueLenbytes = data,
-        17: (data, obj) => obj.mcastReprobes = data,
+        16: (data, obj) => obj.queueLenbytes = structs.getU32(data),
+        17: (data, obj) => obj.mcastReprobes = structs.getU32(data),
         18: (data, obj) => obj.pad = data,
     })
 }
@@ -2470,8 +2470,8 @@ export function parseNeighborTableParams(r: Buffer): NeighborTableParams {
 export function formatNeighborTableParams(x: NeighborTableParams): StreamData {
     return structs.putObject(x, {
         ifindex: (data, obj) => data.push(1, structs.putU32(obj.ifindex!)),
-        refcnt: (data, obj) => data.push(2, obj.refcnt!),
-        reachableTime: (data, obj) => data.push(3, obj.reachableTime!),
+        refcnt: (data, obj) => data.push(2, structs.putU32(obj.refcnt!)),
+        reachableTime: (data, obj) => data.push(3, structs.putU64(obj.reachableTime!)),
         baseReachableTime: (data, obj) => data.push(4, structs.putU64(obj.baseReachableTime!)),
         retransTime: (data, obj) => data.push(5, structs.putU64(obj.retransTime!)),
         gcStaletime: (data, obj) => data.push(6, structs.putU64(obj.gcStaletime!)),
@@ -2484,8 +2484,8 @@ export function formatNeighborTableParams(x: NeighborTableParams): StreamData {
         proxyDelay: (data, obj) => data.push(13, structs.putU64(obj.proxyDelay!)),
         proxyQlen: (data, obj) => data.push(14, structs.putU32(obj.proxyQlen!)),
         locktime: (data, obj) => data.push(15, structs.putU64(obj.locktime!)),
-        queueLenbytes: (data, obj) => data.push(16, obj.queueLenbytes!),
-        mcastReprobes: (data, obj) => data.push(17, obj.mcastReprobes!),
+        queueLenbytes: (data, obj) => data.push(16, structs.putU32(obj.queueLenbytes!)),
+        mcastReprobes: (data, obj) => data.push(17, structs.putU32(obj.mcastReprobes!)),
         pad: (data, obj) => data.push(18, obj.pad!),
     })
 }

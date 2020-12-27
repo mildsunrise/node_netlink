@@ -244,8 +244,8 @@ export class NetlinkSocket extends EventEmitter {
     
     /**
      * This method must, if the message is multipart, separate the
-     * last DONE message from the rest (if there's no DONE message)
-     * this is considered an error.
+     * last DONE message from the rest (if there's no DONE message
+     * this is considered an error).
      * 
      * Then, if the message is a reply and its sequence number has an
      * associated (i.e. request) callback, call it.

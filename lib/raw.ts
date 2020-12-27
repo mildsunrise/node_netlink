@@ -7,6 +7,7 @@
 /** */
 
 import { EventEmitter } from 'events'
+import { constants } from 'os'
 
 // Load the native binding
 const binding = require('../build/Release/netlink_binding.node')
@@ -58,7 +59,7 @@ function tryBind(native: NativeNetlink, ...args: any[]) {
         native.bind(...args)
         return true
     } catch (e) {
-        if (e.errno && e.code === 'EADDRINUSE')
+        if (e.errno === constants.errno.EADDRINUSE)
             return false
         throw e
     }

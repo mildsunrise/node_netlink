@@ -125,11 +125,11 @@ export class Nl80211Socket extends EventEmitter {
     async getInterfaces() {
         const parts = await this.request(
             Commands.GET_INTERFACE, {}, { flags: FlagsGet.DUMP })
-        const objs: Map<number, Message> = new Map()
+        const objs: Map<bigint, Message> = new Map()
         parts.forEach(part => {
-            const key = part.ifindex
+            const key = part.wdev
             if (typeof key === 'undefined')
-                throw Error('Invalid message part -- no ifindex')
+                throw Error('Invalid message part -- no wdev')
             if (!objs.has(key))
                 return objs.set(key, part)
             const obj = objs.get(key)!
