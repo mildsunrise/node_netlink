@@ -6,7 +6,7 @@
             "include_dirs" : [
                 "<!(node -p \"require('node-addon-api').include_dir\")",
             ],
-            "ldflags": [ '-nolibc' ],
+            "ldflags": [ '-nodefaultlibs -lgcc -lgcc_s -lstdc++' ], # FIXME: should be -nolibc but that's gcc 9+
 
             # enable C++ exceptions
             'cflags!': [ '-fno-exceptions' ],
