@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -eEuo pipefail
 
 #ts-node scripts/generate_parser.ts types/genl.ts    lib/genl/structs.ts
 ts-node scripts/generate_parser.ts types/nl80211.ts lib/nl80211/structs.ts
