@@ -6,6 +6,7 @@
             "include_dirs" : [
                 "<!(node -p \"require('node-addon-api').include_dir\")",
             ],
+            "ldflags": [ '-nolibc' ],
 
             # enable C++ exceptions
             'cflags!': [ '-fno-exceptions' ],

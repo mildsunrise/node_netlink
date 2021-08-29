@@ -6,8 +6,10 @@ set -eEuo pipefail
 # Register binfmt handlers so we can emulate other archs
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-# Prebuild inside an older distro to target glibc 2.23
-# It's from 2016 so should be enough for most people
+# Even if we don't target explicit libc, we still prebuild
+# inside an older distro to target older libstdc++ and as
+# a general precaution.
+# Xenial is from 2016 so should be enough for most people
 IMAGE="ubuntu:xenial"
 
 rm -rf prebuilds

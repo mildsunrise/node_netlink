@@ -1,3 +1,21 @@
+/*
+ WARNING: this code is not linked with a standard library. This means that
+ libc symbols are resolved from whatever libc there is loaded on the Node.js
+ process, **assuming the ABI is the same than where it was built**. This
+ allows the prebuilds to usually load on i.e. Alpine and the like... but it
+ also introduces a bit of unsafety since the ABIs may not exactly match even
+ when the symbols match, and so the prebuild will load correctly (and get used)
+ but could trigger bugs or even crashes later.
+
+ So, try to call as few libc functions as possible. List libc symbols with:
+
+     nm -Du build/Release/node_netlink.node | \
+       grep -vE '@(GLIBCXX|CXXABI|GCC)_[0-9]+(\.[0-9]+){1,2}$' | \
+       grep -vE '^\s+U (uv|napi)_'
+
+ and review any newly introduced symbols.
+*/
+
 #include <sys/socket.h>
 #include <linux/netlink.h>
 #include <unistd.h>

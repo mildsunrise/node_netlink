@@ -32,7 +32,10 @@ help by [improving the type definitions](./types).
 
 ## Usage
 
-There's prebuilds for x86, x64, arm32v7 and arm64v8, so you don't need anything in those cases.
+There's prebuilds for x86, x64, arm32v7 and arm64v8, so you won't
+need anything in those cases. (The prebuilds are very portable and
+should work even in Alpine Linux, Buildroot and other environments
+that use different libc).
 
 For other archs, you only need a compiler:
 
