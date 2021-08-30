@@ -37,9 +37,11 @@ process_arch amd64 "ia32 x64"
 process_arch arm/v7 "arm"
 process_arch arm64/v8 "arm64"
 
-# Test that they load correctly
+# Test that they load correctly, & on early versions
 # (since we are just testing for Node.js / glibc,
 # compatibility, I don't think it's useful to test
 # more than one arch here?)
-scripts/prebuild/run_in_docker.sh ubuntu:xenial 10 scripts/prebuild/load_prebuild.sh
 scripts/prebuild/load_prebuild.sh
+run_in_docker linux/amd64 ubuntu:xenial \
+  scripts/prebuild/with_node.sh 10 \
+  scripts/prebuild/load_prebuild.sh
