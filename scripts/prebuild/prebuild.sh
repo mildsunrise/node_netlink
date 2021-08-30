@@ -6,26 +6,30 @@ set -eEuo pipefail
 # Register binfmt handlers so we can emulate other archs
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 
-# Prebuild inside an older distro to target glibc 2.23
-# It's from 2016 so should be enough for most people
-IMAGE="ubuntu:xenial"
-
 rm -rf prebuilds
+
+run_in_docker() {
+  PLATFORM="$1"; IMAGE="$2"
+  docker run --rm -v "$(pwd)":/app -w /app --platform="$PLATFORM" "$IMAGE" "${@:3}"
+}
+
+process_arch() {
+  DOCKER_ARCH="$1"; TARGET_ARCHS="$2"
+  PLATFORM="linux/$DOCKER_ARCH"
+
+  # Prebuild inside an older distro to target glibc 2.23
+  # It's from 2016 so should be enough for most people
+  run_in_docker "$PLATFORM" ubuntu:xenial \
+    scripts/prebuild/with_node.sh 14 \
+    scripts/prebuild/with_copy.sh \
+    scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
+}
 
 # It only makes sense to prebuild for archs supported by
 # libbpf: see deps/libbpf/src/bpf.c
-
-scripts/prebuild/run_in_docker.sh $IMAGE 14 \
-    scripts/prebuild/with_copy.sh \
-    scripts/prebuild/do_prebuild.sh "ia32 x64"
-
-scripts/prebuild/run_in_docker.sh arm32v7/$IMAGE 14 \
-    scripts/prebuild/with_copy.sh \
-    scripts/prebuild/do_prebuild.sh "arm"
-
-scripts/prebuild/run_in_docker.sh arm64v8/$IMAGE 14 \
-    scripts/prebuild/with_copy.sh \
-    scripts/prebuild/do_prebuild.sh "arm64"
+process_arch amd64 "ia32 x64"
+process_arch arm/v7 "arm"
+process_arch arm64/v8 "arm64"
 
 # Test that they load correctly
 # (since we are just testing for Node.js / glibc,
