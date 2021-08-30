@@ -14,15 +14,14 @@ run_in_docker() {
 }
 
 process_arch() {
-  DOCKER_ARCH="$1"; TARGET_ARCHS="$2"
-  PLATFORM="linux/$DOCKER_ARCH"
+  PLATFORM="linux/$1"
 
   # Prebuild inside an older distro to target glibc 2.23
   # It's from 2016 so should be enough for most people
   run_in_docker "$PLATFORM" ubuntu:xenial \
     scripts/prebuild/with_node.sh 14 \
     scripts/prebuild/with_copy.sh \
-    scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
+    scripts/prebuild/do_prebuild.sh
 
   # For musl we'll just use Alpine, and musl has full ABI
   # compat so we don't need to build against an old musl,
@@ -31,14 +30,15 @@ process_arch() {
   run_in_docker "$PLATFORM" node:10-alpine sh \
     scripts/prebuild/with_alpine_buildtools.sh \
     scripts/prebuild/with_copy.sh \
-    scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
+    scripts/prebuild/do_prebuild.sh
 }
 
 # It only makes sense to prebuild for archs supported by
 # libbpf: see deps/libbpf/src/bpf.c
-process_arch amd64 "ia32 x64"
-process_arch arm/v7 "arm"
-process_arch arm64/v8 "arm64"
+process_arch amd64
+process_arch 386
+process_arch arm/v7
+process_arch arm64/v8
 
 # Test that they load correctly, & on early versions
 # (since we are just testing for Node.js / glibc,
