@@ -23,6 +23,12 @@ process_arch() {
     scripts/prebuild/with_node.sh 14 \
     scripts/prebuild/with_copy.sh \
     scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
+
+  # For musl we'll just use Alpine, and musl has full ABI
+  # compat so we don't need to build against an old musl
+  run_in_docker "$PLATFORM" node:10-alpine \
+    scripts/prebuild/with_alpine_buildtools.sh \
+    scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
 }
 
 # It only makes sense to prebuild for archs supported by

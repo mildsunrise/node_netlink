@@ -33,6 +33,7 @@ help by [improving the type definitions](./types).
 ## Usage
 
 There's prebuilds for x86, x64, arm32v7 and arm64v8, so you don't need anything in those cases.
+(musl has prebuilds too, so Alpine Linux is covered.)
 
 For other archs, you only need a compiler:
 
