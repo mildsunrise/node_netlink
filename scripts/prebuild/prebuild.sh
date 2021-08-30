@@ -25,8 +25,7 @@ process_arch() {
 
   # For musl we'll just use Alpine, and musl has full ABI
   # compat so we don't need to build against an old musl,
-  # but there may be other deps (libstdc++) so we need an
-  # older Alpine (and x86 support)
+  # but there may be other deps (libstdc++)
   run_in_docker "$PLATFORM" node:10-alpine sh \
     scripts/prebuild/with_alpine_buildtools.sh \
     scripts/prebuild/with_copy.sh \
