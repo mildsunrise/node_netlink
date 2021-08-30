@@ -16,10 +16,10 @@ run_in_docker() {
 process_arch() {
   PLATFORM="linux/$1"
 
-  # Prebuild inside an older distro to target glibc 2.23
+  # Prebuild inside an older distro to target glibc 2.24
   # It's from 2016 so should be enough for most people
-  run_in_docker "$PLATFORM" ubuntu:xenial \
-    scripts/prebuild/with_node.sh 14 \
+  run_in_docker "$PLATFORM" node:10-stretch \
+    scripts/prebuild/with_debian_buildtools.sh \
     scripts/prebuild/with_copy.sh \
     scripts/prebuild/do_prebuild.sh
 
@@ -44,8 +44,7 @@ process_arch arm64/v8
 # compatibility, I don't think it's useful to test
 # more than one arch here?)
 scripts/prebuild/load_prebuild.sh
-run_in_docker linux/amd64 ubuntu:xenial \
-  scripts/prebuild/with_node.sh 10 \
+run_in_docker linux/amd64 node:10-stretch \
   scripts/prebuild/load_prebuild.sh
 run_in_docker linux/amd64 node:10-alpine \
   scripts/prebuild/load_prebuild.sh
