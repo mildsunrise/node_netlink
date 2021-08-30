@@ -25,9 +25,12 @@ process_arch() {
     scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
 
   # For musl we'll just use Alpine, and musl has full ABI
-  # compat so we don't need to build against an old musl
-  run_in_docker "$PLATFORM" node:10-alpine \
+  # compat so we don't need to build against an old musl,
+  # but there may be other deps (libstdc++) so we need an
+  # older Alpine (and x86 support)
+  run_in_docker "$PLATFORM" node:10-alpine sh \
     scripts/prebuild/with_alpine_buildtools.sh \
+    scripts/prebuild/with_copy.sh \
     scripts/prebuild/do_prebuild.sh "$TARGET_ARCHS"
 }
 
@@ -44,4 +47,6 @@ process_arch arm64/v8 "arm64"
 scripts/prebuild/load_prebuild.sh
 run_in_docker linux/amd64 ubuntu:xenial \
   scripts/prebuild/with_node.sh 10 \
+  scripts/prebuild/load_prebuild.sh
+run_in_docker linux/amd64 node:10-alpine \
   scripts/prebuild/load_prebuild.sh
