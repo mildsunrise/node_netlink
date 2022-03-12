@@ -72,7 +72,7 @@ export const align = (x: number) => x + padding(x)
 //  - Methods accept exclusively Buffer named r
 //  - Throw on error
 //  - Return this type:
-type ParseResult<T> = { x: T, consumed: number }
+export type ParseResult<T> = { x: T, consumed: number }
 
 // Conventions for formatting:
 //  - Methods that accept data:
@@ -196,7 +196,7 @@ export function parseMessages(r: Buffer): NetlinkMessage[] {
 // ERROR MESSAGE
 // -------------
 
-interface NetlinkErrorMessage {
+export interface NetlinkErrorMessage {
     errno: number
     code?: string
     header: NetlinkHeader

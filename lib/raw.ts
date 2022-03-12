@@ -59,7 +59,7 @@ function tryBind(native: NativeNetlink, ...args: any[]) {
         native.bind(...args)
         return true
     } catch (e) {
-        if (e.errno === constants.errno.EADDRINUSE)
+        if ((e as any).errno === constants.errno.EADDRINUSE)
             return false
         throw e
     }
@@ -115,7 +115,7 @@ export class RawNetlinkSocket extends EventEmitter {
      * If no port is passed, [[generateLocalPort]] will be used and
      * bind will be retried until we find a free address.
      * 
-     * @param protocol Netlink protocol to bind to (see [[PROTOCOLS]])
+     * @param protocol Netlink protocol to bind to (see [[Protocol]])
      * @param options Socket options
      */
     constructor(protocol: number, options?: RawNetlinkSocketOptions) {

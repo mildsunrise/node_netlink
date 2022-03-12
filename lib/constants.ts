@@ -58,7 +58,7 @@ export const MAX_LINKS = 32
 
 /** General Netlink message flags */
 export enum Flags {
-    /** It is request message. 	*/
+    /** It is request message. */
     REQUEST = 0x01,
     /** Multipart message, terminated by NLMSG_DONE */
     MULTI = 0x02,
