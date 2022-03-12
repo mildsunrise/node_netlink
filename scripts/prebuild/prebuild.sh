@@ -16,9 +16,9 @@ run_in_docker() {
 process_arch() {
   PLATFORM="linux/$1"
 
-  # Prebuild inside an older distro to target glibc 2.24
-  # It's from 2016 so should be enough for most people
-  run_in_docker "$PLATFORM" node:10-stretch \
+  # Prebuild inside an older distro to target glibc 2.19
+  # It's from early 2014 so should be enough for most people
+  run_in_docker "$PLATFORM" node:10.12.0-jessie \
     scripts/prebuild/with_debian_buildtools.sh \
     scripts/prebuild/with_copy.sh \
     scripts/prebuild/do_prebuild.sh
@@ -26,7 +26,7 @@ process_arch() {
   # For musl we'll just use Alpine, and musl has full ABI
   # compat so we don't need to build against an old musl,
   # but there may be other deps (libstdc++)
-  run_in_docker "$PLATFORM" node:10-alpine sh \
+  run_in_docker "$PLATFORM" node:10.24.1-alpine3.10 sh \
     scripts/prebuild/with_alpine_buildtools.sh \
     scripts/prebuild/with_copy.sh \
     scripts/prebuild/do_prebuild.sh
