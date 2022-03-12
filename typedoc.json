@@ -1,10 +1,11 @@
 {
-    "mode": "modules",
     "excludePrivate": true,
     "excludeProtected": true,
     "excludeExternals": true,
-    "excludeNotExported": true,
+    "entryPoints": ["lib"],
+    "entryPointStrategy": "expand",
     "exclude": "**/index.ts",
-    "target": "ES6",
-    "listInvalidSymbolLinks": true
+    "validation": {
+        "invalidLink": true
+    }
 }

@@ -11,7 +11,7 @@ It also implements the Generic Netlink protocol.
 **Note:** This is early stage; API compatibility is not maintained.
 If you are going to use this, pin to a specific version.
 
-**[💡 Examples](#examples)** &nbsp;•&nbsp; **[📚 API reference](https://netlink.alba.sh/docs/)**
+**[💡 Examples](#examples)** &nbsp;•&nbsp; **[📚 API reference](https://netlink.alba.sh/docs/modules.html)**
 
 
 ## System APIs

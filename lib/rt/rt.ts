@@ -1,7 +1,7 @@
 /**
  * This module implements the Rtnetlink interface on top of `netlink`.
+ * @module
  */
-/** */
 
 import { EventEmitter } from 'events'
 

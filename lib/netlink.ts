@@ -3,8 +3,8 @@
  * and lets the user send / receive parsed Netlink messages, rather than
  * raw data. It can also take care of things like requests & ACKs,
  * sequence numbers, multipart message handling, attribute parsing.
+ * @module
  */
-/** */
 
 import { EventEmitter } from 'events'
 import * as util from 'util'

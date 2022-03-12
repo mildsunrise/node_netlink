@@ -3,8 +3,8 @@
  * interface ([[RawNetlinkSocket]]) to create Netlink sockets and
  * send / receive raw data over them. Its API is intended to
  * mirror [`dgram.Socket`](https://nodejs.org/api/dgram.html).
+ * @module
  */
-/** */
 
 import { EventEmitter } from 'events'
 import { constants } from 'os'

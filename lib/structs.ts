@@ -5,8 +5,9 @@
  * **Important:** These structures use the host endianness.
  * This module will serialize messages differently depending
  * on that.
+ *
+ * @module
  */
-/** */
 
 import { endianness } from 'os'
 

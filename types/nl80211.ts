@@ -2,6 +2,8 @@
  * 802.11 netlink interface
  * 
  * Based on <linux/nl80211.h> at 14f34e3
+ *
+ * @module
  */
 
 import { TypeStore, data, bool, flag, u8, u16, u32, u64, s8, s16, s32, s64, f32, f64, string, array, map, asflags } from './_base'

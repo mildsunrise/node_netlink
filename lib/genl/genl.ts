@@ -1,7 +1,7 @@
 /**
  * This module implements the Generic Netlink protocol on top of `netlink`.
+ * @module
  */
-/** */
 
 import { EventEmitter } from 'events'
 

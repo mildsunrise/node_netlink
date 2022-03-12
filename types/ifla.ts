@@ -9,6 +9,8 @@
  *   <linux/if_tunnel.h>
  *   <linux/can/netlink.h>
  * at d1ea35f
+ *
+ * @module
  */
 
 import { TypeStore, data, bool, flag, u8, u16, u32, u64, s8, s16, s32, s64, f32, f64, string, array, map, asflags } from './_base'

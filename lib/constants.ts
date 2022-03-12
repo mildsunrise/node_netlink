@@ -1,7 +1,7 @@
 /**
  * This module exports Netlink constants.
+ * @module
  */
-/** */
 
 // Based on <linux/netlink.h> at d3e8869
 

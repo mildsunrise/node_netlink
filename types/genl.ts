@@ -2,6 +2,8 @@
  * generic netlink controller types
  * 
  * Based on <linux/genetlink.h> at 6f52b16
+ *
+ * @module
  */
 
 import { TypeStore, u16, u32, string, array } from './_base'

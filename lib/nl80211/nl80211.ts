@@ -1,7 +1,7 @@
 /**
  * Exposes the nl80211 interface on top of the Generic Protocol layer
+ * @module
  */
-/** */
 
 import { EventEmitter } from 'events'
 
