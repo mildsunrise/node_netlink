@@ -3,7 +3,7 @@ import { MessageType } from './gen_structs'
 import * as rt from './gen_structs'
 import * as ifla from './ifla'
 
-export type Message = AddressMessage | LinkMessage | NdUserOptionMessage | NeighborMessage | NeighborTableMessage | PrefixMessage | RouteMessage | TcMessage | TcActionMessage
+export type Message = AddressMessage | LinkMessage | NdUserOptionMessage | NeighborMessage | NeighborTableMessage | PrefixMessage | RouteMessage | RuleMessage | TcMessage | TcActionMessage
 
 export interface AddressMessage {
     kind: 'address'
@@ -138,6 +138,25 @@ export function formatRouteMessage(x: RouteMessage, out: AttrStream) {
     out.emit(rt.formatRouteAttrs(x.attrs))
 }
 
+export interface RuleMessage {
+    kind: 'rule'
+    data: rt.Rule
+    attrs: rt.RuleAttrs
+}
+
+export function parseRuleMessage(r: Buffer): RuleMessage {
+    if (r.length < rt.__LENGTH_Rule)
+        throw Error(`Unexpected Rule message length (${r.length})`)
+    const data = rt.parseRule(r.slice(0, rt.__LENGTH_Rule))
+    const attrs = rt.parseRuleAttrs(r.slice(rt.__LENGTH_Rule))
+    return { kind: 'rule', data, attrs }
+}
+
+export function formatRuleMessage(x: RuleMessage, out: AttrStream) {
+    out.emit(rt.formatRule(x.data))
+    out.emit(rt.formatRuleAttrs(x.attrs))
+}
+
 export interface TcMessage {
     kind: 'tc'
     data: rt.Tc
@@ -184,6 +203,9 @@ const parseFns: { [t in MessageType]?: (r: Buffer) => Message } = {
     [MessageType.NEWROUTE]: parseRouteMessage,
     [MessageType.DELROUTE]: parseRouteMessage,
     [MessageType.GETROUTE]: parseRouteMessage,
+    [MessageType.NEWRULE]: parseRuleMessage,
+    [MessageType.DELRULE]: parseRuleMessage,
+    [MessageType.GETRULE]: parseRuleMessage,
     [MessageType.NEWNEIGH]: parseNeighborMessage,
     [MessageType.DELNEIGH]: parseNeighborMessage,
     [MessageType.GETNEIGH]: parseNeighborMessage,

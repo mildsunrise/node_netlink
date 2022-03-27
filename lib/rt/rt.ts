@@ -376,6 +376,44 @@ export class RtNetlinkSocket extends EventEmitter {
         return this.getRoute(data || {}, attrs, options)
     }
 
+    async newRule(data: rt.Rule, attrs?: rt.RuleAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RuleMessage[]> {
+        const msg = new AttrStream()
+        rt.formatRuleMessage({ kind: 'rule', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.NEWRULE, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'rule')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    async delRule(data: rt.Rule, attrs?: rt.RuleAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RuleMessage[]> {
+        const msg = new AttrStream()
+        rt.formatRuleMessage({ kind: 'rule', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.DELRULE, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'rule')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    async getRule(data: rt.Rule, attrs?: rt.RuleAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RuleMessage[]> {
+        const msg = new AttrStream()
+        rt.formatRuleMessage({ kind: 'rule', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.GETRULE, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'rule')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    getRules(data?: rt.Rule, attrs?: rt.RuleAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.RuleMessage[]> {
+        options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
+        return this.getRule(data || {}, attrs, options)
+    }
+
     async newTrafficClass(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
         const msg = new AttrStream()
         rt.formatTcMessage({ kind: 'tc', data, attrs: attrs || {} }, msg)

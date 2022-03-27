@@ -1,16 +1,17 @@
 /**
  * rtnetlink interface
- * 
+ *
  * This excludes if_link.h and its associated headers,
  * these types have been placed in ifla.ts. Therefore
  * [[Link]] is defined here, but [[LinkAttrs]] is not.
- * 
+ *
  * Based on
  *   <linux/rtnetlink.h>
  *   <linux/neighbour.h>
  *   <linux/if_addr.h>
  *   <linux/if_arp.h>
  *   <linux/if.h>
+ *   <linux/fib_rules.h>
  * at d1ea35f
  *
  * @module
@@ -1092,6 +1093,130 @@ const types: TypeStore = {
         ] }],
         ['mcastReprobes', u32, { orig: 'NDTPA_MCAST_REPROBES' }],
         ['pad', data, { orig: 'NDTPA_PAD' }],
+    ]},
+
+    // FORWARDING RULES //
+    // ("FIB" removed from identifiers)
+
+    Rule: { root: true, kind: 'struct', orig: 'fib_rule_hdr', attrs: [
+        ['family', u8, { orig: 'family' }],
+        ['dstLen', u8, { orig: 'dst_len' }],
+        ['srcLen', u8, { orig: 'src_len' }],
+        ['tos', u8, { orig: 'tos' }],
+
+        ['table', u8, { orig: 'table' }],
+        ['res1', u8, { orig: 'res1', docs: [
+            'reserved',
+        ] }],
+        ['res2', u8, { orig: 'res2', docs: [
+            'reserved',
+        ] }],
+        ['action', u8, { type: 'RuleAction', orig: 'action' }],
+
+        ['flags', u32, { type: 'RuleFlags', orig: 'flags' }],
+    ]},
+
+    RuleAttrs: { attrs: [
+        ['dst', data, { orig: 'FRA_DST', docs: [
+            'destination address',
+        ] }],
+        ['src', data, { orig: 'FRA_SRC', docs: [
+            'source address',
+        ] }],
+        ['iifname', string, { orig: 'FRA_IIFNAME', docs: [
+            'input interface name (deprecated alias FRA_IFNAME)',
+        ] }],
+        ['goto', u32, { orig: 'FRA_GOTO', docs: [
+            'target to jump to (RuleAction.GOTO)',
+        ] }],
+        ['unused2', data, { orig: 'FRA_UNUSED2' }],
+        ['priority', u32, { orig: 'FRA_PRIORITY', docs: [
+            'priority/preference',
+        ] }],
+        ['unused3', data, { orig: 'FRA_UNUSED3' }],
+        ['unused4', data, { orig: 'FRA_UNUSED4' }],
+        ['unused5', data, { orig: 'FRA_UNUSED5' }],
+        ['fwmark', u32, { orig: 'FRA_FWMARK', docs: [
+            'netfilter mark',
+        ] }],
+        ['flow', u32, { orig: 'FRA_FLOW', docs: [
+            'flow/class id',
+        ] }],
+        ['tunId', data, { orig: 'FRA_TUN_ID' }],
+        ['suppressIfgroup', data, { orig: 'FRA_SUPPRESS_IFGROUP' }],
+        ['suppressPrefixlen', data, { orig: 'FRA_SUPPRESS_PREFIXLEN' }],
+        ['table', u32, { orig: 'FRA_TABLE', docs: [
+            'Extended table id',
+        ] }],
+        ['fwmask', u32, { orig: 'FRA_FWMASK', docs: [
+            'mask for [[fwmark]]',
+        ] }],
+        ['oifname', string, { orig: 'FRA_OIFNAME', docs: [
+            'output interface name',
+        ] }],
+        ['pad', data, { orig: 'FRA_PAD' }],
+        ['l3Mdev', u8, { orig: 'FRA_L3MDEV', docs: [
+            'iif or oif is l3mdev goto its table',
+        ] }],
+        ['uidRange', 'RuleUidRange', { orig: 'FRA_UID_RANGE' }],
+        ['protocol', u8, { orig: 'FRA_PROTOCOL', docs: [
+            'Originator of the rule',
+        ] }],
+        ['ipProto', u8, { orig: 'FRA_IP_PROTO' }],
+        ['sportRange', 'RulePortRange', { orig: 'FRA_SPORT_RANGE' }],
+        ['dportRange', 'RulePortRange', { orig: 'FRA_DPORT_RANGE' }],
+    ]},
+
+    RuleFlags: { kind: 'flags', values: [
+        { value: 1 << 0, name: 'permanent', orig: 'FIB_RULE_PERMANENT', docs: [
+            'rule is permanent, and cannot be deleted',
+        ] },
+        { value: 1 << 1, name: 'invert', orig: 'FIB_RULE_INVERT' },
+        { value: 1 << 2, name: 'unresolved', orig: 'FIB_RULE_UNRESOLVED' },
+        { value: 1 << 3, name: 'iifDetached', orig: 'FIB_RULE_IIF_DETACHED', docs: [
+            'input interface detached (deprecated alias FIB_RULE_DEV_DETACHED)',
+        ] },
+        { value: 1 << 4, name: 'oifDetached', orig: 'FIB_RULE_OIF_DETACHED', docs: [
+            'output interface detached',
+        ] },
+
+        { value: 1 << 16, name: 'findSaddr', orig: 'FIB_RULE_FIND_SADDR', docs: [
+            'try to find source address in routing lookups',
+        ] },
+    ]},
+
+    RuleUidRange: { kind: 'struct', orig: 'fib_rule_uid_range', attrs: [
+        ['start', u32, { orig: 'start' }],
+        ['end', u32, { orig: 'end' }],
+    ]},
+
+    RulePortRange: { kind: 'struct', orig: 'fib_rule_port_range', attrs: [
+        ['start', u16, { orig: 'start' }],
+        ['end', u16, { orig: 'end' }],
+    ]},
+
+    RuleAction: { kind: 'enum', values: [
+        { value: 0, name: 'unspec', orig: 'FR_ACT_UNSPEC' },
+        { value: 1, name: 'toTbl', orig: 'FR_ACT_TO_TBL', docs: [
+            'Pass to fixed table',
+        ] },
+        { value: 2, name: 'goto', orig: 'FR_ACT_GOTO', docs: [
+            'Jump to another rule',
+        ] },
+        { value: 3, name: 'nop', orig: 'FR_ACT_NOP', docs: [
+            'No operation',
+        ] },
+        { value: 4, name: 'res3', orig: 'FR_ACT_RES3' },
+        { value: 5, name: 'res4', orig: 'FR_ACT_RES4' },
+        { value: 6, name: 'blackhole', orig: 'FR_ACT_BLACKHOLE', docs: [
+            'Drop without notification',
+        ] },
+        { value: 7, name: 'unreachable', orig: 'FR_ACT_UNREACHABLE', docs: [
+            'Drop with ENETUNREACH',
+        ] },
+        { value: 8, name: 'prohibit', orig: 'FR_ACT_PROHIBIT', docs: [
+            'Drop with EACCES',
+        ] },
     ]},
 }
 
