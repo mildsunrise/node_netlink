@@ -404,9 +404,7 @@ export interface LinkAttrs extends BaseObject {
     
     newNetnsid?: Buffer
     
-    ifNetnsid?: number
-    
-    /** new alias */
+    /** new alias for IFLA_IF_NETNSID */
     targetNetnsid?: number
     
     carrierUpCount?: number
@@ -475,16 +473,15 @@ export function parseLinkAttrs(r: Buffer): LinkAttrs {
         43: (data, obj) => obj.xdp = parseXdp(data),
         44: (data, obj) => obj.event = data,
         45: (data, obj) => obj.newNetnsid = data,
-        46: (data, obj) => obj.ifNetnsid = structs.getU32(data),
-        47: (data, obj) => obj.targetNetnsid = structs.getU32(data),
-        48: (data, obj) => obj.carrierUpCount = structs.getU32(data),
-        49: (data, obj) => obj.carrierDownCount = structs.getU32(data),
-        50: (data, obj) => obj.newIfindex = structs.getU32(data),
-        51: (data, obj) => obj.minMtu = structs.getU32(data),
-        52: (data, obj) => obj.maxMtu = structs.getU32(data),
-        53: (data, obj) => obj.propList = data,
-        54: (data, obj) => obj.altIfname = structs.getString(data),
-        55: (data, obj) => obj.permAddress = data,
+        46: (data, obj) => obj.targetNetnsid = structs.getU32(data),
+        47: (data, obj) => obj.carrierUpCount = structs.getU32(data),
+        48: (data, obj) => obj.carrierDownCount = structs.getU32(data),
+        49: (data, obj) => obj.newIfindex = structs.getU32(data),
+        50: (data, obj) => obj.minMtu = structs.getU32(data),
+        51: (data, obj) => obj.maxMtu = structs.getU32(data),
+        52: (data, obj) => obj.propList = data,
+        53: (data, obj) => obj.altIfname = structs.getString(data),
+        54: (data, obj) => obj.permAddress = data,
     })
 }
 
@@ -536,16 +533,15 @@ export function formatLinkAttrs(x: LinkAttrs): StreamData {
         xdp: (data, obj) => data.push(43, formatXdp(obj.xdp!)),
         event: (data, obj) => data.push(44, obj.event!),
         newNetnsid: (data, obj) => data.push(45, obj.newNetnsid!),
-        ifNetnsid: (data, obj) => data.push(46, structs.putU32(obj.ifNetnsid!)),
-        targetNetnsid: (data, obj) => data.push(47, structs.putU32(obj.targetNetnsid!)),
-        carrierUpCount: (data, obj) => data.push(48, structs.putU32(obj.carrierUpCount!)),
-        carrierDownCount: (data, obj) => data.push(49, structs.putU32(obj.carrierDownCount!)),
-        newIfindex: (data, obj) => data.push(50, structs.putU32(obj.newIfindex!)),
-        minMtu: (data, obj) => data.push(51, structs.putU32(obj.minMtu!)),
-        maxMtu: (data, obj) => data.push(52, structs.putU32(obj.maxMtu!)),
-        propList: (data, obj) => data.push(53, obj.propList!),
-        altIfname: (data, obj) => data.push(54, structs.putString(obj.altIfname!)),
-        permAddress: (data, obj) => data.push(55, obj.permAddress!),
+        targetNetnsid: (data, obj) => data.push(46, structs.putU32(obj.targetNetnsid!)),
+        carrierUpCount: (data, obj) => data.push(47, structs.putU32(obj.carrierUpCount!)),
+        carrierDownCount: (data, obj) => data.push(48, structs.putU32(obj.carrierDownCount!)),
+        newIfindex: (data, obj) => data.push(49, structs.putU32(obj.newIfindex!)),
+        minMtu: (data, obj) => data.push(50, structs.putU32(obj.minMtu!)),
+        maxMtu: (data, obj) => data.push(51, structs.putU32(obj.maxMtu!)),
+        propList: (data, obj) => data.push(52, obj.propList!),
+        altIfname: (data, obj) => data.push(53, structs.putString(obj.altIfname!)),
+        permAddress: (data, obj) => data.push(54, obj.permAddress!),
     })
 }
 

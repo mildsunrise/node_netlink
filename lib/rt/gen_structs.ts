@@ -2489,3 +2489,301 @@ export function formatNeighborTableParams(x: NeighborTableParams): StreamData {
         pad: (data, obj) => data.push(18, obj.pad!),
     })
 }
+
+export interface Rule {
+    family?: number
+    
+    dstLen?: number
+    
+    srcLen?: number
+    
+    tos?: number
+    
+    table?: number
+    
+    /** reserved */
+    res1?: number
+    
+    /** reserved */
+    res2?: number
+    
+    action?: RuleAction | keyof typeof RuleAction
+    
+    flags?: RuleFlags
+}
+
+/** Parses the attributes of a [[Rule]] object */
+export function parseRule(r: Buffer): Rule {
+    if (r.length !== __LENGTH_Rule) throw Error('Unexpected length for Rule')
+    const x: Rule = {}
+    x.family = structs.readU8.call(r, 0)
+    x.dstLen = structs.readU8.call(r, 1)
+    x.srcLen = structs.readU8.call(r, 2)
+    x.tos = structs.readU8.call(r, 3)
+    x.table = structs.readU8.call(r, 4)
+    x.res1 = structs.readU8.call(r, 5)
+    x.res2 = structs.readU8.call(r, 6)
+    x.action = structs.getEnum(RuleAction, structs.readU8.call(r, 7))
+    x.flags = parseRuleFlags(structs.readU32.call(r, 8))
+    return x
+}
+
+/** Encodes a [[Rule]] object into a stream of attributes */
+export function formatRule(x: Rule, r: Buffer = Buffer.alloc(__LENGTH_Rule)): Buffer {
+    if (r.length !== __LENGTH_Rule) throw Error('Unexpected length for Rule')
+    x.family && structs.writeU8.call(r, x.family, 0)
+    x.dstLen && structs.writeU8.call(r, x.dstLen, 1)
+    x.srcLen && structs.writeU8.call(r, x.srcLen, 2)
+    x.tos && structs.writeU8.call(r, x.tos, 3)
+    x.table && structs.writeU8.call(r, x.table, 4)
+    x.res1 && structs.writeU8.call(r, x.res1, 5)
+    x.res2 && structs.writeU8.call(r, x.res2, 6)
+    x.action && structs.writeU8.call(r, structs.putEnum(RuleAction, x.action), 7)
+    x.flags && structs.writeU32.call(r, formatRuleFlags(x.flags), 8)
+    return r
+}
+
+export const __LENGTH_Rule = 12
+
+export interface RuleAttrs extends BaseObject {
+    /** destination address */
+    dst?: Buffer
+    
+    /** source address */
+    src?: Buffer
+    
+    /** input interface name (deprecated alias FRA_IFNAME) */
+    iifname?: string
+    
+    /** target to jump to (RuleAction.GOTO) */
+    goto?: number
+    
+    unused2?: Buffer
+    
+    /** priority/preference */
+    priority?: number
+    
+    unused3?: Buffer
+    
+    unused4?: Buffer
+    
+    unused5?: Buffer
+    
+    /** netfilter mark */
+    fwmark?: number
+    
+    /** flow/class id */
+    flow?: number
+    
+    tunId?: Buffer
+    
+    suppressIfgroup?: Buffer
+    
+    suppressPrefixlen?: Buffer
+    
+    /** Extended table id */
+    table?: number
+    
+    /** mask for [[fwmark]] */
+    fwmask?: number
+    
+    /** output interface name */
+    oifname?: string
+    
+    pad?: Buffer
+    
+    /** iif or oif is l3mdev goto its table */
+    l3Mdev?: number
+    
+    uidRange?: RuleUidRange
+    
+    /** Originator of the rule */
+    protocol?: number
+    
+    ipProto?: number
+    
+    sportRange?: RulePortRange
+    
+    dportRange?: RulePortRange
+}
+
+/** Parses the attributes of a [[RuleAttrs]] object */
+export function parseRuleAttrs(r: Buffer): RuleAttrs {
+    return structs.getObject(r, {
+        1: (data, obj) => obj.dst = data,
+        2: (data, obj) => obj.src = data,
+        3: (data, obj) => obj.iifname = structs.getString(data),
+        4: (data, obj) => obj.goto = structs.getU32(data),
+        5: (data, obj) => obj.unused2 = data,
+        6: (data, obj) => obj.priority = structs.getU32(data),
+        7: (data, obj) => obj.unused3 = data,
+        8: (data, obj) => obj.unused4 = data,
+        9: (data, obj) => obj.unused5 = data,
+        10: (data, obj) => obj.fwmark = structs.getU32(data),
+        11: (data, obj) => obj.flow = structs.getU32(data),
+        12: (data, obj) => obj.tunId = data,
+        13: (data, obj) => obj.suppressIfgroup = data,
+        14: (data, obj) => obj.suppressPrefixlen = data,
+        15: (data, obj) => obj.table = structs.getU32(data),
+        16: (data, obj) => obj.fwmask = structs.getU32(data),
+        17: (data, obj) => obj.oifname = structs.getString(data),
+        18: (data, obj) => obj.pad = data,
+        19: (data, obj) => obj.l3Mdev = structs.getU8(data),
+        20: (data, obj) => obj.uidRange = parseRuleUidRange(data),
+        21: (data, obj) => obj.protocol = structs.getU8(data),
+        22: (data, obj) => obj.ipProto = structs.getU8(data),
+        23: (data, obj) => obj.sportRange = parseRulePortRange(data),
+        24: (data, obj) => obj.dportRange = parseRulePortRange(data),
+    })
+}
+
+/** Encodes a [[RuleAttrs]] object into a stream of attributes */
+export function formatRuleAttrs(x: RuleAttrs): StreamData {
+    return structs.putObject(x, {
+        dst: (data, obj) => data.push(1, obj.dst!),
+        src: (data, obj) => data.push(2, obj.src!),
+        iifname: (data, obj) => data.push(3, structs.putString(obj.iifname!)),
+        goto: (data, obj) => data.push(4, structs.putU32(obj.goto!)),
+        unused2: (data, obj) => data.push(5, obj.unused2!),
+        priority: (data, obj) => data.push(6, structs.putU32(obj.priority!)),
+        unused3: (data, obj) => data.push(7, obj.unused3!),
+        unused4: (data, obj) => data.push(8, obj.unused4!),
+        unused5: (data, obj) => data.push(9, obj.unused5!),
+        fwmark: (data, obj) => data.push(10, structs.putU32(obj.fwmark!)),
+        flow: (data, obj) => data.push(11, structs.putU32(obj.flow!)),
+        tunId: (data, obj) => data.push(12, obj.tunId!),
+        suppressIfgroup: (data, obj) => data.push(13, obj.suppressIfgroup!),
+        suppressPrefixlen: (data, obj) => data.push(14, obj.suppressPrefixlen!),
+        table: (data, obj) => data.push(15, structs.putU32(obj.table!)),
+        fwmask: (data, obj) => data.push(16, structs.putU32(obj.fwmask!)),
+        oifname: (data, obj) => data.push(17, structs.putString(obj.oifname!)),
+        pad: (data, obj) => data.push(18, obj.pad!),
+        l3Mdev: (data, obj) => data.push(19, structs.putU8(obj.l3Mdev!)),
+        uidRange: (data, obj) => data.push(20, formatRuleUidRange(obj.uidRange!)),
+        protocol: (data, obj) => data.push(21, structs.putU8(obj.protocol!)),
+        ipProto: (data, obj) => data.push(22, structs.putU8(obj.ipProto!)),
+        sportRange: (data, obj) => data.push(23, formatRulePortRange(obj.sportRange!)),
+        dportRange: (data, obj) => data.push(24, formatRulePortRange(obj.dportRange!)),
+    })
+}
+
+export interface RuleFlags {
+    /** rule is permanent, and cannot be deleted */
+    permanent?: true
+    
+    invert?: true
+    
+    unresolved?: true
+    
+    /** input interface detached (deprecated alias FIB_RULE_DEV_DETACHED) */
+    iifDetached?: true
+    
+    /** output interface detached */
+    oifDetached?: true
+    
+    /** try to find source address in routing lookups */
+    findSaddr?: true
+    
+    __unknown?: number
+}
+
+/** Parses the flags in a [[RuleFlags]] bitmask */
+export function parseRuleFlags(r: number): RuleFlags {
+    const x: RuleFlags = {}
+    if (r & (1)) (x.permanent = true, r &= ~(1))
+    if (r & (2)) (x.invert = true, r &= ~(2))
+    if (r & (4)) (x.unresolved = true, r &= ~(4))
+    if (r & (8)) (x.iifDetached = true, r &= ~(8))
+    if (r & (16)) (x.oifDetached = true, r &= ~(16))
+    if (r & (65536)) (x.findSaddr = true, r &= ~(65536))
+    if (r) x.__unknown = r
+    return x
+}
+
+/** Encodes a [[RuleFlags]] bitmask */
+export function formatRuleFlags(x: RuleFlags): number {
+    let r = x.__unknown || 0
+    if (x.permanent) r |= 1
+    if (x.invert) r |= 2
+    if (x.unresolved) r |= 4
+    if (x.iifDetached) r |= 8
+    if (x.oifDetached) r |= 16
+    if (x.findSaddr) r |= 65536
+    return r
+}
+
+export interface RuleUidRange {
+    start?: number
+    
+    end?: number
+}
+
+/** Parses the attributes of a [[RuleUidRange]] object */
+export function parseRuleUidRange(r: Buffer): RuleUidRange {
+    if (r.length !== __LENGTH_RuleUidRange) throw Error('Unexpected length for RuleUidRange')
+    const x: RuleUidRange = {}
+    x.start = structs.readU32.call(r, 0)
+    x.end = structs.readU32.call(r, 4)
+    return x
+}
+
+/** Encodes a [[RuleUidRange]] object into a stream of attributes */
+export function formatRuleUidRange(x: RuleUidRange, r: Buffer = Buffer.alloc(__LENGTH_RuleUidRange)): Buffer {
+    if (r.length !== __LENGTH_RuleUidRange) throw Error('Unexpected length for RuleUidRange')
+    x.start && structs.writeU32.call(r, x.start, 0)
+    x.end && structs.writeU32.call(r, x.end, 4)
+    return r
+}
+
+export const __LENGTH_RuleUidRange = 8
+
+export interface RulePortRange {
+    start?: number
+    
+    end?: number
+}
+
+/** Parses the attributes of a [[RulePortRange]] object */
+export function parseRulePortRange(r: Buffer): RulePortRange {
+    if (r.length !== __LENGTH_RulePortRange) throw Error('Unexpected length for RulePortRange')
+    const x: RulePortRange = {}
+    x.start = structs.readU16.call(r, 0)
+    x.end = structs.readU16.call(r, 2)
+    return x
+}
+
+/** Encodes a [[RulePortRange]] object into a stream of attributes */
+export function formatRulePortRange(x: RulePortRange, r: Buffer = Buffer.alloc(__LENGTH_RulePortRange)): Buffer {
+    if (r.length !== __LENGTH_RulePortRange) throw Error('Unexpected length for RulePortRange')
+    x.start && structs.writeU16.call(r, x.start, 0)
+    x.end && structs.writeU16.call(r, x.end, 2)
+    return r
+}
+
+export const __LENGTH_RulePortRange = 4
+
+export enum RuleAction {
+    unspec,
+    
+    /** Pass to fixed table */
+    toTbl = 1,
+    
+    /** Jump to another rule */
+    goto = 2,
+    
+    /** No operation */
+    nop = 3,
+    
+    res3 = 4,
+    
+    res4 = 5,
+    
+    /** Drop without notification */
+    blackhole = 6,
+    
+    /** Drop with ENETUNREACH */
+    unreachable = 7,
+    
+    /** Drop with EACCES */
+    prohibit = 8,
+}
