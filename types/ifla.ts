@@ -215,9 +215,8 @@ const types: TypeStore = {
         ['xdp', 'Xdp', { orig: 'IFLA_XDP' }],
         ['event', data, { type: 'Event', orig: 'IFLA_EVENT' }],
         ['newNetnsid', data, { orig: 'IFLA_NEW_NETNSID' }],
-        ['ifNetnsid', u32, { orig: 'IFLA_IF_NETNSID' }],
         ['targetNetnsid', u32, { orig: 'IFLA_TARGET_NETNSID', docs: [
-            'new alias',
+            'new alias for IFLA_IF_NETNSID',
         ] }],
         ['carrierUpCount', u32, { orig: 'IFLA_CARRIER_UP_COUNT' }],
         ['carrierDownCount', u32, { orig: 'IFLA_CARRIER_DOWN_COUNT' }],
