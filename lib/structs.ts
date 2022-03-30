@@ -1,7 +1,7 @@
 /**
  * This module implements parsing / formatting routines for
  * Netlink and Generic Netlink structures.
- * 
+ *
  * **Important:** These structures use the host endianness.
  * This module will serialize messages differently depending
  * on that.

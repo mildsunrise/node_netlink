@@ -21,11 +21,11 @@ let portCounter = 32
  * not being used. However this is not a guarantee, especially
  * if you are using native addons that also create Netlink sockets
  * using other libraries (like libnl).
- * 
+ *
  * Unique port numbers
  * are generated from the PID (lowest 16 bits) and a random number
  * for the highest 16 bits.
- * 
+ *
  * @returns Unique port number
  */
 export function generateLocalPort(): number {
@@ -95,10 +95,10 @@ export interface RawNetlinkSendOptions {
 
 /**
  * TODO
- * 
+ *
  * Missing things:
  *  - Credentials passing
- * 
+ *
  * events:
  * `message`
  * `truncatedMessage`
@@ -111,10 +111,10 @@ export class RawNetlinkSocket extends EventEmitter {
     /**
      * Create a native Netlink socket, bound to the specified protocol
      * at the specified local address (port).
-     * 
+     *
      * If no port is passed, [[generateLocalPort]] will be used and
      * bind will be retried until we find a free address.
-     * 
+     *
      * @param protocol Netlink protocol to bind to (see [[Protocol]])
      * @param options Socket options
      */
@@ -185,7 +185,7 @@ export class RawNetlinkSocket extends EventEmitter {
 
     /**
      * Return the address this socket is currently bound at.
-     * 
+     *
      * @returns Local address
      */
     address(): { port: number, groups: number } {

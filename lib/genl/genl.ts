@@ -47,7 +47,7 @@ export const CTRL_VERSION = 1
 
 /**
  * TODO
- * 
+ *
  * This socket silently discards invalid messages (see `invalid` event).
  */
 export class GenericNetlinkSocket extends EventEmitter {
@@ -105,9 +105,9 @@ export class GenericNetlinkSocket extends EventEmitter {
 
     /**
      * Send a request to the controller
-     * @param cmd 
-     * @param msg 
-     * @param options 
+     * @param cmd
+     * @param msg
+     * @param options
      */
     async ctrlRequest(
         cmd: Commands,

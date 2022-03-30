@@ -237,7 +237,7 @@ The module is composed of several layers:
     send / receive parsed Netlink messages, rather than raw data. It
     can also take care of things like requests & ACKs, sequence numbers,
     multipart message handling, attribute parsing.
-  
+
   - `generic_netlink`: this implements the Generic Netlink protocol
     on top of `netlink`.
 

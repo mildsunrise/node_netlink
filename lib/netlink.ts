@@ -50,7 +50,7 @@ export interface RequestOptions {
 
 /**
  * TODO
- * 
+ *
  * This socket silently discards invalid messages (see `invalid` event).
  * FIXME: cork / uncork api
  * FIXME: debug option, common for all sockets
@@ -122,7 +122,7 @@ export class NetlinkSocket extends EventEmitter {
 
     /**
      * Return the address this socket is currently bound at.
-     * 
+     *
      * @returns Local address
      */
     address() {
@@ -145,13 +145,13 @@ export class NetlinkSocket extends EventEmitter {
      * Send a Netlink message over the socket, addressed as
      * the options indicate. By default, the sequence number
      * and port will be filled automatically.
-     * 
+     *
      * @param type Message type
      * @param data Message payload
      * @param options Message send options
      * @param callback Callback will be called after
      * the message has been sent (or failed to be sent)
-     * 
+     *
      * @returns The sequence number of the sent message
      */
     send(
@@ -176,15 +176,15 @@ export class NetlinkSocket extends EventEmitter {
     /**
      * Sends a message with the REQUEST and ACK flags set,
      * and waits for a reply for the same sequence number.
-     * 
+     *
      * Note that this method doesn't check the origin of
      * the reply, you should do that yourself.
-     * 
+     *
      * An array of mesages is returned. This will contain
      * many items for multipart messages, zero if an ACK
      * is received (and `checkError` isn't disabled) and
      * one for other messages.
-     * 
+     *
      * @param type Message type
      * @param data Message payload
      * @param options Options
@@ -223,7 +223,7 @@ export class NetlinkSocket extends EventEmitter {
      * (preventing the event loop from exiting) even when there
      * are no pending messages. Otherwise, the socket will be
      * dereferenced when there are no pending messages.
-     * 
+     *
      * @param ref Socket ref state
      */
     ref(ref?: boolean) {
@@ -241,16 +241,16 @@ export class NetlinkSocket extends EventEmitter {
         this.requests.set(seq, callback)
         return seq
     }
-    
+
     /**
      * This method must, if the message is multipart, separate the
      * last DONE message from the rest (if there's no DONE message
      * this is considered an error).
-     * 
+     *
      * Then, if the message is a reply and its sequence number has an
      * associated (i.e. request) callback, call it.
      * Otherwise, a 'message' or 'invalid' event is emitted.
-     * 
+     *
      * @param msg Single message object, or array of messages for
      * multipart messages.
      */

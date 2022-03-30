@@ -39,7 +39,7 @@ export interface RtNetlinkSendOptions extends NetlinkSendOptions {
 
 /**
  * TODO
- * 
+ *
  * This socket silently discards invalid messages (see `invalid` event).
  */
 export class RtNetlinkSocket extends EventEmitter {
