@@ -118,6 +118,13 @@ class FileDescriptor {
 };
 
 
+struct ModuleData {
+    Napi::FunctionReference constructor;
+
+    ModuleData(Napi::Env env) {
+    }
+};
+
 Napi::Object nlsockaddrToObject(Napi::Env env, const struct sockaddr_nl& addr, size_t len) {
     assert(addr.nl_family == AF_NETLINK && len == sizeof(addr));
     auto res = Napi::Object::New(env);
@@ -173,11 +180,8 @@ class Socket : public Napi::ObjectWrap<Socket> {
             InstanceMethod<&Socket::SetSendBufferSize>("setSendBufferSize"),
         });
 
-        Napi::FunctionReference* constructor = new Napi::FunctionReference();
-        *constructor = Napi::Persistent(func);
         exports.Set("NativeNetlink", func);
-
-        env.SetInstanceData<Napi::FunctionReference>(constructor);
+        env.GetInstanceData<ModuleData>()->constructor = Napi::Persistent(func);
 
         return exports;
     }
@@ -544,6 +548,7 @@ class Socket : public Napi::ObjectWrap<Socket> {
 };
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    env.SetInstanceData(new ModuleData(env));
     Socket::Init(env, exports);
     return exports;
 }
