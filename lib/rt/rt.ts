@@ -9,7 +9,7 @@ import { MessageInfo, RawNetlinkSocketOptions } from '../raw'
 import { createNetlink, NetlinkSocket, NetlinkSocketOptions, NetlinkSendOptions, RequestOptions } from '../netlink'
 import { Protocol, FlagsGet } from '../constants'
 import { NetlinkMessage, AttrStream } from '../structs'
-import { parseMessage, Message, MessageType } from './structs'
+import { parseMessage, Message, MessageType, MulticastGroups } from './structs'
 import * as rt from './structs'
 import * as ifla from './ifla'
 
@@ -35,6 +35,11 @@ export interface RtNetlinkSocketOptions {
 export interface RtNetlinkSendOptions extends NetlinkSendOptions {
 }
 
+interface EventMap {
+    invalid(err: any, msg: NetlinkMessage[], rinfo: MessageInfo): void
+    message(msg: Message[], rinfo: MessageInfo): void
+}
+
 // FIXME: is it true that rtnetlink attributes can only be managed with RTA_ macros? does anything really change?
 
 /**
@@ -43,6 +48,14 @@ export interface RtNetlinkSendOptions extends NetlinkSendOptions {
  * This socket silently discards invalid messages (see `invalid` event).
  */
 export class RtNetlinkSocket extends EventEmitter {
+    // copy-pasted code for type-safe events
+    emit<E extends keyof EventMap>(event: E, ...args: Parameters<EventMap[E]>) { return super.emit(event, ...args) }
+    on<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.on(event, listener) }
+    once<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.once(event, listener) }
+    off<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.off(event, listener) }
+    addListener<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.addListener(event, listener) }
+    removeListener<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.removeListener(event, listener) }
+
     readonly socket: NetlinkSocket
 
     constructor(socket: NetlinkSocket, options?: RtNetlinkSocketOptions) {
@@ -53,10 +66,20 @@ export class RtNetlinkSocket extends EventEmitter {
 
     private _receive(omsg: NetlinkMessage[], rinfo: MessageInfo) {
         try {
-            this.emit('message', omsg.map(x => parseMessage(x.type, x.data)))
+            this.emit('message', omsg.map(x => parseMessage(x.type, x.data)), rinfo)
         } catch (e) {
             this.emit('invalid', e, omsg, rinfo)
         }
+    }
+
+    /** re-exposes `socket.addMembership()` with the specific type */
+    addMembership(group: MulticastGroups | keyof typeof MulticastGroups) {
+        return this.socket.addMembership(typeof group === 'number' ? group : MulticastGroups[group])
+    }
+
+    /** re-exposes `socket.dropMembership()` with the specific type */
+    dropMembership(group: MulticastGroups | keyof typeof MulticastGroups) {
+        return this.socket.dropMembership(typeof group === 'number' ? group : MulticastGroups[group])
     }
 
     send(

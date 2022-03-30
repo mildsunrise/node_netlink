@@ -12,8 +12,9 @@ const { getSystemErrorName } = (util as any) // FIXME?
 
 import { RawNetlinkSocket,
          RawNetlinkSocketOptions,
-         RawNetlinkSendOptions, 
-         MessageInfo } from './raw'
+         RawNetlinkSendOptions,
+         MessageInfo,
+         ErrnoException } from './raw'
 import { Flags, FlagsAck, MessageType } from './constants'
 import { parseMessages, formatMessage, NetlinkMessage, parseError, NetlinkMessage_ } from './structs'
 
@@ -48,6 +49,15 @@ export interface RequestOptions {
     checkError?: boolean
 }
 
+interface EventMap {
+    invalid(err: any, msg: Buffer | NetlinkMessage[], rinfo: MessageInfo): void
+    message(msg: NetlinkMessage[], rinfo: MessageInfo): void
+    // re-exposed from RawNetlinkSocket
+    truncatedMessage(msg: Buffer, rinfo: MessageInfo): void
+    error(err: ErrnoException): void
+    close(): void
+}
+
 /**
  * TODO
  *
@@ -56,6 +66,14 @@ export interface RequestOptions {
  * FIXME: debug option, common for all sockets
  */
 export class NetlinkSocket extends EventEmitter {
+    // copy-pasted code for type-safe events
+    emit<E extends keyof EventMap>(event: E, ...args: Parameters<EventMap[E]>) { return super.emit(event, ...args) }
+    on<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.on(event, listener) }
+    once<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.once(event, listener) }
+    off<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.off(event, listener) }
+    addListener<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.addListener(event, listener) }
+    removeListener<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.removeListener(event, listener) }
+
     readonly socket: RawNetlinkSocket
     seq: number = 1
     protected referenced: boolean = false
@@ -67,6 +85,10 @@ export class NetlinkSocket extends EventEmitter {
         this.socket = socket
         this.socket.on('message', this._receive.bind(this))
         this.ref(!!(options && options.ref))
+        // re-emit events
+        this.socket.on('close', (...args) => this.emit('close', ...args))
+        this.socket.on('error', (...args) => this.emit('error', ...args))
+        this.socket.on('truncatedMessage', (...args) => this.emit('truncatedMessage', ...args))
     }
 
     private _receive(msg: Buffer, rinfo: MessageInfo) {
@@ -114,7 +136,9 @@ export class NetlinkSocket extends EventEmitter {
 
     /**
      * Close the Netlink socket. After this, all other methods
-     * can no longer be called.
+     * can no longer be called. Messages pending to be sent
+     * will be discarded, and its completion callback won't be
+     * called.
      */
     close() {
         return this.socket.close()
@@ -158,7 +182,7 @@ export class NetlinkSocket extends EventEmitter {
         type: number,
         data: Uint8Array | Uint8Array[],
         options?: NetlinkSendOptions,
-        callback?: (error?: Error) => any,
+        callback?: (error?: ErrnoException) => void,
     ): number {
         let seq = options && options.seq
         if (typeof seq === 'undefined')
@@ -233,7 +257,7 @@ export class NetlinkSocket extends EventEmitter {
         }
     }
 
-    protected makeRef(seq: number, callback: (err: Error|null, msg?: NetlinkMessage[], rinfo?: MessageInfo) => any) {
+    protected makeRef(seq: number, callback: (err: Error|null, msg?: NetlinkMessage[], rinfo?: MessageInfo) => void) {
         if (!this.referenced && !this.requests.size)
             this.socket.ref()
         if (this.requests.has(seq))

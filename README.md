@@ -107,12 +107,12 @@ await socket.setLink({
 ### Subscribing to multicast groups (rtnetlink)
 
 ~~~ js
-const { rt, createRtNetlink } = require('netlink')
+const { createRtNetlink } = require('netlink')
 
 // ref: true causes this socket to keep the event loop alive
 const socket = createRtNetlink({ ref: true })
 
-socket.socket.addMembership(rt.MulticastGroups.IPV4_IFADDR)
+socket.addMembership('IPV4_IFADDR')
 
 socket.on('message', message => {
   for (const part of message) {

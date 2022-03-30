@@ -25,6 +25,7 @@ Napi::Error ErrnoException(Napi::Env env, int errnum, const char* syscall, std::
     std::ostringstream msg;
     msg << message << ": " << errmsg;
     auto error = Napi::Error::New(env, msg.str());
+    error.Set("name", Napi::String::New(env, "ErrnoException"));
     error.Set("errno", Napi::Number::New(env, errnum));
     error.Set("code", Napi::String::New(env, errcode));
     error.Set("syscall", Napi::String::New(env, syscall));
@@ -458,6 +459,7 @@ class Socket : public Napi::ObjectWrap<Socket> {
             Napi::Value error = (req->status >= 0) ? Env().Undefined() :
                 ErrnoException(Env(), -req->status, "sendmsg", "Error when sending Netlink message").Value();
             req->callback.MakeCallback(Value(), { error }, *req);
+            if (fd == -1) return; // callback may decide to close the socket
         }
 
         if (write_queue.empty())
@@ -490,7 +492,7 @@ class Socket : public Napi::ObjectWrap<Socket> {
         sockaddr_nl addr;
         unsigned int len = sizeof(addr);
         if (getsockname(fd, (sockaddr*) &addr, &len))
-            throw ErrnoException(env, errno, "getsockname");
+            throw ErrnoException(env, errno, "getsockname", "Couldn't get socket address");
         return nlsockaddrToObject(env, addr, len);
     }
 
