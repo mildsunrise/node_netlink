@@ -104,6 +104,29 @@ await socket.setLink({
 })
 ~~~
 
+### Subscribing to multicast groups (rtnetlink)
+
+~~~ js
+const { rt, createRtNetlink } = require('netlink')
+
+// ref: true causes this socket to keep the event loop alive
+const socket = createRtNetlink({ ref: true })
+
+socket.socket.addMembership(rt.MulticastGroups.IPV4_IFADDR)
+
+socket.on('message', message => {
+  for (const part of message) {
+    if (part.kind === 'address') {
+      const { data, attrs } = part
+      const ifaceDesc = `${data.index} (${attrs.label})`
+      // we're only subscribed to IPv4, no need to check `data.family`
+      const addressDesc = `${attrs.address.join('.')}/${data.prefixlen}`
+      console.log(`change in address ${addressDesc} of interface ${ifaceDesc}:`, part)
+    }
+  }
+})
+~~~
+
 ### Managing 802.11 (aka wifi) interfaces
 
 ~~~ js
