@@ -217,12 +217,16 @@ class Socket : public Napi::ObjectWrap<Socket> {
 
         async_res = std::make_unique<Napi::AsyncContext>(env, "netlink:NativeNetlink", Value());
 
+        Ref(); // don't garbage collect us while the socket is active
         open = true;
     }
 
   private:
     void DoClose() {
+        if (!open) return;
+
         open = false;
+        Unref(); // we can now be garbage collected
 
         timer.reset();
         // watcher has to be closed before its fd
