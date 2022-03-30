@@ -259,7 +259,7 @@ class Socket : public Napi::ObjectWrap<Socket> {
         addr.nl_groups = groups;
         if (bind(fd, (sockaddr*) &addr, sizeof(addr)))
             throw ErrnoException(env, errno, "bind", "Couldn't bind netlink socket");
-        watcher->ref();
+        watcher->start(Env(), UV_READABLE, PollHandler);
     }
 
     void Send(const CallbackInfo& info) {
