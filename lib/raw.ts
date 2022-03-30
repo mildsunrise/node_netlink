@@ -93,6 +93,23 @@ export interface RawNetlinkSendOptions {
     groups?: number
 }
 
+export interface ErrnoException extends Error {
+    name: 'ErrnoException'
+    /** name of the syscall that failed to execute */
+    syscall: string
+    /** error code */
+    errno: number
+    /** string constant corresponding to [[errno]] */
+    code: string
+}
+
+interface EventMap {
+    message(msg: Buffer, rinfo: MessageInfo): void
+    truncatedMessage(msg: Buffer, rinfo: MessageInfo): void
+    error(err: ErrnoException): void
+    close(): void
+}
+
 /**
  * TODO
  *
@@ -106,6 +123,14 @@ export interface RawNetlinkSendOptions {
  * `close`
  */
 export class RawNetlinkSocket extends EventEmitter {
+    // copy-pasted code for type-safe events
+    emit<E extends keyof EventMap>(event: E, ...args: Parameters<EventMap[E]>) { return super.emit(event, ...args) }
+    on<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.on(event, listener) }
+    once<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.once(event, listener) }
+    off<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.off(event, listener) }
+    addListener<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.addListener(event, listener) }
+    removeListener<E extends keyof EventMap>(event: E, listener: EventMap[E]) { return super.removeListener(event, listener) }
+
     private readonly __native: NativeNetlink
 
     /**
@@ -151,20 +176,20 @@ export class RawNetlinkSocket extends EventEmitter {
         this.emit(rinfo.truncated ? 'truncatedMessage' : 'message', msg, rinfo)
     }
 
-    private _error(error: Error) {
+    private _error(error: ErrnoException) {
         this.emit('error', error)
     }
 
     send(
         msg: Uint8Array | Uint8Array[],
         options?: RawNetlinkSendOptions,
-        callback?: (error?: Error) => any
+        callback?: (error?: ErrnoException) => void
     ) {
         const port = (options && options.port) || 0
         const groups = (options && options.groups) || 0
         if (typeof port !== 'number' || typeof groups !== 'number')
             throw TypeError('Expected number')
-        this.__native.send(port, groups, msg, (error?: Error) => {
+        this.__native.send(port, groups, msg, (error?: ErrnoException) => {
             // FIXME
             if (callback) {
                 callback(error)
@@ -176,7 +201,9 @@ export class RawNetlinkSocket extends EventEmitter {
 
     /**
      * Close the Netlink socket. After this, all other methods
-     * can no longer be called.
+     * can no longer be called. Messages pending to be sent
+     * will be discarded, and its completion callback won't be
+     * called.
      */
     close() {
         this.__native.close()
