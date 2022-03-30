@@ -188,8 +188,17 @@ class Socket : public Napi::ObjectWrap<Socket> {
 
         int protocol = Napi::Number(env, info[0]);
         msg_buffer = (unsigned int) Napi::Number(env, info[1]);
-        read_callback = Napi::Persistent(Napi::Function(env, info[2]));
-        error_callback = Napi::Persistent(Napi::Function(env, info[3]));
+
+        // do not save strong references to functions, instead save them into
+        // the JS object. the earlier would prevent the engine from correctly
+        // detecting (and collecting) reference loops since it has no way of
+        // inferring the dependency between Value() and the strong references
+        // (which are GC roots, i.e. not associated to anything)
+        read_callback = Napi::Weak(Napi::Function(env, info[2]));
+        error_callback = Napi::Weak(Napi::Function(env, info[3]));
+        Value()["readCallback"] = read_callback.Value();
+        Value()["errorCallback"] = error_callback.Value();
+        Value().Freeze(); // prevent them from being touched, since we save weak refs
 
         // Create the socket
         int flags = 0;
