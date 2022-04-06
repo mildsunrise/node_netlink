@@ -1,6 +1,6 @@
 /**
  * 802.11 netlink interface
- * 
+ *
  * Based on <linux/nl80211.h> at 14f34e3
  *
  * @module
@@ -2178,7 +2178,7 @@ const types: TypeStore = {
             'whether P2P PS mechanism supported',
             'or not. u8, one of the values of &enum nl80211_sta_p2p_ps_status',
         ] }],
-        ['pad', data, { orig: 'NL80211_ATTR_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_ATTR_PAD', docs: [
             'attribute used for padding for 64-bit alignment',
         ] }],
         ['iftypeExtCapa', data, { orig: 'NL80211_ATTR_IFTYPE_EXT_CAPA', docs: [
@@ -2834,7 +2834,7 @@ const types: TypeStore = {
             'aggregate PPDU duration for all frames',
             'received from the station (u64, usec)',
         ] }],
-        ['pad', data, { orig: 'NL80211_STA_INFO_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_STA_INFO_PAD', docs: [
             'attribute used for padding for 64-bit alignment',
         ] }],
         ['ackSignal', u8, { orig: 'NL80211_STA_INFO_ACK_SIGNAL', docs: [
@@ -2891,7 +2891,7 @@ const types: TypeStore = {
             'number of failed transmitted',
             'MSDUs (u64)',
         ] }],
-        ['pad', data, { orig: 'NL80211_TID_STATS_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_TID_STATS_PAD', docs: [
             'attribute used for padding for 64-bit alignment',
         ] }],
         ['txqStats', 'TxqStats', { orig: 'NL80211_TID_STATS_TXQ_STATS', docs: [
@@ -3456,7 +3456,7 @@ const types: TypeStore = {
             'time the radio spent for scan',
             '(on this channel or globally)',
         ] }],
-        ['pad', data, { orig: 'NL80211_SURVEY_INFO_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_SURVEY_INFO_PAD', docs: [
             'attribute used for padding for 64-bit alignment',
         ] }],
         ['timeBssRx', data, { orig: 'NL80211_SURVEY_INFO_TIME_BSS_RX', docs: [
@@ -3899,7 +3899,7 @@ const types: TypeStore = {
             'was last updated by a received frame. The value is expected to be',
             'accurate to about 10ms. (u64, nanoseconds)',
         ] }],
-        ['pad', data, { orig: 'NL80211_BSS_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_BSS_PAD', docs: [
             'attribute used for padding for 64-bit alignment',
         ] }],
         ['parentTsf', u64, { orig: 'NL80211_BSS_PARENT_TSF', docs: [
@@ -5526,7 +5526,7 @@ const types: TypeStore = {
             'number of FTM triggers out of',
             'scheduled window (u32)',
         ] }],
-        ['pad', data, { orig: 'NL80211_FTM_STATS_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_FTM_STATS_PAD', docs: [
             'used for padding, ignore',
         ] }],
     ]},
@@ -5621,7 +5621,7 @@ const types: TypeStore = {
             "the last result; if all results are combined it's set on the single",
             'result.',
         ] }],
-        ['pad', data, { orig: 'NL80211_PMSR_RESP_ATTR_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_PMSR_RESP_ATTR_PAD', docs: [
             'padding for 64-bit attributes, ignore',
         ] }],
     ]},
@@ -5885,7 +5885,7 @@ const types: TypeStore = {
             '9.4.2.22.1) starting with the Measurement Token, with Measurement',
             'Type 11.',
         ] }],
-        ['pad', data, { orig: 'NL80211_PMSR_FTM_RESP_ATTR_PAD', docs: [
+        ['__pad', data, { orig: 'NL80211_PMSR_FTM_RESP_ATTR_PAD', docs: [
             'ignore, for u64/s64 padding only',
         ] }],
     ]},
