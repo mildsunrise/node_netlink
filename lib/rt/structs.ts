@@ -3,7 +3,18 @@ import { MessageType } from './gen_structs'
 import * as rt from './gen_structs'
 import * as ifla from './ifla'
 
-export type Message = AddressMessage | LinkMessage | NdUserOptionMessage | NeighborMessage | NeighborTableMessage | PrefixMessage | RouteMessage | RuleMessage | TcMessage | TcActionMessage
+export type Message =
+    AddressMessage |
+    LinkMessage |
+    NdUserOptionMessage |
+    NeighborMessage |
+    NeighborTableMessage |
+    PrefixMessage |
+    RouteMessage |
+    RuleMessage |
+    NextHopMessage |
+    TcMessage |
+    TcActionMessage
 
 export interface AddressMessage {
     kind: 'address'
@@ -157,6 +168,25 @@ export function formatRuleMessage(x: RuleMessage, out: AttrStream) {
     out.emit(rt.formatRuleAttrs(x.attrs))
 }
 
+export interface NextHopMessage {
+    kind: 'nexthop'
+    data: rt.NextHop
+    attrs: rt.NextHopAttrs
+}
+
+export function parseNextHopMessage(r: Buffer): NextHopMessage {
+    if (r.length < rt.__LENGTH_NextHop)
+        throw Error(`Unexpected NextHop message length (${r.length})`)
+    const data = rt.parseNextHop(r.slice(0, rt.__LENGTH_NextHop))
+    const attrs = rt.parseNextHopAttrs(r.slice(rt.__LENGTH_NextHop))
+    return { kind: 'nexthop', data, attrs }
+}
+
+export function formatNextHopMessage(x: NextHopMessage, out: AttrStream) {
+    out.emit(rt.formatNextHop(x.data))
+    out.emit(rt.formatNextHopAttrs(x.attrs))
+}
+
 export interface TcMessage {
     kind: 'tc'
     data: rt.Tc
@@ -226,6 +256,9 @@ const parseFns: { [t in MessageType]?: (r: Buffer) => Message } = {
     [MessageType.GETNEIGHTBL]: parseNeighborTableMessage,
     [MessageType.SETNEIGHTBL]: parseNeighborTableMessage,
     [MessageType.NEWNDUSEROPT]: parseNdUserOptionMessage,
+    [MessageType.NEWNEXTHOP]: parseNextHopMessage,
+    [MessageType.DELNEXTHOP]: parseNextHopMessage,
+    [MessageType.GETNEXTHOP]: parseNextHopMessage,
 }
 
 export function parseMessage(t: MessageType, r: Buffer): Message {

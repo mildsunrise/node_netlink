@@ -437,6 +437,44 @@ export class RtNetlinkSocket extends EventEmitter {
         return this.getRule(data || {}, attrs, options)
     }
 
+    async newNextHop(data: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        const msg = new AttrStream()
+        rt.formatNextHopMessage({ kind: 'nexthop', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.NEWNEXTHOP, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'nexthop')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    async delNextHop(data: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        const msg = new AttrStream()
+        rt.formatNextHopMessage({ kind: 'nexthop', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.DELNEXTHOP, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'nexthop')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    async getNextHop(data: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        const msg = new AttrStream()
+        rt.formatNextHopMessage({ kind: 'nexthop', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.GETNEXTHOP, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'nexthop')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    getNextHops(data?: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
+        return this.getNextHop(data || {}, attrs, options)
+    }
+
     async newTrafficClass(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
         const msg = new AttrStream()
         rt.formatTcMessage({ kind: 'tc', data, attrs: attrs || {} }, msg)
