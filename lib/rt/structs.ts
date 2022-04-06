@@ -259,6 +259,9 @@ const parseFns: { [t in MessageType]?: (r: Buffer) => Message } = {
     [MessageType.NEWNEXTHOP]: parseNextHopMessage,
     [MessageType.DELNEXTHOP]: parseNextHopMessage,
     [MessageType.GETNEXTHOP]: parseNextHopMessage,
+    [MessageType.NEWNEXTHOPBUCKET]: parseNextHopMessage,
+    [MessageType.DELNEXTHOPBUCKET]: parseNextHopMessage,
+    [MessageType.GETNEXTHOPBUCKET]: parseNextHopMessage,
 }
 
 export function parseMessage(t: MessageType, r: Buffer): Message {

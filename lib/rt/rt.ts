@@ -475,6 +475,44 @@ export class RtNetlinkSocket extends EventEmitter {
         return this.getNextHop(data || {}, attrs, options)
     }
 
+    async newNextHopBucket(data: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        const msg = new AttrStream()
+        rt.formatNextHopMessage({ kind: 'nexthop', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.NEWNEXTHOPBUCKET, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'nexthop')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    async delNextHopBucket(data: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        const msg = new AttrStream()
+        rt.formatNextHopMessage({ kind: 'nexthop', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.DELNEXTHOPBUCKET, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'nexthop')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    async getNextHopBucket(data: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        const msg = new AttrStream()
+        rt.formatNextHopMessage({ kind: 'nexthop', data, attrs: attrs || {} }, msg)
+        const omsg = await this.request(MessageType.GETNEXTHOPBUCKET, msg.bufs, options)
+        return omsg.map(x => {
+            if (x.kind !== 'nexthop')
+                throw Error(`Unexpected ${x.kind} message received`)
+            return x
+        })
+    }
+
+    getNextHopBuckets(data?: rt.NextHop, attrs?: rt.NextHopAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.NextHopMessage[]> {
+        options = { ...options, flags: Number(options?.flags) | FlagsGet.DUMP }
+        return this.getNextHopBucket(data || {}, attrs, options)
+    }
+
     async newTrafficClass(data: rt.Tc, attrs?: rt.TcAttrs, options?: RtNetlinkSendOptions & RequestOptions): Promise<rt.TcMessage[]> {
         const msg = new AttrStream()
         rt.formatTcMessage({ kind: 'tc', data, attrs: attrs || {} }, msg)
