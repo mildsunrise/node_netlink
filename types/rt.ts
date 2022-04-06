@@ -89,6 +89,9 @@ const types: TypeStore = {
         { value: 112, name: 'NEWVLAN', orig: 'RTM_NEWVLAN' },
         { value: 113, name: 'DELVLAN', orig: 'RTM_DELVLAN' },
         { value: 114, name: 'GETVLAN', orig: 'RTM_GETVLAN' },
+        { value: 116, name: 'NEWNEXTHOPBUCKET', orig: 'RTM_NEWNEXTHOPBUCKET' },
+        { value: 117, name: 'DELNEXTHOPBUCKET', orig: 'RTM_DELNEXTHOPBUCKET' },
+        { value: 118, name: 'GETNEXTHOPBUCKET', orig: 'RTM_GETNEXTHOPBUCKET' },
     ]},
 
     MulticastGroups: { kind: 'enum', orig: 'rtnetlink_groups', docs: [
