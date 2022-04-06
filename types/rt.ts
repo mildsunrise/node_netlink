@@ -13,6 +13,8 @@
  *   <linux/if_addr.h>
  *   <linux/if_arp.h>
  * at d1ea35f
+ *   <linux/nexthop.h>
+ * at 710ec56
  *
  * @module
  */
@@ -1215,6 +1217,127 @@ const types: TypeStore = {
         { value: 8, name: 'prohibit', orig: 'FR_ACT_PROHIBIT', docs: [
             'Drop with EACCES',
         ] },
+    ]},
+
+    // NEXT HOP //
+
+    NextHop: { root: true, kind: 'struct', orig: 'nhmsg', attrs: [
+        ['family', u8, { orig: 'nh_family' }],
+        ['scope', u8, { orig: 'nh_scope', docs: [
+            'return only',
+        ] }],
+        ['protocol', u8, { orig: 'nh_protocol', docs: [
+            'Routing protocol that installed nexthop',
+        ] }],
+        ['__reserved', u8, { orig: 'resvd' }],
+        ['flags', u32, { type: 'RouteNextHopFlags', orig: 'nh_flags' }],
+    ]},
+
+    NextHopAttrs: { attrs: [
+        ['id', u32, { orig: 'NHA_ID', docs: [
+            'id for nexthop. id == 0 means auto-assign',
+        ] }],
+
+        ['group', data /* FIXME: array('NextHopGroup') */, { orig: 'NHA_GROUP', docs: [
+            '[if this attribute is present: no other attributes can be set (other than `id` and `groupType`)]',
+        ] }],
+        ['groupType', u16, { type: 'NextHopGroupType', orig: 'NHA_GROUP_TYPE' }],
+
+        ['blackhole', flag, { orig: 'NHA_BLACKHOLE', docs: [
+            'nexthop used to blackhole packets',
+            '[if this attribute is present: OIF, GATEWAY, ENCAP can not be set]',
+        ] }],
+
+        ['oif', u32, { orig: 'NHA_OIF', docs: [
+            'nexthop device',
+            '[can be appended to dump request to return only nexthops using given device]',
+        ] }],
+        ['gateway', data, { orig: 'NHA_GATEWAY', docs: [
+            'be32 (IPv4) or in6_addr (IPv6) gw address',
+        ] }],
+        ['encapType', u16, { orig: 'NHA_ENCAP_TYPE', docs: [
+            'lwt encap type',
+        ] }],
+        ['encap', data, { orig: 'NHA_ENCAP', docs: [
+            'lwt encap data',
+        ] }],
+
+        ['groups', flag, { orig: 'NHA_GROUPS', docs: [
+            'only return nexthop groups in dump',
+        ] }],
+        ['master', u32, { orig: 'NHA_MASTER', docs: [
+            'only return nexthops with given master dev',
+        ] }],
+
+        ['fdb', flag, { orig: 'NHA_FDB', docs: [
+            'nexthop belongs to a bridge fdb',
+            '[if this attribute is present: OIF, BLACKHOLE, ENCAP cannot be set]',
+        ] }],
+
+        ['resGroup', 'NextHopResGroup', { orig: 'NHA_RES_GROUP', docs: [
+            'resilient nexthop group attributes',
+        ] }],
+        ['resBucket', 'NextHopResBucket', { orig: 'NHA_RES_BUCKET', docs: [
+            'nexthop bucket attributes',
+        ] }],
+    ]},
+
+    NextHopGroup: { kind: 'struct', orig: 'nexthop_grp', docs: [
+        'entry in a nexthop group',
+    ], attrs: [
+        ['id', u32, { orig: 'id', docs: [
+            'nexthop id - must exist',
+        ] }],
+        ['weight', u8, { orig: 'weight', docs: [
+            'weight of this nexthop',
+        ] }],
+        ['__reserved1', u8, { orig: 'resvd1' }],
+        ['__reserved2', u16, { orig: 'resvd2' }],
+    ]},
+
+    NextHopGroupType: { kind: 'enum', values: [
+        { value: 0, name: 'multipath', orig: 'NEXTHOP_GRP_TYPE_MPATH', docs: [
+            'hash-threshold nexthop group',
+            '(default type if not specified)',
+        ] },
+        { value: 1, name: 'resilient', orig: 'NEXTHOP_GRP_TYPE_RES', docs: [
+            'resilient nexthop group',
+        ] },
+    ]},
+
+    'NextHopResGroup': { kind: 'attrs', zero: true, attrs: [
+        ['__pad', data, { orig: 'NHA_RES_GROUP_PAD', docs: [
+            'Pad attribute for 64-bit alignment.',
+        ] }],
+
+        ['buckets', u16, { orig: 'NHA_RES_GROUP_BUCKETS', docs: [
+            'number of nexthop buckets in a resilient nexthop group',
+        ] }],
+        ['idleTimer', u32, { orig: 'NHA_RES_GROUP_IDLE_TIMER', docs: [
+            'clock_t; nexthop bucket idle timer (per-group)',
+        ] }],
+        ['unbalancedTimer', u32, { orig: 'NHA_RES_GROUP_UNBALANCED_TIMER', docs: [
+            'clock_t; nexthop unbalanced timer',
+        ] }],
+        ['unbalancedTime', u64, { orig: 'NHA_RES_GROUP_UNBALANCED_TIME', docs: [
+            'clock_t; nexthop unbalanced time',
+        ] }],
+    ]},
+
+    'NextHopResBucket': { kind: 'attrs', zero: true, attrs: [
+        ['__pad', data, { orig: 'NHA_RES_BUCKET_PAD', docs: [
+            'Pad attribute for 64-bit alignment.',
+        ] }],
+
+        ['index', u16, { orig: 'NHA_RES_BUCKET_INDEX', docs: [
+            'u16; nexthop bucket index',
+        ] }],
+        ['idleTime', u64, { orig: 'NHA_RES_BUCKET_IDLE_TIME', docs: [
+            'clock_t; nexthop bucket idle time',
+        ] }],
+        ['nexthopId', u32, { orig: 'NHA_RES_BUCKET_NH_ID', docs: [
+            'nexthop id assigned to the nexthop bucket',
+        ] }],
     ]},
 }
 
