@@ -1,6 +1,6 @@
 /**
  * iproute link interface
- * 
+ *
  * Based on
  *   <linux/if_link.h>
  *   <linux/if_vlan.h>
@@ -211,7 +211,7 @@ const types: TypeStore = {
         ['protoDown', data, { orig: 'IFLA_PROTO_DOWN' }],
         ['gsoMaxSegs', u32, { orig: 'IFLA_GSO_MAX_SEGS' }],
         ['gsoMaxSize', u32, { orig: 'IFLA_GSO_MAX_SIZE' }],
-        ['pad', data, { orig: 'IFLA_PAD' }],
+        ['__pad', data, { orig: 'IFLA_PAD' }],
         ['xdp', 'Xdp', { orig: 'IFLA_XDP' }],
         ['event', data, { type: 'Event', orig: 'IFLA_EVENT' }],
         ['newNetnsid', data, { orig: 'IFLA_NEW_NETNSID' }],
@@ -312,7 +312,7 @@ const types: TypeStore = {
         ['nfCallIp6tables', data, { orig: 'IFLA_BR_NF_CALL_IP6TABLES' }],
         ['nfCallArptables', data, { orig: 'IFLA_BR_NF_CALL_ARPTABLES' }],
         ['vlanDefaultPvid', data, { orig: 'IFLA_BR_VLAN_DEFAULT_PVID' }],
-        ['pad', data, { orig: 'IFLA_BR_PAD' }],
+        ['__pad', data, { orig: 'IFLA_BR_PAD' }],
         ['vlanStatsEnabled', data, { orig: 'IFLA_BR_VLAN_STATS_ENABLED' }],
         ['mcastStatsEnabled', data, { orig: 'IFLA_BR_MCAST_STATS_ENABLED' }],
         ['mcastIgmpVersion', data, { orig: 'IFLA_BR_MCAST_IGMP_VERSION' }],
@@ -387,7 +387,7 @@ const types: TypeStore = {
         ['holdTimer', data, { orig: 'IFLA_BRPORT_HOLD_TIMER' }],
         ['flush', data, { orig: 'IFLA_BRPORT_FLUSH' }],
         ['multicastRouter', data, { orig: 'IFLA_BRPORT_MULTICAST_ROUTER' }],
-        ['pad', data, { orig: 'IFLA_BRPORT_PAD' }],
+        ['__pad', data, { orig: 'IFLA_BRPORT_PAD' }],
         ['mcastFlood', data, { orig: 'IFLA_BRPORT_MCAST_FLOOD' }],
         ['mcastToUcast', data, { orig: 'IFLA_BRPORT_MCAST_TO_UCAST' }],
         ['vlanTunnel', data, { orig: 'IFLA_BRPORT_VLAN_TUNNEL' }],
@@ -501,7 +501,7 @@ const types: TypeStore = {
         ['scb', u8, { orig: 'IFLA_MACSEC_SCB' }],
         ['replayProtect', u8, { orig: 'IFLA_MACSEC_REPLAY_PROTECT' }],
         ['validation', u8, { orig: 'IFLA_MACSEC_VALIDATION' }],
-        ['pad', data, { orig: 'IFLA_MACSEC_PAD' }],
+        ['__pad', data, { orig: 'IFLA_MACSEC_PAD' }],
     ]},
 
     Xfrm: { docs: [
@@ -822,7 +822,7 @@ const types: TypeStore = {
         ['txBytes', data, { orig: 'IFLA_VF_STATS_TX_BYTES' }],
         ['broadcast', data, { orig: 'IFLA_VF_STATS_BROADCAST' }],
         ['multicast', data, { orig: 'IFLA_VF_STATS_MULTICAST' }],
-        ['pad', data, { orig: 'IFLA_VF_STATS_PAD' }],
+        ['__pad', data, { orig: 'IFLA_VF_STATS_PAD' }],
         ['rxDropped', data, { orig: 'IFLA_VF_STATS_RX_DROPPED' }],
         ['txDropped', data, { orig: 'IFLA_VF_STATS_TX_DROPPED' }],
     ]},
@@ -892,7 +892,7 @@ const types: TypeStore = {
         ['vsiMgrId', u8, { orig: 'vsi_mgr_id' }],
         ['vsiTypeId', u8, { count: 3, orig: 'vsi_type_id' }],
         ['vsiTypeVersion', u8, { orig: 'vsi_type_version' }],
-        ['pad', u8, { count: 3, orig: 'pad' }],
+        ['__pad', u8, { count: 3, orig: 'pad' }],
     ]},
 
     Ipoib: { docs: [
@@ -933,8 +933,8 @@ const types: TypeStore = {
         'STATS section',
     ], attrs: [
         ['family', u8, { orig: 'family' }],
-        ['pad1', u8, { orig: 'pad1' }],
-        ['pad2', u16, { orig: 'pad2' }],
+        ['__pad1', u8, { orig: 'pad1' }],
+        ['__pad2', u16, { orig: 'pad2' }],
         ['ifindex', u32, { orig: 'ifindex' }],
         ['filterMask', u32, { orig: 'filter_mask' }],
     ]},
@@ -1151,7 +1151,7 @@ const types: TypeStore = {
         ['txPackets', u64, { orig: 'tx_packets' }],
         ['vid', u16, { orig: 'vid' }],
         ['flags', u16, { orig: 'flags' }],
-        ['pad2', u32, { orig: 'pad2' }],
+        ['__pad2', u32, { orig: 'pad2' }],
     ]},
 
     BridgeStpXstats: { kind: 'struct', orig: 'bridge_stp_xstats', attrs: [
@@ -1258,7 +1258,7 @@ const types: TypeStore = {
     ], attrs: [
         ['vlan', data, { orig: 'BRIDGE_XSTATS_VLAN' }],
         ['mcast', data, { orig: 'BRIDGE_XSTATS_MCAST' }],
-        ['pad', data, { orig: 'BRIDGE_XSTATS_PAD' }],
+        ['__pad', data, { orig: 'BRIDGE_XSTATS_PAD' }],
         ['stp', data, { orig: 'BRIDGE_XSTATS_STP' }],
     ]},
 

@@ -8,10 +8,10 @@
  * Based on
  *   <linux/rtnetlink.h>
  *   <linux/neighbour.h>
+ *   <linux/fib_rules.h>
+ *   <linux/if.h>
  *   <linux/if_addr.h>
  *   <linux/if_arp.h>
- *   <linux/if.h>
- *   <linux/fib_rules.h>
  * at d1ea35f
  *
  * @module
@@ -316,9 +316,7 @@ const types: TypeStore = {
         ['gateway', data, { orig: 'RTA_GATEWAY' }],
         ['priority', u32, { orig: 'RTA_PRIORITY' }],
         ['prefsrc', data, { orig: 'RTA_PREFSRC' }],
-        ['metrics', 'RouteMetrics', { orig: 'RTA_METRICS', docs: [
-            'array of struct rtattr with types of RTAX_*',
-        ] }],
+        ['metrics', 'RouteMetrics', { orig: 'RTA_METRICS' }],
         ['multipath', data, { orig: 'RTA_MULTIPATH', docs: [
             'array of struct rtnexthop',
         ] }],
@@ -338,7 +336,7 @@ const types: TypeStore = {
         ['encapType', u16, { orig: 'RTA_ENCAP_TYPE' }],
         ['encap', data, { orig: 'RTA_ENCAP' }],
         ['expires', data, { orig: 'RTA_EXPIRES' }],
-        ['pad', data, { orig: 'RTA_PAD' }],
+        ['__pad', data, { orig: 'RTA_PAD' }],
         ['uid', data, { orig: 'RTA_UID' }],
         ['ttlPropagate', u8, { orig: 'RTA_TTL_PROPAGATE' }],
         ['ipProto', data, { orig: 'RTA_IP_PROTO' }],
@@ -847,7 +845,7 @@ const types: TypeStore = {
         ['fcnt', data, { orig: 'TCA_FCNT' }],
         ['stats2', data, { orig: 'TCA_STATS2' }],
         ['stab', data, { orig: 'TCA_STAB' }],
-        ['pad', data, { orig: 'TCA_PAD' }],
+        ['__pad', data, { orig: 'TCA_PAD' }],
         ['dumpInvisible', data, { orig: 'TCA_DUMP_INVISIBLE' }],
         ['chain', u32, { orig: 'TCA_CHAIN' }],
         ['hwOffload', data, { orig: 'TCA_HW_OFFLOAD' }],
@@ -907,8 +905,8 @@ const types: TypeStore = {
 
     Neighbor: { root: true, kind: 'struct', orig: 'ndmsg', attrs: [
         ['family', u8, { orig: 'ndm_family' }],
-        ['pad1', u8, { orig: 'ndm_pad1' }],
-        ['pad2', u16, { orig: 'ndm_pad2' }],
+        ['__pad1', u8, { orig: 'ndm_pad1' }],
+        ['__pad2', u16, { orig: 'ndm_pad2' }],
         ['ifindex', s32, { orig: 'ndm_ifindex' }],
         ['state', u16, { type: 'NeighborState', orig: 'ndm_state' }],
         ['flags', u8, { type: 'NeighborFlags', orig: 'ndm_flags' }],
@@ -1025,7 +1023,7 @@ const types: TypeStore = {
         ['gcInterval', u64, { orig: 'NDTA_GC_INTERVAL', docs: [
             'u64, msecs',
         ] }],
-        ['pad', data, { orig: 'NDTA_PAD' }],
+        ['__pad', data, { orig: 'NDTA_PAD' }],
     ]},
 
     NeighborTableConfig: { kind: 'struct', orig: 'ndt_config', attrs: [
@@ -1092,7 +1090,7 @@ const types: TypeStore = {
             'u32',
         ] }],
         ['mcastReprobes', u32, { orig: 'NDTPA_MCAST_REPROBES' }],
-        ['pad', data, { orig: 'NDTPA_PAD' }],
+        ['__pad', data, { orig: 'NDTPA_PAD' }],
     ]},
 
     // FORWARDING RULES //
@@ -1105,10 +1103,10 @@ const types: TypeStore = {
         ['tos', u8, { orig: 'tos' }],
 
         ['table', u8, { orig: 'table' }],
-        ['res1', u8, { orig: 'res1', docs: [
+        ['__reserved1', u8, { orig: 'res1', docs: [
             'reserved',
         ] }],
-        ['res2', u8, { orig: 'res2', docs: [
+        ['__reserved2', u8, { orig: 'res2', docs: [
             'reserved',
         ] }],
         ['action', u8, { type: 'RuleAction', orig: 'action' }],
@@ -1154,7 +1152,7 @@ const types: TypeStore = {
         ['oifname', string, { orig: 'FRA_OIFNAME', docs: [
             'output interface name',
         ] }],
-        ['pad', data, { orig: 'FRA_PAD' }],
+        ['__pad', data, { orig: 'FRA_PAD' }],
         ['l3Mdev', u8, { orig: 'FRA_L3MDEV', docs: [
             'iif or oif is l3mdev goto its table',
         ] }],
