@@ -141,7 +141,7 @@ for (const iface of ifaces.values())
   console.log(`Found inferface ${iface.ifindex}: ${iface.ifname} type ${iface.iftype}`)
 
 // Operate on the first interface we find
-const ifindex = [...ifaces.values()][0].ifindex
+const { ifindex } = [...ifaces.values()].find(x => 'ifindex' in x)
 
 // Switch to a different frequency
 await socket.request(iw.Commands.SET_CHANNEL, {
