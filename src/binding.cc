@@ -196,9 +196,9 @@ class Socket : public Napi::ObjectWrap<Socket> {
         // (which are GC roots, i.e. not associated to anything)
         read_callback = Napi::Weak(Napi::Function(env, info[2]));
         error_callback = Napi::Weak(Napi::Function(env, info[3]));
-        Value()["readCallback"] = read_callback.Value();
-        Value()["errorCallback"] = error_callback.Value();
-        Value().Freeze(); // prevent them from being touched, since we save weak refs
+        // prevent them from being touched, since we save weak refs
+        Value().DefineProperty(Napi::PropertyDescriptor::Value("readCallback", read_callback.Value(), napi_default));
+        Value().DefineProperty(Napi::PropertyDescriptor::Value("errorCallback", error_callback.Value(), napi_default));
 
         // Create the socket
         int flags = 0;
