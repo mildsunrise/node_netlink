@@ -24,6 +24,8 @@ APIs are implemented:
 
  - `nl80211`: 802.11 aka wifi interface (used by `iw`, `hostapd`, `wpa_supplicant`, etc.)
 
+ - `wg`: WireGuard tunnels
+
 The point is to wrap these interfaces in a 'high-level' way, complete
 with TypeScript typings. However some fields will be set to
 `Buffer` (i.e. unparsed) because its type is not yet known. You can

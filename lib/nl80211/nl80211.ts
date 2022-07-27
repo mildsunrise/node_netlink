@@ -11,7 +11,7 @@ import { Flags, FlagsGet } from '../constants'
 import { NetlinkMessage, AttrStream } from '../structs'
 import { Commands, Message, formatMessage, parseMessage } from './structs'
 import { GenericNetlinkSocketOptions, GenericNetlinkSocket, GenericNetlinkSendOptions, createGenericNetlink } from '../genl/genl'
-import { genl, nl80211 } from '..'
+import { genl } from '..'
 
 // Based on <linux/nl80211.h> at 14f34e3
 
