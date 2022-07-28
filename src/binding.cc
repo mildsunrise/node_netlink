@@ -38,11 +38,17 @@ Napi::Error ErrnoException(Napi::Env env, int errnum, const char* syscall) {
 }
 
 
-template <class T> class UvHandle {
+template <class Self, class T> class UvHandle {
   public:
-    ~UvHandle() {
-        if (init) uv_close((uv_handle_t*) &handle, NULL);
-    }
+    struct Deleter {
+        void operator()(Self* self) {
+            UvHandle* pself = static_cast<UvHandle*>(self);
+            uv_close((uv_handle_t*) &pself->handle, [](uv_handle_t* handle) {
+                auto pself = reinterpret_cast<UvHandle*>(handle); // safe, because handle is the first member
+                delete static_cast<Self*>(pself);
+            });
+        }
+    };
     inline bool isActive() {
         return uv_is_active((uv_handle_t*) &handle);
     }
@@ -57,32 +63,48 @@ template <class T> class UvHandle {
     }
     UvHandle(const UvHandle&) = delete;
     UvHandle& operator=(const UvHandle&) = delete;
+    UvHandle(UvHandle&&) = delete;
+    UvHandle& operator=(UvHandle&&) = delete;
   protected:
-    UvHandle(): init(false) {};
-    bool init;
+    struct FailedDeleter {
+        void operator()(Self* self) { delete self; }
+    };
+    template <class InitFn> static std::unique_ptr<Self, Deleter> New_(InitFn initFn) {
+        auto ptr = std::unique_ptr<Self, FailedDeleter>(new Self()); // we can't use make_unique()
+        initFn(*ptr);
+        return std::unique_ptr<Self, Deleter>(ptr.release());
+    }
     T handle;
+    UvHandle() = default;
+    ~UvHandle() = default;
 };
 
-class UvTimer : public UvHandle<uv_timer_t> {
+class UvTimer : public UvHandle<UvTimer, uv_timer_t> {
+  protected:
+    friend class UvHandle<UvTimer, uv_timer_t>;
+    UvTimer() = default;
+    ~UvTimer() = default;
   public:
-    UvTimer(Napi::Env env, uv_loop_t* loop) {
-        if (auto err = uv_timer_init(loop, &handle))
+    static auto New(Napi::Env env, uv_loop_t* loop) { return New_([&](UvTimer& self) {
+        if (auto err = uv_timer_init(loop, &self.handle))
             throw ErrnoException(env, -err, "uv_timer_init");
-        init = true;
-    }
+    }); }
     void start(Napi::Env env, uv_timer_cb cb, uint64_t timeout, uint64_t repeat) {
         if (auto err = uv_timer_start(&handle, cb, timeout, repeat))
             throw ErrnoException(env, -err, "uv_timer_start");
     }
 };
 
-class UvPoll : public UvHandle<uv_poll_t> {
+class UvPoll : public UvHandle<UvPoll, uv_poll_t> {
+  protected:
+    friend class UvHandle<UvPoll, uv_poll_t>;
+    UvPoll() = default;
+    ~UvPoll() = default;
   public:
-    UvPoll(Napi::Env env, uv_loop_t* loop, int fd) {
-        if (auto err = uv_poll_init(loop, &handle, fd))
+    static auto New(Napi::Env env, uv_loop_t* loop, int fd) { return New_([&](UvPoll& self) {
+        if (auto err = uv_poll_init(loop, &self.handle, fd))
             throw ErrnoException(env, -err, "uv_poll_init");
-        init = true;
-    }
+    }); }
     void start(Napi::Env env, int events, uv_poll_cb cb) {
         if (auto err = uv_poll_start(&handle, events, cb))
             throw ErrnoException(env, -err, "uv_poll_start");
@@ -209,10 +231,10 @@ class Socket : public Napi::ObjectWrap<Socket> {
         if (fd == -1)
             throw ErrnoException(env, errno, "socket", "Couldn't create netlink socket");
 
-        watcher = std::make_unique<UvPoll>(env, loop, fd);
+        watcher = UvPoll::New(env, loop, fd);
         watcher->setData(this);
 
-        timer = std::make_unique<UvTimer>(env, loop);
+        timer = UvTimer::New(env, loop);
         timer->setData(this);
 
         async_res = std::make_unique<Napi::AsyncContext>(env, "netlink:NativeNetlink", Value());
@@ -533,8 +555,8 @@ class Socket : public Napi::ObjectWrap<Socket> {
     Napi::FunctionReference read_callback;
     Napi::FunctionReference error_callback;
     FileDescriptor fd;
-    std::unique_ptr<UvTimer> timer;
-    std::unique_ptr<UvPoll> watcher;
+    std::unique_ptr<UvTimer, UvTimer::Deleter> timer;
+    std::unique_ptr<UvPoll, UvPoll::Deleter> watcher;
     std::unique_ptr<Napi::AsyncContext> async_res;
     std::queue<std::unique_ptr<SendRequest>> write_queue;
     std::queue<std::unique_ptr<SendRequest>> completed_queue;
