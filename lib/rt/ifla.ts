@@ -201,6 +201,9 @@ export interface LinkStats64 {
     
     /** dropped, no handler found */
     rxNohandler?: bigint
+
+    /** destination MAC address mismatch */
+    rxOtherHostDropped?: bigint
 }
 
 /** Parses the attributes of a [[LinkStats64]] object */
@@ -232,6 +235,8 @@ export function parseLinkStats64(r: Buffer): LinkStats64 {
     x.txCompressed = structs.readU64.call(r, 176)
     if (r.length >= 192) // Introduced in Linux v4.6
         x.rxNohandler = structs.readU64.call(r, 184)
+    if (r.length >= 200) // Introduced in Linux v5.19
+        x.rxOtherHostDropped = structs.readU64.call(r, 192);
     return x
 }
 
@@ -262,10 +267,11 @@ export function formatLinkStats64(x: LinkStats64, r: Buffer = Buffer.alloc(__MAX
     x.rxCompressed && structs.writeU64.call(r, x.rxCompressed, 168)
     x.txCompressed && structs.writeU64.call(r, x.txCompressed, 176)
     x.rxNohandler && structs.writeU64.call(r, x.rxNohandler, 184)
+    x.rxOtherHostDropped && structs.writeU64.call(r, x.rxOtherHostDropped, 192)
     return r
 }
 
-export const __MAXLENGTH_LinkStats64 = 192
+export const __MAXLENGTH_LinkStats64 = 200
 
 /** The struct should be in sync with struct ifmap */
 export interface LinkInterfaceMap {
