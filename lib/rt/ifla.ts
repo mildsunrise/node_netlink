@@ -396,7 +396,7 @@ export interface LinkAttrs extends BaseObject {
     
     gsoMaxSize?: number
     
-    pad?: Buffer
+    __pad?: Buffer
     
     xdp?: Xdp
     
@@ -469,7 +469,7 @@ export function parseLinkAttrs(r: Buffer): LinkAttrs {
         39: (data, obj) => obj.protoDown = data,
         40: (data, obj) => obj.gsoMaxSegs = structs.getU32(data),
         41: (data, obj) => obj.gsoMaxSize = structs.getU32(data),
-        42: (data, obj) => obj.pad = data,
+        42: (data, obj) => obj.__pad = data,
         43: (data, obj) => obj.xdp = parseXdp(data),
         44: (data, obj) => obj.event = data,
         45: (data, obj) => obj.newNetnsid = data,
@@ -529,7 +529,7 @@ export function formatLinkAttrs(x: LinkAttrs): StreamData {
         protoDown: (data, obj) => data.push(39, obj.protoDown!),
         gsoMaxSegs: (data, obj) => data.push(40, structs.putU32(obj.gsoMaxSegs!)),
         gsoMaxSize: (data, obj) => data.push(41, structs.putU32(obj.gsoMaxSize!)),
-        pad: (data, obj) => data.push(42, obj.pad!),
+        __pad: (data, obj) => data.push(42, obj.__pad!),
         xdp: (data, obj) => data.push(43, formatXdp(obj.xdp!)),
         event: (data, obj) => data.push(44, obj.event!),
         newNetnsid: (data, obj) => data.push(45, obj.newNetnsid!),
@@ -708,7 +708,7 @@ export interface Bridge extends BaseObject {
     
     vlanDefaultPvid?: Buffer
     
-    pad?: Buffer
+    __pad?: Buffer
     
     vlanStatsEnabled?: Buffer
     
@@ -765,7 +765,7 @@ export function parseBridge(r: Buffer): Bridge {
         37: (data, obj) => obj.nfCallIp6tables = data,
         38: (data, obj) => obj.nfCallArptables = data,
         39: (data, obj) => obj.vlanDefaultPvid = data,
-        40: (data, obj) => obj.pad = data,
+        40: (data, obj) => obj.__pad = data,
         41: (data, obj) => obj.vlanStatsEnabled = data,
         42: (data, obj) => obj.mcastStatsEnabled = data,
         43: (data, obj) => obj.mcastIgmpVersion = data,
@@ -817,7 +817,7 @@ export function formatBridge(x: Bridge): StreamData {
         nfCallIp6tables: (data, obj) => data.push(37, obj.nfCallIp6tables!),
         nfCallArptables: (data, obj) => data.push(38, obj.nfCallArptables!),
         vlanDefaultPvid: (data, obj) => data.push(39, obj.vlanDefaultPvid!),
-        pad: (data, obj) => data.push(40, obj.pad!),
+        __pad: (data, obj) => data.push(40, obj.__pad!),
         vlanStatsEnabled: (data, obj) => data.push(41, obj.vlanStatsEnabled!),
         mcastStatsEnabled: (data, obj) => data.push(42, obj.mcastStatsEnabled!),
         mcastIgmpVersion: (data, obj) => data.push(43, obj.mcastIgmpVersion!),
@@ -928,7 +928,7 @@ export interface BridgePort extends BaseObject {
     
     multicastRouter?: Buffer
     
-    pad?: Buffer
+    __pad?: Buffer
     
     mcastFlood?: Buffer
     
@@ -975,7 +975,7 @@ export function parseBridgePort(r: Buffer): BridgePort {
         23: (data, obj) => obj.holdTimer = data,
         24: (data, obj) => obj.flush = data,
         25: (data, obj) => obj.multicastRouter = data,
-        26: (data, obj) => obj.pad = data,
+        26: (data, obj) => obj.__pad = data,
         27: (data, obj) => obj.mcastFlood = data,
         28: (data, obj) => obj.mcastToUcast = data,
         29: (data, obj) => obj.vlanTunnel = data,
@@ -1015,7 +1015,7 @@ export function formatBridgePort(x: BridgePort): StreamData {
         holdTimer: (data, obj) => data.push(23, obj.holdTimer!),
         flush: (data, obj) => data.push(24, obj.flush!),
         multicastRouter: (data, obj) => data.push(25, obj.multicastRouter!),
-        pad: (data, obj) => data.push(26, obj.pad!),
+        __pad: (data, obj) => data.push(26, obj.__pad!),
         mcastFlood: (data, obj) => data.push(27, obj.mcastFlood!),
         mcastToUcast: (data, obj) => data.push(28, obj.mcastToUcast!),
         vlanTunnel: (data, obj) => data.push(29, obj.vlanTunnel!),
@@ -1354,7 +1354,7 @@ export interface Macsec extends BaseObject {
     
     validation?: number
     
-    pad?: Buffer
+    __pad?: Buffer
 }
 
 /** Parses the attributes of a [[Macsec]] object */
@@ -1373,7 +1373,7 @@ export function parseMacsec(r: Buffer): Macsec {
         11: (data, obj) => obj.scb = structs.getU8(data),
         12: (data, obj) => obj.replayProtect = structs.getU8(data),
         13: (data, obj) => obj.validation = structs.getU8(data),
-        14: (data, obj) => obj.pad = data,
+        14: (data, obj) => obj.__pad = data,
     })
 }
 
@@ -1393,7 +1393,7 @@ export function formatMacsec(x: Macsec): StreamData {
         scb: (data, obj) => data.push(11, structs.putU8(obj.scb!)),
         replayProtect: (data, obj) => data.push(12, structs.putU8(obj.replayProtect!)),
         validation: (data, obj) => data.push(13, structs.putU8(obj.validation!)),
-        pad: (data, obj) => data.push(14, obj.pad!),
+        __pad: (data, obj) => data.push(14, obj.__pad!),
     })
 }
 
@@ -2384,7 +2384,7 @@ export interface VirtualFunctionStats extends BaseObject {
     
     multicast?: Buffer
     
-    pad?: Buffer
+    __pad?: Buffer
     
     rxDropped?: Buffer
     
@@ -2400,7 +2400,7 @@ export function parseVirtualFunctionStats(r: Buffer): VirtualFunctionStats {
         3: (data, obj) => obj.txBytes = data,
         4: (data, obj) => obj.broadcast = data,
         5: (data, obj) => obj.multicast = data,
-        6: (data, obj) => obj.pad = data,
+        6: (data, obj) => obj.__pad = data,
         7: (data, obj) => obj.rxDropped = data,
         8: (data, obj) => obj.txDropped = data,
     })
@@ -2415,7 +2415,7 @@ export function formatVirtualFunctionStats(x: VirtualFunctionStats): StreamData 
         txBytes: (data, obj) => data.push(3, obj.txBytes!),
         broadcast: (data, obj) => data.push(4, obj.broadcast!),
         multicast: (data, obj) => data.push(5, obj.multicast!),
-        pad: (data, obj) => data.push(6, obj.pad!),
+        __pad: (data, obj) => data.push(6, obj.__pad!),
         rxDropped: (data, obj) => data.push(7, obj.rxDropped!),
         txDropped: (data, obj) => data.push(8, obj.txDropped!),
     })
@@ -2561,7 +2561,7 @@ export interface PortVsi {
     
     vsiTypeVersion?: number
     
-    pad?: number[]
+    __pad?: number[]
 }
 
 /** Parses the attributes of a [[PortVsi]] object */
@@ -2571,7 +2571,7 @@ export function parsePortVsi(r: Buffer): PortVsi {
     x.vsiMgrId = structs.readU8.call(r, 0)
     x.vsiTypeId = [...Array(3).keys()].map(i => structs.readU8.call(r, 1 + 1 * i))
     x.vsiTypeVersion = structs.readU8.call(r, 4)
-    x.pad = [...Array(3).keys()].map(i => structs.readU8.call(r, 5 + 1 * i))
+    x.__pad = [...Array(3).keys()].map(i => structs.readU8.call(r, 5 + 1 * i))
     return x
 }
 
@@ -2583,9 +2583,9 @@ export function formatPortVsi(x: PortVsi, r: Buffer = Buffer.alloc(__LENGTH_Port
         throw Error('vsiTypeId: Unexpected array length')
         x.vsiTypeId && x.vsiTypeId.forEach((x, i) => structs.writeU8.call(r, x, 1 + 1 * i))
     x.vsiTypeVersion && structs.writeU8.call(r, x.vsiTypeVersion, 4)
-    if (x.pad && x.pad.length !== 3)
-        throw Error('pad: Unexpected array length')
-        x.pad && x.pad.forEach((x, i) => structs.writeU8.call(r, x, 5 + 1 * i))
+    if (x.__pad && x.__pad.length !== 3)
+        throw Error('__pad: Unexpected array length')
+        x.__pad && x.__pad.forEach((x, i) => structs.writeU8.call(r, x, 5 + 1 * i))
     return r
 }
 
@@ -2672,9 +2672,9 @@ export function formatHsr(x: Hsr): StreamData {
 export interface IfStatsMsg {
     family?: number
     
-    pad1?: number
+    __pad1?: number
     
-    pad2?: number
+    __pad2?: number
     
     ifindex?: number
     
@@ -2686,8 +2686,8 @@ export function parseIfStatsMsg(r: Buffer): IfStatsMsg {
     if (r.length !== __LENGTH_IfStatsMsg) throw Error('Unexpected length for IfStatsMsg')
     const x: IfStatsMsg = {}
     x.family = structs.readU8.call(r, 0)
-    x.pad1 = structs.readU8.call(r, 1)
-    x.pad2 = structs.readU16.call(r, 2)
+    x.__pad1 = structs.readU8.call(r, 1)
+    x.__pad2 = structs.readU16.call(r, 2)
     x.ifindex = structs.readU32.call(r, 4)
     x.filterMask = structs.readU32.call(r, 8)
     return x
@@ -2697,8 +2697,8 @@ export function parseIfStatsMsg(r: Buffer): IfStatsMsg {
 export function formatIfStatsMsg(x: IfStatsMsg, r: Buffer = Buffer.alloc(__LENGTH_IfStatsMsg)): Buffer {
     if (r.length !== __LENGTH_IfStatsMsg) throw Error('Unexpected length for IfStatsMsg')
     x.family && structs.writeU8.call(r, x.family, 0)
-    x.pad1 && structs.writeU8.call(r, x.pad1, 1)
-    x.pad2 && structs.writeU16.call(r, x.pad2, 2)
+    x.__pad1 && structs.writeU8.call(r, x.__pad1, 1)
+    x.__pad2 && structs.writeU16.call(r, x.__pad2, 2)
     x.ifindex && structs.writeU32.call(r, x.ifindex, 4)
     x.filterMask && structs.writeU32.call(r, x.filterMask, 8)
     return r
@@ -3291,7 +3291,7 @@ export interface BridgeVlanXstats {
     
     flags?: number
     
-    pad2?: number
+    __pad2?: number
 }
 
 /** Parses the attributes of a [[BridgeVlanXstats]] object */
@@ -3304,7 +3304,7 @@ export function parseBridgeVlanXstats(r: Buffer): BridgeVlanXstats {
     x.txPackets = structs.readU64.call(r, 24)
     x.vid = structs.readU16.call(r, 32)
     x.flags = structs.readU16.call(r, 34)
-    x.pad2 = structs.readU32.call(r, 36)
+    x.__pad2 = structs.readU32.call(r, 36)
     return x
 }
 
@@ -3317,7 +3317,7 @@ export function formatBridgeVlanXstats(x: BridgeVlanXstats, r: Buffer = Buffer.a
     x.txPackets && structs.writeU64.call(r, x.txPackets, 24)
     x.vid && structs.writeU16.call(r, x.vid, 32)
     x.flags && structs.writeU16.call(r, x.flags, 34)
-    x.pad2 && structs.writeU32.call(r, x.pad2, 36)
+    x.__pad2 && structs.writeU32.call(r, x.__pad2, 36)
     return r
 }
 
@@ -3718,7 +3718,7 @@ export interface BridgeXstats extends BaseObject {
     
     mcast?: Buffer
     
-    pad?: Buffer
+    __pad?: Buffer
     
     stp?: Buffer
 }
@@ -3728,7 +3728,7 @@ export function parseBridgeXstats(r: Buffer): BridgeXstats {
     return structs.getObject(r, {
         1: (data, obj) => obj.vlan = data,
         2: (data, obj) => obj.mcast = data,
-        3: (data, obj) => obj.pad = data,
+        3: (data, obj) => obj.__pad = data,
         4: (data, obj) => obj.stp = data,
     })
 }
@@ -3738,7 +3738,7 @@ export function formatBridgeXstats(x: BridgeXstats): StreamData {
     return structs.putObject(x, {
         vlan: (data, obj) => data.push(1, obj.vlan!),
         mcast: (data, obj) => data.push(2, obj.mcast!),
-        pad: (data, obj) => data.push(3, obj.pad!),
+        __pad: (data, obj) => data.push(3, obj.__pad!),
         stp: (data, obj) => data.push(4, obj.stp!),
     })
 }

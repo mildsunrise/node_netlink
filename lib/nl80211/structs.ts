@@ -2795,7 +2795,7 @@ export interface Message extends BaseObject {
     staSupportP2pPs?: StationP2pPsStatus | keyof typeof StationP2pPsStatus
     
     /** attribute used for padding for 64-bit alignment */
-    pad?: Buffer
+    __pad?: Buffer
     
     /**
      * Nested attribute of the following attributes:
@@ -3415,7 +3415,7 @@ export function parseMessage(r: Buffer): Message {
         226: (data, obj) => obj.pbss = structs.getFlag(data),
         227: (data, obj) => obj.bssSelect = parseBssSelect(data),
         228: (data, obj) => obj.staSupportP2pPs = structs.getEnum(StationP2pPsStatus, structs.getU8(data)),
-        229: (data, obj) => obj.pad = data,
+        229: (data, obj) => obj.__pad = data,
         230: (data, obj) => obj.iftypeExtCapa = data,
         231: (data, obj) => obj.muMimoGroupData = data,
         232: (data, obj) => obj.muMimoFollowMacAddr = data,
@@ -3703,7 +3703,7 @@ export function formatMessage(x: Message): StreamData {
         pbss: (data, obj) => data.push(226, structs.putFlag(obj.pbss!)),
         bssSelect: (data, obj) => data.push(227, formatBssSelect(obj.bssSelect!)),
         staSupportP2pPs: (data, obj) => data.push(228, structs.putU8(structs.putEnum(StationP2pPsStatus, obj.staSupportP2pPs!))),
-        pad: (data, obj) => data.push(229, obj.pad!),
+        __pad: (data, obj) => data.push(229, obj.__pad!),
         iftypeExtCapa: (data, obj) => data.push(230, obj.iftypeExtCapa!),
         muMimoGroupData: (data, obj) => data.push(231, obj.muMimoGroupData!),
         muMimoFollowMacAddr: (data, obj) => data.push(232, obj.muMimoFollowMacAddr!),
@@ -4373,7 +4373,7 @@ export interface StationInfo extends BaseObject {
     rxDuration?: bigint
     
     /** attribute used for padding for 64-bit alignment */
-    pad?: Buffer
+    __pad?: Buffer
     
     /** signal strength of the last ACK frame(u8, dBm) */
     ackSignal?: number
@@ -4455,7 +4455,7 @@ export function parseStationInfo(r: Buffer): StationInfo {
         30: (data, obj) => obj.beaconSignalAvg = structs.getU8(data),
         31: (data, obj) => obj.tidStats = structs.getMap(data, x => parseTidStats(x)),
         32: (data, obj) => obj.rxDuration = structs.getU64(data),
-        33: (data, obj) => obj.pad = data,
+        33: (data, obj) => obj.__pad = data,
         34: (data, obj) => obj.ackSignal = structs.getU8(data),
         35: (data, obj) => obj.ackSignalAvg = structs.getS8(data),
         36: (data, obj) => obj.rxMpdus = structs.getU32(data),
@@ -4503,7 +4503,7 @@ export function formatStationInfo(x: StationInfo): StreamData {
         beaconSignalAvg: (data, obj) => data.push(30, structs.putU8(obj.beaconSignalAvg!)),
         tidStats: (data, obj) => data.push(31, structs.putMap(obj.tidStats!, x => formatTidStats(x))),
         rxDuration: (data, obj) => data.push(32, structs.putU64(obj.rxDuration!)),
-        pad: (data, obj) => data.push(33, obj.pad!),
+        __pad: (data, obj) => data.push(33, obj.__pad!),
         ackSignal: (data, obj) => data.push(34, structs.putU8(obj.ackSignal!)),
         ackSignalAvg: (data, obj) => data.push(35, structs.putS8(obj.ackSignalAvg!)),
         rxMpdus: (data, obj) => data.push(36, structs.putU32(obj.rxMpdus!)),
@@ -4540,7 +4540,7 @@ export interface TidStats extends BaseObject {
     txMsduFailed?: bigint
     
     /** attribute used for padding for 64-bit alignment */
-    pad?: Buffer
+    __pad?: Buffer
     
     /** TXQ stats (nested attribute) */
     txqStats?: TxqStats
@@ -4553,7 +4553,7 @@ export function parseTidStats(r: Buffer): TidStats {
         2: (data, obj) => obj.txMsdu = structs.getU64(data),
         3: (data, obj) => obj.txMsduRetries = structs.getU64(data),
         4: (data, obj) => obj.txMsduFailed = structs.getU64(data),
-        5: (data, obj) => obj.pad = data,
+        5: (data, obj) => obj.__pad = data,
         6: (data, obj) => obj.txqStats = parseTxqStats(data),
     })
 }
@@ -4565,7 +4565,7 @@ export function formatTidStats(x: TidStats): StreamData {
         txMsdu: (data, obj) => data.push(2, structs.putU64(obj.txMsdu!)),
         txMsduRetries: (data, obj) => data.push(3, structs.putU64(obj.txMsduRetries!)),
         txMsduFailed: (data, obj) => data.push(4, structs.putU64(obj.txMsduFailed!)),
-        pad: (data, obj) => data.push(5, obj.pad!),
+        __pad: (data, obj) => data.push(5, obj.__pad!),
         txqStats: (data, obj) => data.push(6, formatTxqStats(obj.txqStats!)),
     })
 }
@@ -5555,7 +5555,7 @@ export interface SurveyInfo extends BaseObject {
     timeScan?: Buffer
     
     /** attribute used for padding for 64-bit alignment */
-    pad?: Buffer
+    __pad?: Buffer
     
     /**
      * amount of time the radio spent
@@ -5576,7 +5576,7 @@ export function parseSurveyInfo(r: Buffer): SurveyInfo {
         7: (data, obj) => obj.timeRx = structs.getU64(data),
         8: (data, obj) => obj.timeTx = structs.getU64(data),
         9: (data, obj) => obj.timeScan = data,
-        10: (data, obj) => obj.pad = data,
+        10: (data, obj) => obj.__pad = data,
         11: (data, obj) => obj.timeBssRx = data,
     })
 }
@@ -5593,7 +5593,7 @@ export function formatSurveyInfo(x: SurveyInfo): StreamData {
         timeRx: (data, obj) => data.push(7, structs.putU64(obj.timeRx!)),
         timeTx: (data, obj) => data.push(8, structs.putU64(obj.timeTx!)),
         timeScan: (data, obj) => data.push(9, obj.timeScan!),
-        pad: (data, obj) => data.push(10, obj.pad!),
+        __pad: (data, obj) => data.push(10, obj.__pad!),
         timeBssRx: (data, obj) => data.push(11, obj.timeBssRx!),
     })
 }
@@ -6364,7 +6364,7 @@ export interface Bss extends BaseObject {
     lastSeenBoottime?: bigint
     
     /** attribute used for padding for 64-bit alignment */
-    pad?: Buffer
+    __pad?: Buffer
     
     /**
      * the time at the start of reception of the first
@@ -6406,7 +6406,7 @@ export function parseBss(r: Buffer): Bss {
         13: (data, obj) => obj.beaconTsf = structs.getU64(data),
         14: (data, obj) => obj.prespData = structs.getFlag(data),
         15: (data, obj) => obj.lastSeenBoottime = structs.getU64(data),
-        16: (data, obj) => obj.pad = data,
+        16: (data, obj) => obj.__pad = data,
         17: (data, obj) => obj.parentTsf = structs.getU64(data),
         18: (data, obj) => obj.parentBssid = data,
         19: (data, obj) => obj.chainSignal = structs.getU8(data),
@@ -6431,7 +6431,7 @@ export function formatBss(x: Bss): StreamData {
         beaconTsf: (data, obj) => data.push(13, structs.putU64(obj.beaconTsf!)),
         prespData: (data, obj) => data.push(14, structs.putFlag(obj.prespData!)),
         lastSeenBoottime: (data, obj) => data.push(15, structs.putU64(obj.lastSeenBoottime!)),
-        pad: (data, obj) => data.push(16, obj.pad!),
+        __pad: (data, obj) => data.push(16, obj.__pad!),
         parentTsf: (data, obj) => data.push(17, structs.putU64(obj.parentTsf!)),
         parentBssid: (data, obj) => data.push(18, obj.parentBssid!),
         chainSignal: (data, obj) => data.push(19, structs.putU8(obj.chainSignal!)),
@@ -9092,7 +9092,7 @@ export interface FtmResponderStats extends BaseObject {
     outOfWindowTriggersNum?: number
     
     /** used for padding, ignore */
-    pad?: Buffer
+    __pad?: Buffer
 }
 
 /** Parses the attributes of a [[FtmResponderStats]] object */
@@ -9107,7 +9107,7 @@ export function parseFtmResponderStats(r: Buffer): FtmResponderStats {
         7: (data, obj) => obj.unknownTriggersNum = structs.getU32(data),
         8: (data, obj) => obj.rescheduleRequestsNum = structs.getU32(data),
         9: (data, obj) => obj.outOfWindowTriggersNum = structs.getU32(data),
-        10: (data, obj) => obj.pad = data,
+        10: (data, obj) => obj.__pad = data,
     })
 }
 
@@ -9123,7 +9123,7 @@ export function formatFtmResponderStats(x: FtmResponderStats): StreamData {
         unknownTriggersNum: (data, obj) => data.push(7, structs.putU32(obj.unknownTriggersNum!)),
         rescheduleRequestsNum: (data, obj) => data.push(8, structs.putU32(obj.rescheduleRequestsNum!)),
         outOfWindowTriggersNum: (data, obj) => data.push(9, structs.putU32(obj.outOfWindowTriggersNum!)),
-        pad: (data, obj) => data.push(10, obj.pad!),
+        __pad: (data, obj) => data.push(10, obj.__pad!),
     })
 }
 
@@ -9278,7 +9278,7 @@ export interface PeerMeasurementResponse extends BaseObject {
     final?: true
     
     /** padding for 64-bit attributes, ignore */
-    pad?: Buffer
+    __pad?: Buffer
 }
 
 /** Parses the attributes of a [[PeerMeasurementResponse]] object */
@@ -9289,7 +9289,7 @@ export function parsePeerMeasurementResponse(r: Buffer): PeerMeasurementResponse
         3: (data, obj) => obj.hostTime = structs.getU64(data),
         4: (data, obj) => obj.apTsf = structs.getU64(data),
         5: (data, obj) => obj.final = structs.getFlag(data),
-        6: (data, obj) => obj.pad = data,
+        6: (data, obj) => obj.__pad = data,
     })
 }
 
@@ -9301,7 +9301,7 @@ export function formatPeerMeasurementResponse(x: PeerMeasurementResponse): Strea
         hostTime: (data, obj) => data.push(3, structs.putU64(obj.hostTime!)),
         apTsf: (data, obj) => data.push(4, structs.putU64(obj.apTsf!)),
         final: (data, obj) => data.push(5, structs.putFlag(obj.final!)),
-        pad: (data, obj) => data.push(6, obj.pad!),
+        __pad: (data, obj) => data.push(6, obj.__pad!),
     })
 }
 
@@ -9746,7 +9746,7 @@ export interface PeerMeasurementFtmResponse extends BaseObject {
     civicloc?: Buffer
     
     /** ignore, for u64/s64 padding only */
-    pad?: Buffer
+    __pad?: Buffer
 }
 
 /** Parses the attributes of a [[PeerMeasurementFtmResponse]] object */
@@ -9772,7 +9772,7 @@ export function parsePeerMeasurementFtmResponse(r: Buffer): PeerMeasurementFtmRe
         18: (data, obj) => obj.distSpread = structs.getU64(data),
         19: (data, obj) => obj.lci = data,
         20: (data, obj) => obj.civicloc = data,
-        21: (data, obj) => obj.pad = data,
+        21: (data, obj) => obj.__pad = data,
     })
 }
 
@@ -9799,7 +9799,7 @@ export function formatPeerMeasurementFtmResponse(x: PeerMeasurementFtmResponse):
         distSpread: (data, obj) => data.push(18, structs.putU64(obj.distSpread!)),
         lci: (data, obj) => data.push(19, obj.lci!),
         civicloc: (data, obj) => data.push(20, obj.civicloc!),
-        pad: (data, obj) => data.push(21, obj.pad!),
+        __pad: (data, obj) => data.push(21, obj.__pad!),
     })
 }
 

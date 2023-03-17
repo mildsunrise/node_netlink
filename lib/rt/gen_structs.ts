@@ -129,6 +129,12 @@ export enum MessageType {
     DELVLAN = 113,
     
     GETVLAN = 114,
+    
+    NEWNEXTHOPBUCKET = 116,
+    
+    DELNEXTHOPBUCKET = 117,
+    
+    GETNEXTHOPBUCKET = 118,
 }
 
 /** RTnetlink multicast groups */
@@ -471,7 +477,6 @@ export interface RouteAttrs extends BaseObject {
     
     prefsrc?: Buffer
     
-    /** array of struct rtattr with types of RTAX_* */
     metrics?: RouteMetrics
     
     /** array of struct rtnexthop */
@@ -506,7 +511,7 @@ export interface RouteAttrs extends BaseObject {
     
     expires?: Buffer
     
-    pad?: Buffer
+    __pad?: Buffer
     
     uid?: Buffer
     
@@ -547,7 +552,7 @@ export function parseRouteAttrs(r: Buffer): RouteAttrs {
         21: (data, obj) => obj.encapType = structs.getU16(data),
         22: (data, obj) => obj.encap = data,
         23: (data, obj) => obj.expires = data,
-        24: (data, obj) => obj.pad = data,
+        24: (data, obj) => obj.__pad = data,
         25: (data, obj) => obj.uid = data,
         26: (data, obj) => obj.ttlPropagate = structs.getU8(data),
         27: (data, obj) => obj.ipProto = data,
@@ -583,7 +588,7 @@ export function formatRouteAttrs(x: RouteAttrs): StreamData {
         encapType: (data, obj) => data.push(21, structs.putU16(obj.encapType!)),
         encap: (data, obj) => data.push(22, obj.encap!),
         expires: (data, obj) => data.push(23, obj.expires!),
-        pad: (data, obj) => data.push(24, obj.pad!),
+        __pad: (data, obj) => data.push(24, obj.__pad!),
         uid: (data, obj) => data.push(25, obj.uid!),
         ttlPropagate: (data, obj) => data.push(26, structs.putU8(obj.ttlPropagate!)),
         ipProto: (data, obj) => data.push(27, obj.ipProto!),
@@ -1713,7 +1718,7 @@ export interface TcAttrs extends BaseObject {
     
     stab?: Buffer
     
-    pad?: Buffer
+    __pad?: Buffer
     
     dumpInvisible?: Buffer
     
@@ -1737,7 +1742,7 @@ export function parseTcAttrs(r: Buffer): TcAttrs {
         6: (data, obj) => obj.fcnt = data,
         7: (data, obj) => obj.stats2 = data,
         8: (data, obj) => obj.stab = data,
-        9: (data, obj) => obj.pad = data,
+        9: (data, obj) => obj.__pad = data,
         10: (data, obj) => obj.dumpInvisible = data,
         11: (data, obj) => obj.chain = structs.getU32(data),
         12: (data, obj) => obj.hwOffload = data,
@@ -1757,7 +1762,7 @@ export function formatTcAttrs(x: TcAttrs): StreamData {
         fcnt: (data, obj) => data.push(6, obj.fcnt!),
         stats2: (data, obj) => data.push(7, obj.stats2!),
         stab: (data, obj) => data.push(8, obj.stab!),
-        pad: (data, obj) => data.push(9, obj.pad!),
+        __pad: (data, obj) => data.push(9, obj.__pad!),
         dumpInvisible: (data, obj) => data.push(10, obj.dumpInvisible!),
         chain: (data, obj) => data.push(11, structs.putU32(obj.chain!)),
         hwOffload: (data, obj) => data.push(12, obj.hwOffload!),
@@ -1925,9 +1930,9 @@ export function formatNdUserOptionAttrs(x: NdUserOptionAttrs): StreamData {
 export interface Neighbor {
     family?: number
     
-    pad1?: number
+    __pad1?: number
     
-    pad2?: number
+    __pad2?: number
     
     ifindex?: number
     
@@ -1943,8 +1948,8 @@ export function parseNeighbor(r: Buffer): Neighbor {
     if (r.length !== __LENGTH_Neighbor) throw Error('Unexpected length for Neighbor')
     const x: Neighbor = {}
     x.family = structs.readU8.call(r, 0)
-    x.pad1 = structs.readU8.call(r, 1)
-    x.pad2 = structs.readU16.call(r, 2)
+    x.__pad1 = structs.readU8.call(r, 1)
+    x.__pad2 = structs.readU16.call(r, 2)
     x.ifindex = structs.readS32.call(r, 4)
     x.state = parseNeighborState(structs.readU16.call(r, 8))
     x.flags = parseNeighborFlags(structs.readU8.call(r, 10))
@@ -1956,8 +1961,8 @@ export function parseNeighbor(r: Buffer): Neighbor {
 export function formatNeighbor(x: Neighbor, r: Buffer = Buffer.alloc(__LENGTH_Neighbor)): Buffer {
     if (r.length !== __LENGTH_Neighbor) throw Error('Unexpected length for Neighbor')
     x.family && structs.writeU8.call(r, x.family, 0)
-    x.pad1 && structs.writeU8.call(r, x.pad1, 1)
-    x.pad2 && structs.writeU16.call(r, x.pad2, 2)
+    x.__pad1 && structs.writeU8.call(r, x.__pad1, 1)
+    x.__pad2 && structs.writeU16.call(r, x.__pad2, 2)
     x.ifindex && structs.writeS32.call(r, x.ifindex, 4)
     x.state && structs.writeU16.call(r, formatNeighborState(x.state), 8)
     x.flags && structs.writeU8.call(r, formatNeighborFlags(x.flags), 10)
@@ -2247,7 +2252,7 @@ export interface NeighborTableAttrs extends BaseObject {
     /** u64, msecs */
     gcInterval?: bigint
     
-    pad?: Buffer
+    __pad?: Buffer
 }
 
 /** Parses the attributes of a [[NeighborTableAttrs]] object */
@@ -2261,7 +2266,7 @@ export function parseNeighborTableAttrs(r: Buffer): NeighborTableAttrs {
         6: (data, obj) => obj.parms = parseNeighborTableParams(data),
         7: (data, obj) => obj.stats = parseNeighborTableStats(data),
         8: (data, obj) => obj.gcInterval = structs.getU64(data),
-        9: (data, obj) => obj.pad = data,
+        9: (data, obj) => obj.__pad = data,
     })
 }
 
@@ -2276,7 +2281,7 @@ export function formatNeighborTableAttrs(x: NeighborTableAttrs): StreamData {
         parms: (data, obj) => data.push(6, formatNeighborTableParams(obj.parms!)),
         stats: (data, obj) => data.push(7, formatNeighborTableStats(obj.stats!)),
         gcInterval: (data, obj) => data.push(8, structs.putU64(obj.gcInterval!)),
-        pad: (data, obj) => data.push(9, obj.pad!),
+        __pad: (data, obj) => data.push(9, obj.__pad!),
     })
 }
 
@@ -2439,7 +2444,7 @@ export interface NeighborTableParams extends BaseObject {
     
     mcastReprobes?: number
     
-    pad?: Buffer
+    __pad?: Buffer
 }
 
 /** Parses the attributes of a [[NeighborTableParams]] object */
@@ -2462,7 +2467,7 @@ export function parseNeighborTableParams(r: Buffer): NeighborTableParams {
         15: (data, obj) => obj.locktime = structs.getU64(data),
         16: (data, obj) => obj.queueLenbytes = structs.getU32(data),
         17: (data, obj) => obj.mcastReprobes = structs.getU32(data),
-        18: (data, obj) => obj.pad = data,
+        18: (data, obj) => obj.__pad = data,
     })
 }
 
@@ -2486,7 +2491,7 @@ export function formatNeighborTableParams(x: NeighborTableParams): StreamData {
         locktime: (data, obj) => data.push(15, structs.putU64(obj.locktime!)),
         queueLenbytes: (data, obj) => data.push(16, structs.putU32(obj.queueLenbytes!)),
         mcastReprobes: (data, obj) => data.push(17, structs.putU32(obj.mcastReprobes!)),
-        pad: (data, obj) => data.push(18, obj.pad!),
+        __pad: (data, obj) => data.push(18, obj.__pad!),
     })
 }
 
@@ -2502,10 +2507,10 @@ export interface Rule {
     table?: number
     
     /** reserved */
-    res1?: number
+    __reserved1?: number
     
     /** reserved */
-    res2?: number
+    __reserved2?: number
     
     action?: RuleAction | keyof typeof RuleAction
     
@@ -2521,8 +2526,8 @@ export function parseRule(r: Buffer): Rule {
     x.srcLen = structs.readU8.call(r, 2)
     x.tos = structs.readU8.call(r, 3)
     x.table = structs.readU8.call(r, 4)
-    x.res1 = structs.readU8.call(r, 5)
-    x.res2 = structs.readU8.call(r, 6)
+    x.__reserved1 = structs.readU8.call(r, 5)
+    x.__reserved2 = structs.readU8.call(r, 6)
     x.action = structs.getEnum(RuleAction, structs.readU8.call(r, 7))
     x.flags = parseRuleFlags(structs.readU32.call(r, 8))
     return x
@@ -2536,8 +2541,8 @@ export function formatRule(x: Rule, r: Buffer = Buffer.alloc(__LENGTH_Rule)): Bu
     x.srcLen && structs.writeU8.call(r, x.srcLen, 2)
     x.tos && structs.writeU8.call(r, x.tos, 3)
     x.table && structs.writeU8.call(r, x.table, 4)
-    x.res1 && structs.writeU8.call(r, x.res1, 5)
-    x.res2 && structs.writeU8.call(r, x.res2, 6)
+    x.__reserved1 && structs.writeU8.call(r, x.__reserved1, 5)
+    x.__reserved2 && structs.writeU8.call(r, x.__reserved2, 6)
     x.action && structs.writeU8.call(r, structs.putEnum(RuleAction, x.action), 7)
     x.flags && structs.writeU32.call(r, formatRuleFlags(x.flags), 8)
     return r
@@ -2590,7 +2595,7 @@ export interface RuleAttrs extends BaseObject {
     /** output interface name */
     oifname?: string
     
-    pad?: Buffer
+    __pad?: Buffer
     
     /** iif or oif is l3mdev goto its table */
     l3Mdev?: number
@@ -2627,7 +2632,7 @@ export function parseRuleAttrs(r: Buffer): RuleAttrs {
         15: (data, obj) => obj.table = structs.getU32(data),
         16: (data, obj) => obj.fwmask = structs.getU32(data),
         17: (data, obj) => obj.oifname = structs.getString(data),
-        18: (data, obj) => obj.pad = data,
+        18: (data, obj) => obj.__pad = data,
         19: (data, obj) => obj.l3Mdev = structs.getU8(data),
         20: (data, obj) => obj.uidRange = parseRuleUidRange(data),
         21: (data, obj) => obj.protocol = structs.getU8(data),
@@ -2657,7 +2662,7 @@ export function formatRuleAttrs(x: RuleAttrs): StreamData {
         table: (data, obj) => data.push(15, structs.putU32(obj.table!)),
         fwmask: (data, obj) => data.push(16, structs.putU32(obj.fwmask!)),
         oifname: (data, obj) => data.push(17, structs.putString(obj.oifname!)),
-        pad: (data, obj) => data.push(18, obj.pad!),
+        __pad: (data, obj) => data.push(18, obj.__pad!),
         l3Mdev: (data, obj) => data.push(19, structs.putU8(obj.l3Mdev!)),
         uidRange: (data, obj) => data.push(20, formatRuleUidRange(obj.uidRange!)),
         protocol: (data, obj) => data.push(21, structs.putU8(obj.protocol!)),
@@ -2786,4 +2791,250 @@ export enum RuleAction {
     
     /** Drop with EACCES */
     prohibit = 8,
+}
+
+export interface NextHop {
+    family?: number
+    
+    /** return only */
+    scope?: number
+    
+    /** Routing protocol that installed nexthop */
+    protocol?: number
+    
+    __reserved?: number
+    
+    flags?: RouteNextHopFlags
+}
+
+/** Parses the attributes of a [[NextHop]] object */
+export function parseNextHop(r: Buffer): NextHop {
+    if (r.length !== __LENGTH_NextHop) throw Error('Unexpected length for NextHop')
+    const x: NextHop = {}
+    x.family = structs.readU8.call(r, 0)
+    x.scope = structs.readU8.call(r, 1)
+    x.protocol = structs.readU8.call(r, 2)
+    x.__reserved = structs.readU8.call(r, 3)
+    x.flags = parseRouteNextHopFlags(structs.readU32.call(r, 4))
+    return x
+}
+
+/** Encodes a [[NextHop]] object into a stream of attributes */
+export function formatNextHop(x: NextHop, r: Buffer = Buffer.alloc(__LENGTH_NextHop)): Buffer {
+    if (r.length !== __LENGTH_NextHop) throw Error('Unexpected length for NextHop')
+    x.family && structs.writeU8.call(r, x.family, 0)
+    x.scope && structs.writeU8.call(r, x.scope, 1)
+    x.protocol && structs.writeU8.call(r, x.protocol, 2)
+    x.__reserved && structs.writeU8.call(r, x.__reserved, 3)
+    x.flags && structs.writeU32.call(r, formatRouteNextHopFlags(x.flags), 4)
+    return r
+}
+
+export const __LENGTH_NextHop = 8
+
+export interface NextHopAttrs extends BaseObject {
+    /** id for nexthop. id == 0 means auto-assign */
+    id?: number
+    
+    /** [if this attribute is present: no other attributes can be set (other than `id` and `groupType`)] */
+    group?: Buffer
+    
+    groupType?: NextHopGroupType | keyof typeof NextHopGroupType
+    
+    /**
+     * nexthop used to blackhole packets
+     * [if this attribute is present: OIF, GATEWAY, ENCAP can not be set]
+     */
+    blackhole?: true
+    
+    /**
+     * nexthop device
+     * [can be appended to dump request to return only nexthops using given device]
+     */
+    oif?: number
+    
+    /** be32 (IPv4) or in6_addr (IPv6) gw address */
+    gateway?: Buffer
+    
+    /** lwt encap type */
+    encapType?: number
+    
+    /** lwt encap data */
+    encap?: Buffer
+    
+    /** only return nexthop groups in dump */
+    groups?: true
+    
+    /** only return nexthops with given master dev */
+    master?: number
+    
+    /**
+     * nexthop belongs to a bridge fdb
+     * [if this attribute is present: OIF, BLACKHOLE, ENCAP cannot be set]
+     */
+    fdb?: true
+    
+    /** resilient nexthop group attributes */
+    resGroup?: NextHopResGroup
+    
+    /** nexthop bucket attributes */
+    resBucket?: NextHopResBucket
+}
+
+/** Parses the attributes of a [[NextHopAttrs]] object */
+export function parseNextHopAttrs(r: Buffer): NextHopAttrs {
+    return structs.getObject(r, {
+        1: (data, obj) => obj.id = structs.getU32(data),
+        2: (data, obj) => obj.group = data,
+        3: (data, obj) => obj.groupType = structs.getEnum(NextHopGroupType, structs.getU16(data)),
+        4: (data, obj) => obj.blackhole = structs.getFlag(data),
+        5: (data, obj) => obj.oif = structs.getU32(data),
+        6: (data, obj) => obj.gateway = data,
+        7: (data, obj) => obj.encapType = structs.getU16(data),
+        8: (data, obj) => obj.encap = data,
+        9: (data, obj) => obj.groups = structs.getFlag(data),
+        10: (data, obj) => obj.master = structs.getU32(data),
+        11: (data, obj) => obj.fdb = structs.getFlag(data),
+        12: (data, obj) => obj.resGroup = parseNextHopResGroup(data),
+        13: (data, obj) => obj.resBucket = parseNextHopResBucket(data),
+    })
+}
+
+/** Encodes a [[NextHopAttrs]] object into a stream of attributes */
+export function formatNextHopAttrs(x: NextHopAttrs): StreamData {
+    return structs.putObject(x, {
+        id: (data, obj) => data.push(1, structs.putU32(obj.id!)),
+        group: (data, obj) => data.push(2, obj.group!),
+        groupType: (data, obj) => data.push(3, structs.putU16(structs.putEnum(NextHopGroupType, obj.groupType!))),
+        blackhole: (data, obj) => data.push(4, structs.putFlag(obj.blackhole!)),
+        oif: (data, obj) => data.push(5, structs.putU32(obj.oif!)),
+        gateway: (data, obj) => data.push(6, obj.gateway!),
+        encapType: (data, obj) => data.push(7, structs.putU16(obj.encapType!)),
+        encap: (data, obj) => data.push(8, obj.encap!),
+        groups: (data, obj) => data.push(9, structs.putFlag(obj.groups!)),
+        master: (data, obj) => data.push(10, structs.putU32(obj.master!)),
+        fdb: (data, obj) => data.push(11, structs.putFlag(obj.fdb!)),
+        resGroup: (data, obj) => data.push(12, formatNextHopResGroup(obj.resGroup!)),
+        resBucket: (data, obj) => data.push(13, formatNextHopResBucket(obj.resBucket!)),
+    })
+}
+
+/** entry in a nexthop group */
+export interface NextHopGroup {
+    /** nexthop id - must exist */
+    id?: number
+    
+    /** weight of this nexthop */
+    weight?: number
+    
+    __reserved1?: number
+    
+    __reserved2?: number
+}
+
+/** Parses the attributes of a [[NextHopGroup]] object */
+export function parseNextHopGroup(r: Buffer): NextHopGroup {
+    if (r.length !== __LENGTH_NextHopGroup) throw Error('Unexpected length for NextHopGroup')
+    const x: NextHopGroup = {}
+    x.id = structs.readU32.call(r, 0)
+    x.weight = structs.readU8.call(r, 4)
+    x.__reserved1 = structs.readU8.call(r, 5)
+    x.__reserved2 = structs.readU16.call(r, 6)
+    return x
+}
+
+/** Encodes a [[NextHopGroup]] object into a stream of attributes */
+export function formatNextHopGroup(x: NextHopGroup, r: Buffer = Buffer.alloc(__LENGTH_NextHopGroup)): Buffer {
+    if (r.length !== __LENGTH_NextHopGroup) throw Error('Unexpected length for NextHopGroup')
+    x.id && structs.writeU32.call(r, x.id, 0)
+    x.weight && structs.writeU8.call(r, x.weight, 4)
+    x.__reserved1 && structs.writeU8.call(r, x.__reserved1, 5)
+    x.__reserved2 && structs.writeU16.call(r, x.__reserved2, 6)
+    return r
+}
+
+export const __LENGTH_NextHopGroup = 8
+
+export enum NextHopGroupType {
+    /**
+     * hash-threshold nexthop group
+     * (default type if not specified)
+     */
+    multipath,
+    
+    /** resilient nexthop group */
+    resilient = 1,
+}
+
+export interface NextHopResGroup extends BaseObject {
+    /** Pad attribute for 64-bit alignment. */
+    __pad?: Buffer
+    
+    /** number of nexthop buckets in a resilient nexthop group */
+    buckets?: number
+    
+    /** clock_t; nexthop bucket idle timer (per-group) */
+    idleTimer?: number
+    
+    /** clock_t; nexthop unbalanced timer */
+    unbalancedTimer?: number
+    
+    /** clock_t; nexthop unbalanced time */
+    unbalancedTime?: bigint
+}
+
+/** Parses the attributes of a [[NextHopResGroup]] object */
+export function parseNextHopResGroup(r: Buffer): NextHopResGroup {
+    return structs.getObject(r, {
+        0: (data, obj) => obj.__pad = data,
+        1: (data, obj) => obj.buckets = structs.getU16(data),
+        2: (data, obj) => obj.idleTimer = structs.getU32(data),
+        3: (data, obj) => obj.unbalancedTimer = structs.getU32(data),
+        4: (data, obj) => obj.unbalancedTime = structs.getU64(data),
+    })
+}
+
+/** Encodes a [[NextHopResGroup]] object into a stream of attributes */
+export function formatNextHopResGroup(x: NextHopResGroup): StreamData {
+    return structs.putObject(x, {
+        __pad: (data, obj) => data.push(0, obj.__pad!),
+        buckets: (data, obj) => data.push(1, structs.putU16(obj.buckets!)),
+        idleTimer: (data, obj) => data.push(2, structs.putU32(obj.idleTimer!)),
+        unbalancedTimer: (data, obj) => data.push(3, structs.putU32(obj.unbalancedTimer!)),
+        unbalancedTime: (data, obj) => data.push(4, structs.putU64(obj.unbalancedTime!)),
+    })
+}
+
+export interface NextHopResBucket extends BaseObject {
+    /** Pad attribute for 64-bit alignment. */
+    __pad?: Buffer
+    
+    /** u16; nexthop bucket index */
+    index?: number
+    
+    /** clock_t; nexthop bucket idle time */
+    idleTime?: bigint
+    
+    /** nexthop id assigned to the nexthop bucket */
+    nexthopId?: number
+}
+
+/** Parses the attributes of a [[NextHopResBucket]] object */
+export function parseNextHopResBucket(r: Buffer): NextHopResBucket {
+    return structs.getObject(r, {
+        0: (data, obj) => obj.__pad = data,
+        1: (data, obj) => obj.index = structs.getU16(data),
+        2: (data, obj) => obj.idleTime = structs.getU64(data),
+        3: (data, obj) => obj.nexthopId = structs.getU32(data),
+    })
+}
+
+/** Encodes a [[NextHopResBucket]] object into a stream of attributes */
+export function formatNextHopResBucket(x: NextHopResBucket): StreamData {
+    return structs.putObject(x, {
+        __pad: (data, obj) => data.push(0, obj.__pad!),
+        index: (data, obj) => data.push(1, structs.putU16(obj.index!)),
+        idleTime: (data, obj) => data.push(2, structs.putU64(obj.idleTime!)),
+        nexthopId: (data, obj) => data.push(3, structs.putU32(obj.nexthopId!)),
+    })
 }
