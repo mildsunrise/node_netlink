@@ -1,6 +1,6 @@
 /**
  * This module implements the lowest layer, which exposes the native
- * interface ([[RawNetlinkSocket]]) to create Netlink sockets and
+ * interface ({@link RawNetlinkSocket}) to create Netlink sockets and
  * send / receive raw data over them. Its API is intended to
  * mirror [`dgram.Socket`](https://nodejs.org/api/dgram.html).
  * @module
@@ -36,7 +36,7 @@ export function generateLocalPort(): number {
 }
 
 /**
- * Options for [[RawNetlinkSocket]]
+ * Options for {@link RawNetlinkSocket}
  */
 export interface RawNetlinkSocketOptions {
     /** Local port number to bind to */
@@ -99,7 +99,7 @@ export interface ErrnoException extends Error {
     syscall: string
     /** error code */
     errno: number
-    /** string constant corresponding to [[errno]] */
+    /** string constant corresponding to {@link errno} */
     code: string
 }
 
@@ -137,10 +137,10 @@ export class RawNetlinkSocket extends EventEmitter {
      * Create a native Netlink socket, bound to the specified protocol
      * at the specified local address (port).
      *
-     * If no port is passed, [[generateLocalPort]] will be used and
+     * If no port is passed, {@link generateLocalPort} will be used and
      * bind will be retried until we find a free address.
      *
-     * @param protocol Netlink protocol to bind to (see [[Protocol]])
+     * @param protocol Netlink protocol to bind to (see {@link Protocol})
      * @param options Socket options
      */
     constructor(protocol: number, options?: RawNetlinkSocketOptions) {

@@ -227,9 +227,9 @@ function processFlags(name: string, type: TypeDef) {
 
     const iface = genInterface(name, fields, type.docs && type.docs.join('\n'))
     const parse = genFunction(`parse${name}`, `r: number`, name, parseCode.join('\n'),
-        `Parses the flags in a [[${name}]] bitmask`)
+        `Parses the flags in a {@link ${name}} bitmask`)
     const format = genFunction(`format${name}`, `x: ${name}`, 'number', formatCode.join('\n'),
-        `Encodes a [[${name}]] bitmask`)
+        `Encodes a {@link ${name}} bitmask`)
     return iface + '\n\n' + parse + '\n\n' + format
 }
 
@@ -254,17 +254,17 @@ function processEnum(name: string, type: TypeDef, emitFlags: boolean, emitAttrFl
 
     const enumDef = withDocstring(type.docs && type.docs.join('\n'),
         'export enum ' + name + ' {\n' + indent(values.join('\n\n')) + '\n}')
-    const iface = genInterface(sname + ' extends BaseObject', fields, `Set of flags from [[${name}]] bits`)
+    const iface = genInterface(sname + ' extends BaseObject', fields, `Set of flags from {@link ${name}} bits`)
     const parse = genFunction(`parse${sname}`, `r: number`, sname, parseCode.join('\n'),
-        `Parses the flags in a bitmask with [[${name}]] bits`)
+        `Parses the flags in a bitmask with {@link ${name}} bits`)
     const format = genFunction(`format${sname}`, `x: ${sname}`, 'number', formatCode.join('\n'),
-        `Encodes a [[${name}]] bitmask`)
+        `Encodes a {@link ${name}} bitmask`)
     const fullParseCode = `return structs.getObject(r, {\n${indent(parseAttrCode.join('\n'))}\n})`
     const fullFormatCode = `return structs.putObject(x, {\n${indent(formatAttrCode.join('\n'))}\n})`
     const parseAttr = genFunction(`parse${sname}Attr`, `r: Buffer`, sname, fullParseCode,
-        `Parses flags attributes with [[${name}]] types`)
+        `Parses flags attributes with {@link ${name}} types`)
     const formatAttr = genFunction(`format${sname}Attr`, `x: ${sname}`, 'StreamData', fullFormatCode,
-        `Encodes a set of [[${name}]] flags into a stream of attributes`)
+        `Encodes a set of {@link ${name}} flags into a stream of attributes`)
     return enumDef + ((emitFlags || emitAttrFlags) ? ('\n\n' + iface) : '')
         + (emitFlags ? ('\n\n' + parse + '\n\n' + format) : '')
         + (emitAttrFlags ? ('\n\n' + parseAttr + '\n\n' + formatAttr) : '')
@@ -290,9 +290,9 @@ function processAttr(name: string, type: TypeDef) {
     const fullFormatCode = `return structs.putObject(x, {\n${indent(formatCode.join('\n'))}\n})`
     const iface = genInterface(name + ' extends BaseObject', fields, type.docs && type.docs.join('\n'))
     const parse = genFunction(`parse${name}`, `r: Buffer`, name, fullParseCode,
-        `Parses the attributes of a [[${name}]] object`)
+        `Parses the attributes of a {@link ${name}} object`)
     const format = genFunction(`format${name}`, `x: ${name}`, 'StreamData', fullFormatCode,
-        `Encodes a [[${name}]] object into a stream of attributes`)
+        `Encodes a {@link ${name}} object into a stream of attributes`)
     return iface + '\n\n' + parse + '\n\n' + format
 }
 
@@ -406,8 +406,8 @@ function processStruct(name: string, type: TypeDef) {
     fullFormatCode.push('return r')
     const iface = genInterface(name, fields, type.docs && type.docs.join('\n'))
     const parse = genFunction(`parse${name}`, `r: Buffer`, name, fullParseCode.join('\n'),
-        `Parses the attributes of a [[${name}]] object`)
+        `Parses the attributes of a {@link ${name}} object`)
     const format = genFunction(`format${name}`, `x: ${name}, r: Buffer = Buffer.alloc(${lengthName})`, 'Buffer', fullFormatCode.join('\n'),
-        `Encodes a [[${name}]] object into a stream of attributes`)
+        `Encodes a {@link ${name}} object into a stream of attributes`)
     return iface + '\n\n' + parse + '\n\n' + format + '\n\n' + `export const ${lengthName} = ${length}`
 }

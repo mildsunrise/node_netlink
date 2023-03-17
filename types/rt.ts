@@ -3,7 +3,7 @@
  *
  * This excludes if_link.h and its associated headers,
  * these types have been placed in ifla.ts. Therefore
- * [[Link]] is defined here, but [[LinkAttrs]] is not.
+ * {@link Link} is defined here, but {@link LinkAttrs} is not.
  *
  * Based on
  *   <linux/rtnetlink.h>
@@ -1152,7 +1152,7 @@ const types: TypeStore = {
             'Extended table id',
         ] }],
         ['fwmask', u32, { orig: 'FRA_FWMASK', docs: [
-            'mask for [[fwmark]]',
+            'mask for {@link fwmark}',
         ] }],
         ['oifname', string, { orig: 'FRA_OIFNAME', docs: [
             'output interface name',

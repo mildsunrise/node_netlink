@@ -1,5 +1,5 @@
 /**
- * This module implements the higher layer, which wraps [[RawNetlinkSocket]]
+ * This module implements the higher layer, which wraps {@link RawNetlinkSocket}
  * and lets the user send / receive parsed Netlink messages, rather than
  * raw data. It can also take care of things like requests & ACKs,
  * sequence numbers, multipart message handling, attribute parsing.
@@ -22,7 +22,7 @@ export interface NetlinkSocketOptions {
     /**
      * If true, the event loop will not exit while the socket is
      * is open (default: false). You should set this to true if
-     * you need to listen for notifications. See the [[ref]] method.
+     * you need to listen for notifications. See the {@link NetlinkSocket.ref} method.
      */
     ref?: boolean
 }
@@ -33,7 +33,7 @@ export interface NetlinkSendOptions extends RawNetlinkSendOptions {
      */
     flags?: number
     /**
-     * Sequence number (default: generated with [[generateSeq]])
+     * Sequence number (default: generated with {@link NetlinkSocket.generateSeq})
      */
     seq?: number
     /**
@@ -103,7 +103,7 @@ export class NetlinkSocket extends EventEmitter {
 
     /**
      * Handles zero or more messages received over the socket,
-     * doing multipart grouping and calling [[emitMessage]] as
+     * doing multipart grouping and calling {@link emitMessage} as
      * appropriate.
      */
     protected handleMessages(msgs: NetlinkMessage[], rinfo: MessageInfo) {
@@ -314,7 +314,7 @@ export class NetlinkSocket extends EventEmitter {
             this.socket.unref()
     }
 
-    /** Equivalent to `socket.ref(false)`, see [[ref]] */
+    /** Equivalent to `socket.ref(false)`, see {@link ref} */
     unref() {
         return this.ref(false)
     }

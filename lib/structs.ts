@@ -57,7 +57,7 @@ export function countLength(x: Uint8Array | Uint8Array[]): number {
 
 /** Get the amount of padding (in bytes) to add after length */
 export const padding = (x: number) => ((-x) & 3)
-/** Like [[padding]] but returns a zero-filled buffer of that length */
+/** Like {@link padding} but returns a zero-filled buffer of that length */
 export const getPadding = (x: number) => Buffer.alloc(padding(x))
 /** Append necessary padding to data. THIS MODIFIES THE ORIGINAL ARRAY */
 export function pad(x: Uint8Array[]) {
@@ -137,7 +137,7 @@ export function formatHeader(x: NetlinkHeader): Buffer {
 // NETLINK MESSAGE
 // ---------------
 
-/** Combination of a valid [[NetlinkHeader]] with payload */
+/** Combination of a valid {@link NetlinkHeader} with payload */
 export interface NetlinkMessage_ {
     /** Message type */
     type: number
@@ -151,7 +151,7 @@ export interface NetlinkMessage_ {
     data: Uint8Array | Uint8Array[]
 }
 
-/** Combination of a valid [[NetlinkHeader]] with payload */
+/** Combination of a valid {@link link NetlinkHeader} with payload */
 export interface NetlinkMessage extends NetlinkMessage_ {
     data: Buffer
 }
@@ -176,7 +176,7 @@ export function parseMessage(r: Buffer): ParseResult<NetlinkMessage> {
 }
 
 /**
- * Calls [[parseMessage]] repeatedly, ignoring padding
+ * Calls {@link parseMessage} repeatedly, ignoring padding
  * between messages, until there's no data left (other than padding).
  *
  * @param x Message data
@@ -300,7 +300,7 @@ export function parseAttribute(r: Buffer): ParseResult<NetlinkAttribute> {
 }
 
 /**
- * Calls [[parseMessage]] repeatedly, supplying each result to
+ * Calls {@link parseMessage} repeatedly, supplying each result to
  * the passed callback and ignoring padding, until there's no
  * data left (other than padding).
  *
