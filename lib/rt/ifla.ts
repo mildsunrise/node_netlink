@@ -70,7 +70,7 @@ export interface LinkStats {
     rxNohandler?: number
 }
 
-/** Parses the attributes of a [[LinkStats]] object */
+/** Parses the attributes of a {@link LinkStats} object */
 export function parseLinkStats(r: Buffer): LinkStats {
     if (r.length !== __LENGTH_LinkStats) throw Error('Unexpected length for LinkStats')
     const x: LinkStats = {}
@@ -101,7 +101,7 @@ export function parseLinkStats(r: Buffer): LinkStats {
     return x
 }
 
-/** Encodes a [[LinkStats]] object into a stream of attributes */
+/** Encodes a {@link LinkStats} object into a stream of attributes */
 export function formatLinkStats(x: LinkStats, r: Buffer = Buffer.alloc(__LENGTH_LinkStats)): Buffer {
     if (r.length !== __LENGTH_LinkStats) throw Error('Unexpected length for LinkStats')
     x.rxPackets && structs.writeU32.call(r, x.rxPackets, 0)
@@ -202,7 +202,7 @@ export interface LinkStats64 {
     rxNohandler?: bigint
 }
 
-/** Parses the attributes of a [[LinkStats64]] object */
+/** Parses the attributes of a {@link LinkStats64} object */
 export function parseLinkStats64(r: Buffer): LinkStats64 {
     if (r.length !== __LENGTH_LinkStats64) throw Error('Unexpected length for LinkStats64')
     const x: LinkStats64 = {}
@@ -233,7 +233,7 @@ export function parseLinkStats64(r: Buffer): LinkStats64 {
     return x
 }
 
-/** Encodes a [[LinkStats64]] object into a stream of attributes */
+/** Encodes a {@link LinkStats64} object into a stream of attributes */
 export function formatLinkStats64(x: LinkStats64, r: Buffer = Buffer.alloc(__LENGTH_LinkStats64)): Buffer {
     if (r.length !== __LENGTH_LinkStats64) throw Error('Unexpected length for LinkStats64')
     x.rxPackets && structs.writeU64.call(r, x.rxPackets, 0)
@@ -280,7 +280,7 @@ export interface LinkInterfaceMap {
     port?: number
 }
 
-/** Parses the attributes of a [[LinkInterfaceMap]] object */
+/** Parses the attributes of a {@link LinkInterfaceMap} object */
 export function parseLinkInterfaceMap(r: Buffer): LinkInterfaceMap {
     if (r.length !== __LENGTH_LinkInterfaceMap) throw Error('Unexpected length for LinkInterfaceMap')
     const x: LinkInterfaceMap = {}
@@ -293,7 +293,7 @@ export function parseLinkInterfaceMap(r: Buffer): LinkInterfaceMap {
     return x
 }
 
-/** Encodes a [[LinkInterfaceMap]] object into a stream of attributes */
+/** Encodes a {@link LinkInterfaceMap} object into a stream of attributes */
 export function formatLinkInterfaceMap(x: LinkInterfaceMap, r: Buffer = Buffer.alloc(__LENGTH_LinkInterfaceMap)): Buffer {
     if (r.length !== __LENGTH_LinkInterfaceMap) throw Error('Unexpected length for LinkInterfaceMap')
     x.memStart && structs.writeU64.call(r, x.memStart, 0)
@@ -425,7 +425,7 @@ export interface LinkAttrs extends BaseObject {
     permAddress?: Buffer
 }
 
-/** Parses the attributes of a [[LinkAttrs]] object */
+/** Parses the attributes of a {@link LinkAttrs} object */
 export function parseLinkAttrs(r: Buffer): LinkAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.address = data,
@@ -485,7 +485,7 @@ export function parseLinkAttrs(r: Buffer): LinkAttrs {
     })
 }
 
-/** Encodes a [[LinkAttrs]] object into a stream of attributes */
+/** Encodes a {@link LinkAttrs} object into a stream of attributes */
 export function formatLinkAttrs(x: LinkAttrs): StreamData {
     return structs.putObject(x, {
         address: (data, obj) => data.push(1, obj.address!),
@@ -549,14 +549,14 @@ export interface LinkProtocolInfoInet extends BaseObject {
     conf?: Buffer
 }
 
-/** Parses the attributes of a [[LinkProtocolInfoInet]] object */
+/** Parses the attributes of a {@link LinkProtocolInfoInet} object */
 export function parseLinkProtocolInfoInet(r: Buffer): LinkProtocolInfoInet {
     return structs.getObject(r, {
         1: (data, obj) => obj.conf = data,
     })
 }
 
-/** Encodes a [[LinkProtocolInfoInet]] object into a stream of attributes */
+/** Encodes a {@link LinkProtocolInfoInet} object into a stream of attributes */
 export function formatLinkProtocolInfoInet(x: LinkProtocolInfoInet): StreamData {
     return structs.putObject(x, {
         conf: (data, obj) => data.push(1, obj.conf!),
@@ -590,7 +590,7 @@ export interface LinkProtocolInfoInet6 extends BaseObject {
     addrGenMode?: number
 }
 
-/** Parses the attributes of a [[LinkProtocolInfoInet6]] object */
+/** Parses the attributes of a {@link LinkProtocolInfoInet6} object */
 export function parseLinkProtocolInfoInet6(r: Buffer): LinkProtocolInfoInet6 {
     return structs.getObject(r, {
         1: (data, obj) => obj.flags = structs.getU32(data),
@@ -604,7 +604,7 @@ export function parseLinkProtocolInfoInet6(r: Buffer): LinkProtocolInfoInet6 {
     })
 }
 
-/** Encodes a [[LinkProtocolInfoInet6]] object into a stream of attributes */
+/** Encodes a {@link LinkProtocolInfoInet6} object into a stream of attributes */
 export function formatLinkProtocolInfoInet6(x: LinkProtocolInfoInet6): StreamData {
     return structs.putObject(x, {
         flags: (data, obj) => data.push(1, structs.putU32(obj.flags!)),
@@ -723,7 +723,7 @@ export interface Bridge extends BaseObject {
     multiBoolopt?: Buffer
 }
 
-/** Parses the attributes of a [[Bridge]] object */
+/** Parses the attributes of a {@link Bridge} object */
 export function parseBridge(r: Buffer): Bridge {
     return structs.getObject(r, {
         1: (data, obj) => obj.forwardDelay = data,
@@ -775,7 +775,7 @@ export function parseBridge(r: Buffer): Bridge {
     })
 }
 
-/** Encodes a [[Bridge]] object into a stream of attributes */
+/** Encodes a {@link Bridge} object into a stream of attributes */
 export function formatBridge(x: Bridge): StreamData {
     return structs.putObject(x, {
         forwardDelay: (data, obj) => data.push(1, obj.forwardDelay!),
@@ -834,7 +834,7 @@ export interface BridgeId {
     addr?: number[]
 }
 
-/** Parses the attributes of a [[BridgeId]] object */
+/** Parses the attributes of a {@link BridgeId} object */
 export function parseBridgeId(r: Buffer): BridgeId {
     if (r.length !== __LENGTH_BridgeId) throw Error('Unexpected length for BridgeId')
     const x: BridgeId = {}
@@ -843,7 +843,7 @@ export function parseBridgeId(r: Buffer): BridgeId {
     return x
 }
 
-/** Encodes a [[BridgeId]] object into a stream of attributes */
+/** Encodes a {@link BridgeId} object into a stream of attributes */
 export function formatBridgeId(x: BridgeId, r: Buffer = Buffer.alloc(__LENGTH_BridgeId)): Buffer {
     if (r.length !== __LENGTH_BridgeId) throw Error('Unexpected length for BridgeId')
     if (x.prio && x.prio.length !== 2)
@@ -947,7 +947,7 @@ export interface BridgePort extends BaseObject {
     backupPort?: Buffer
 }
 
-/** Parses the attributes of a [[BridgePort]] object */
+/** Parses the attributes of a {@link BridgePort} object */
 export function parseBridgePort(r: Buffer): BridgePort {
     return structs.getObject(r, {
         1: (data, obj) => obj.state = structs.getU8(data),
@@ -987,7 +987,7 @@ export function parseBridgePort(r: Buffer): BridgePort {
     })
 }
 
-/** Encodes a [[BridgePort]] object into a stream of attributes */
+/** Encodes a {@link BridgePort} object into a stream of attributes */
 export function formatBridgePort(x: BridgePort): StreamData {
     return structs.putObject(x, {
         state: (data, obj) => data.push(1, structs.putU8(obj.state!)),
@@ -1038,7 +1038,7 @@ export interface CacheInfo {
     retransTime?: number
 }
 
-/** Parses the attributes of a [[CacheInfo]] object */
+/** Parses the attributes of a {@link CacheInfo} object */
 export function parseCacheInfo(r: Buffer): CacheInfo {
     if (r.length !== __LENGTH_CacheInfo) throw Error('Unexpected length for CacheInfo')
     const x: CacheInfo = {}
@@ -1049,7 +1049,7 @@ export function parseCacheInfo(r: Buffer): CacheInfo {
     return x
 }
 
-/** Encodes a [[CacheInfo]] object into a stream of attributes */
+/** Encodes a {@link CacheInfo} object into a stream of attributes */
 export function formatCacheInfo(x: CacheInfo, r: Buffer = Buffer.alloc(__LENGTH_CacheInfo)): Buffer {
     if (r.length !== __LENGTH_CacheInfo) throw Error('Unexpected length for CacheInfo')
     x.maxReasmLen && structs.writeU32.call(r, x.maxReasmLen, 0)
@@ -1073,7 +1073,7 @@ export interface Info extends BaseObject {
     slaveData?: Buffer
 }
 
-/** Parses the attributes of a [[Info]] object */
+/** Parses the attributes of a {@link Info} object */
 export function parseInfo(r: Buffer): Info {
     return structs.getObject(r, {
         1: (data, obj) => obj.kind = structs.getString(data),
@@ -1084,7 +1084,7 @@ export function parseInfo(r: Buffer): Info {
     })
 }
 
-/** Encodes a [[Info]] object into a stream of attributes */
+/** Encodes a {@link Info} object into a stream of attributes */
 export function formatInfo(x: Info): StreamData {
     return structs.putObject(x, {
         kind: (data, obj) => data.push(1, structs.putString(obj.kind!)),
@@ -1108,7 +1108,7 @@ export interface Vlan extends BaseObject {
     protocol?: number
 }
 
-/** Parses the attributes of a [[Vlan]] object */
+/** Parses the attributes of a {@link Vlan} object */
 export function parseVlan(r: Buffer): Vlan {
     return structs.getObject(r, {
         1: (data, obj) => obj.id = structs.getU16(data),
@@ -1119,7 +1119,7 @@ export function parseVlan(r: Buffer): Vlan {
     })
 }
 
-/** Encodes a [[Vlan]] object into a stream of attributes */
+/** Encodes a {@link Vlan} object into a stream of attributes */
 export function formatVlan(x: Vlan): StreamData {
     return structs.putObject(x, {
         id: (data, obj) => data.push(1, structs.putU16(obj.id!)),
@@ -1136,7 +1136,7 @@ export interface VlanFlagsMask {
     mask?: number
 }
 
-/** Parses the attributes of a [[VlanFlagsMask]] object */
+/** Parses the attributes of a {@link VlanFlagsMask} object */
 export function parseVlanFlagsMask(r: Buffer): VlanFlagsMask {
     if (r.length !== __LENGTH_VlanFlagsMask) throw Error('Unexpected length for VlanFlagsMask')
     const x: VlanFlagsMask = {}
@@ -1145,7 +1145,7 @@ export function parseVlanFlagsMask(r: Buffer): VlanFlagsMask {
     return x
 }
 
-/** Encodes a [[VlanFlagsMask]] object into a stream of attributes */
+/** Encodes a {@link VlanFlagsMask} object into a stream of attributes */
 export function formatVlanFlagsMask(x: VlanFlagsMask, r: Buffer = Buffer.alloc(__LENGTH_VlanFlagsMask)): Buffer {
     if (r.length !== __LENGTH_VlanFlagsMask) throw Error('Unexpected length for VlanFlagsMask')
     x.flags && structs.writeU32.call(r, x.flags, 0)
@@ -1159,14 +1159,14 @@ export interface VlanQos extends BaseObject {
     mapping?: Buffer
 }
 
-/** Parses the attributes of a [[VlanQos]] object */
+/** Parses the attributes of a {@link VlanQos} object */
 export function parseVlanQos(r: Buffer): VlanQos {
     return structs.getObject(r, {
         1: (data, obj) => obj.mapping = data,
     })
 }
 
-/** Encodes a [[VlanQos]] object into a stream of attributes */
+/** Encodes a {@link VlanQos} object into a stream of attributes */
 export function formatVlanQos(x: VlanQos): StreamData {
     return structs.putObject(x, {
         mapping: (data, obj) => data.push(1, obj.mapping!),
@@ -1179,7 +1179,7 @@ export interface VlanQosMapping {
     to?: number
 }
 
-/** Parses the attributes of a [[VlanQosMapping]] object */
+/** Parses the attributes of a {@link VlanQosMapping} object */
 export function parseVlanQosMapping(r: Buffer): VlanQosMapping {
     if (r.length !== __LENGTH_VlanQosMapping) throw Error('Unexpected length for VlanQosMapping')
     const x: VlanQosMapping = {}
@@ -1188,7 +1188,7 @@ export function parseVlanQosMapping(r: Buffer): VlanQosMapping {
     return x
 }
 
-/** Encodes a [[VlanQosMapping]] object into a stream of attributes */
+/** Encodes a {@link VlanQosMapping} object into a stream of attributes */
 export function formatVlanQosMapping(x: VlanQosMapping, r: Buffer = Buffer.alloc(__LENGTH_VlanQosMapping)): Buffer {
     if (r.length !== __LENGTH_VlanQosMapping) throw Error('Unexpected length for VlanQosMapping')
     x.from && structs.writeU32.call(r, x.from, 0)
@@ -1213,7 +1213,7 @@ export interface Macvlan extends BaseObject {
     macaddrCount?: number
 }
 
-/** Parses the attributes of a [[Macvlan]] object */
+/** Parses the attributes of a {@link Macvlan} object */
 export function parseMacvlan(r: Buffer): Macvlan {
     return structs.getObject(r, {
         1: (data, obj) => obj.mode = structs.getU32(data),
@@ -1225,7 +1225,7 @@ export function parseMacvlan(r: Buffer): Macvlan {
     })
 }
 
-/** Encodes a [[Macvlan]] object into a stream of attributes */
+/** Encodes a {@link Macvlan} object into a stream of attributes */
 export function formatMacvlan(x: Macvlan): StreamData {
     return structs.putObject(x, {
         mode: (data, obj) => data.push(1, structs.putU32(obj.mode!)),
@@ -1256,7 +1256,7 @@ export interface MacvlanMode {
     __unknown?: number
 }
 
-/** Parses the flags in a [[MacvlanMode]] bitmask */
+/** Parses the flags in a {@link MacvlanMode} bitmask */
 export function parseMacvlanMode(r: number): MacvlanMode {
     const x: MacvlanMode = {}
     if (r & (1)) (x.private = true, r &= ~(1))
@@ -1268,7 +1268,7 @@ export function parseMacvlanMode(r: number): MacvlanMode {
     return x
 }
 
-/** Encodes a [[MacvlanMode]] bitmask */
+/** Encodes a {@link MacvlanMode} bitmask */
 export function formatMacvlanMode(x: MacvlanMode): number {
     let r = x.__unknown || 0
     if (x.private) r |= 1
@@ -1294,14 +1294,14 @@ export interface Vrf extends BaseObject {
     table?: number
 }
 
-/** Parses the attributes of a [[Vrf]] object */
+/** Parses the attributes of a {@link Vrf} object */
 export function parseVrf(r: Buffer): Vrf {
     return structs.getObject(r, {
         1: (data, obj) => obj.table = structs.getU32(data),
     })
 }
 
-/** Encodes a [[Vrf]] object into a stream of attributes */
+/** Encodes a {@link Vrf} object into a stream of attributes */
 export function formatVrf(x: Vrf): StreamData {
     return structs.putObject(x, {
         table: (data, obj) => data.push(1, structs.putU32(obj.table!)),
@@ -1312,14 +1312,14 @@ export interface VrfPort extends BaseObject {
     table?: Buffer
 }
 
-/** Parses the attributes of a [[VrfPort]] object */
+/** Parses the attributes of a {@link VrfPort} object */
 export function parseVrfPort(r: Buffer): VrfPort {
     return structs.getObject(r, {
         1: (data, obj) => obj.table = data,
     })
 }
 
-/** Encodes a [[VrfPort]] object into a stream of attributes */
+/** Encodes a {@link VrfPort} object into a stream of attributes */
 export function formatVrfPort(x: VrfPort): StreamData {
     return structs.putObject(x, {
         table: (data, obj) => data.push(1, obj.table!),
@@ -1357,7 +1357,7 @@ export interface Macsec extends BaseObject {
     __pad?: Buffer
 }
 
-/** Parses the attributes of a [[Macsec]] object */
+/** Parses the attributes of a {@link Macsec} object */
 export function parseMacsec(r: Buffer): Macsec {
     return structs.getObject(r, {
         1: (data, obj) => obj.sci = structs.getU64(data),
@@ -1377,7 +1377,7 @@ export function parseMacsec(r: Buffer): Macsec {
     })
 }
 
-/** Encodes a [[Macsec]] object into a stream of attributes */
+/** Encodes a {@link Macsec} object into a stream of attributes */
 export function formatMacsec(x: Macsec): StreamData {
     return structs.putObject(x, {
         sci: (data, obj) => data.push(1, structs.putU64(obj.sci!)),
@@ -1404,7 +1404,7 @@ export interface Xfrm extends BaseObject {
     ifId?: number
 }
 
-/** Parses the attributes of a [[Xfrm]] object */
+/** Parses the attributes of a {@link Xfrm} object */
 export function parseXfrm(r: Buffer): Xfrm {
     return structs.getObject(r, {
         1: (data, obj) => obj.link = structs.getU32(data),
@@ -1412,7 +1412,7 @@ export function parseXfrm(r: Buffer): Xfrm {
     })
 }
 
-/** Encodes a [[Xfrm]] object into a stream of attributes */
+/** Encodes a {@link Xfrm} object into a stream of attributes */
 export function formatXfrm(x: Xfrm): StreamData {
     return structs.putObject(x, {
         link: (data, obj) => data.push(1, structs.putU32(obj.link!)),
@@ -1441,7 +1441,7 @@ export interface Ipvlan extends BaseObject {
     flags?: Buffer
 }
 
-/** Parses the attributes of a [[Ipvlan]] object */
+/** Parses the attributes of a {@link Ipvlan} object */
 export function parseIpvlan(r: Buffer): Ipvlan {
     return structs.getObject(r, {
         1: (data, obj) => obj.mode = structs.getU16(data),
@@ -1449,7 +1449,7 @@ export function parseIpvlan(r: Buffer): Ipvlan {
     })
 }
 
-/** Encodes a [[Ipvlan]] object into a stream of attributes */
+/** Encodes a {@link Ipvlan} object into a stream of attributes */
 export function formatIpvlan(x: Ipvlan): StreamData {
     return structs.putObject(x, {
         mode: (data, obj) => data.push(1, structs.putU16(obj.mode!)),
@@ -1529,7 +1529,7 @@ export interface Vxlan extends BaseObject {
     df?: Buffer
 }
 
-/** Parses the attributes of a [[Vxlan]] object */
+/** Parses the attributes of a {@link Vxlan} object */
 export function parseVxlan(r: Buffer): Vxlan {
     return structs.getObject(r, {
         1: (data, obj) => obj.id = structs.getU32(data),
@@ -1564,7 +1564,7 @@ export function parseVxlan(r: Buffer): Vxlan {
     })
 }
 
-/** Encodes a [[Vxlan]] object into a stream of attributes */
+/** Encodes a {@link Vxlan} object into a stream of attributes */
 export function formatVxlan(x: Vxlan): StreamData {
     return structs.putObject(x, {
         id: (data, obj) => data.push(1, structs.putU32(obj.id!)),
@@ -1605,7 +1605,7 @@ export interface VxlanPortRange {
     high?: number
 }
 
-/** Parses the attributes of a [[VxlanPortRange]] object */
+/** Parses the attributes of a {@link VxlanPortRange} object */
 export function parseVxlanPortRange(r: Buffer): VxlanPortRange {
     if (r.length !== __LENGTH_VxlanPortRange) throw Error('Unexpected length for VxlanPortRange')
     const x: VxlanPortRange = {}
@@ -1614,7 +1614,7 @@ export function parseVxlanPortRange(r: Buffer): VxlanPortRange {
     return x
 }
 
-/** Encodes a [[VxlanPortRange]] object into a stream of attributes */
+/** Encodes a {@link VxlanPortRange} object into a stream of attributes */
 export function formatVxlanPortRange(x: VxlanPortRange, r: Buffer = Buffer.alloc(__LENGTH_VxlanPortRange)): Buffer {
     if (r.length !== __LENGTH_VxlanPortRange) throw Error('Unexpected length for VxlanPortRange')
     x.low && structs.writeU16be.call(r, x.low, 0)
@@ -1662,7 +1662,7 @@ export interface Geneve extends BaseObject {
     df?: Buffer
 }
 
-/** Parses the attributes of a [[Geneve]] object */
+/** Parses the attributes of a {@link Geneve} object */
 export function parseGeneve(r: Buffer): Geneve {
     return structs.getObject(r, {
         1: (data, obj) => obj.id = structs.getU32(data),
@@ -1681,7 +1681,7 @@ export function parseGeneve(r: Buffer): Geneve {
     })
 }
 
-/** Encodes a [[Geneve]] object into a stream of attributes */
+/** Encodes a {@link Geneve} object into a stream of attributes */
 export function formatGeneve(x: Geneve): StreamData {
     return structs.putObject(x, {
         id: (data, obj) => data.push(1, structs.putU32(obj.id!)),
@@ -1713,14 +1713,14 @@ export interface Ppp extends BaseObject {
     devFd?: number
 }
 
-/** Parses the attributes of a [[Ppp]] object */
+/** Parses the attributes of a {@link Ppp} object */
 export function parsePpp(r: Buffer): Ppp {
     return structs.getObject(r, {
         1: (data, obj) => obj.devFd = structs.getS32(data),
     })
 }
 
-/** Encodes a [[Ppp]] object into a stream of attributes */
+/** Encodes a {@link Ppp} object into a stream of attributes */
 export function formatPpp(x: Ppp): StreamData {
     return structs.putObject(x, {
         devFd: (data, obj) => data.push(1, structs.putS32(obj.devFd!)),
@@ -1744,7 +1744,7 @@ export interface Gtp extends BaseObject {
     role?: Buffer
 }
 
-/** Parses the attributes of a [[Gtp]] object */
+/** Parses the attributes of a {@link Gtp} object */
 export function parseGtp(r: Buffer): Gtp {
     return structs.getObject(r, {
         1: (data, obj) => obj.fd0 = data,
@@ -1754,7 +1754,7 @@ export function parseGtp(r: Buffer): Gtp {
     })
 }
 
-/** Encodes a [[Gtp]] object into a stream of attributes */
+/** Encodes a {@link Gtp} object into a stream of attributes */
 export function formatGtp(x: Gtp): StreamData {
     return structs.putObject(x, {
         fd0: (data, obj) => data.push(1, obj.fd0!),
@@ -1823,7 +1823,7 @@ export interface Bond extends BaseObject {
     peerNotifDelay?: Buffer
 }
 
-/** Parses the attributes of a [[Bond]] object */
+/** Parses the attributes of a {@link Bond} object */
 export function parseBond(r: Buffer): Bond {
     return structs.getObject(r, {
         1: (data, obj) => obj.mode = data,
@@ -1857,7 +1857,7 @@ export function parseBond(r: Buffer): Bond {
     })
 }
 
-/** Encodes a [[Bond]] object into a stream of attributes */
+/** Encodes a {@link Bond} object into a stream of attributes */
 export function formatBond(x: Bond): StreamData {
     return structs.putObject(x, {
         mode: (data, obj) => data.push(1, obj.mode!),
@@ -1903,7 +1903,7 @@ export interface BondAdInfo extends BaseObject {
     partnerMac?: Buffer
 }
 
-/** Parses the attributes of a [[BondAdInfo]] object */
+/** Parses the attributes of a {@link BondAdInfo} object */
 export function parseBondAdInfo(r: Buffer): BondAdInfo {
     return structs.getObject(r, {
         1: (data, obj) => obj.aggregator = data,
@@ -1914,7 +1914,7 @@ export function parseBondAdInfo(r: Buffer): BondAdInfo {
     })
 }
 
-/** Encodes a [[BondAdInfo]] object into a stream of attributes */
+/** Encodes a {@link BondAdInfo} object into a stream of attributes */
 export function formatBondAdInfo(x: BondAdInfo): StreamData {
     return structs.putObject(x, {
         aggregator: (data, obj) => data.push(1, obj.aggregator!),
@@ -1943,7 +1943,7 @@ export interface BondSlave extends BaseObject {
     adPartnerOperPortState?: Buffer
 }
 
-/** Parses the attributes of a [[BondSlave]] object */
+/** Parses the attributes of a {@link BondSlave} object */
 export function parseBondSlave(r: Buffer): BondSlave {
     return structs.getObject(r, {
         1: (data, obj) => obj.state = data,
@@ -1957,7 +1957,7 @@ export function parseBondSlave(r: Buffer): BondSlave {
     })
 }
 
-/** Encodes a [[BondSlave]] object into a stream of attributes */
+/** Encodes a {@link BondSlave} object into a stream of attributes */
 export function formatBondSlave(x: BondSlave): StreamData {
     return structs.putObject(x, {
         state: (data, obj) => data.push(1, obj.state!),
@@ -1975,14 +1975,14 @@ export interface VirtualFunctionList extends BaseObject {
     x?: VirtualFunction[]
 }
 
-/** Parses the attributes of a [[VirtualFunctionList]] object */
+/** Parses the attributes of a {@link VirtualFunctionList} object */
 export function parseVirtualFunctionList(r: Buffer): VirtualFunctionList {
     return structs.getObject(r, {
         1: (data, obj) => (obj.x = obj.x || []).push(parseVirtualFunction(data)),
     })
 }
 
-/** Encodes a [[VirtualFunctionList]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionList} object into a stream of attributes */
 export function formatVirtualFunctionList(x: VirtualFunctionList): StreamData {
     return structs.putObject(x, {
         x: (data, obj) => obj.x!.forEach(x => data.push(1, formatVirtualFunction(x))),
@@ -2030,7 +2030,7 @@ export interface VirtualFunction extends BaseObject {
     broadcast?: Buffer
 }
 
-/** Parses the attributes of a [[VirtualFunction]] object */
+/** Parses the attributes of a {@link VirtualFunction} object */
 export function parseVirtualFunction(r: Buffer): VirtualFunction {
     return structs.getObject(r, {
         1: (data, obj) => obj.mac = data,
@@ -2049,7 +2049,7 @@ export function parseVirtualFunction(r: Buffer): VirtualFunction {
     })
 }
 
-/** Encodes a [[VirtualFunction]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunction} object into a stream of attributes */
 export function formatVirtualFunction(x: VirtualFunction): StreamData {
     return structs.putObject(x, {
         mac: (data, obj) => data.push(1, obj.mac!),
@@ -2075,7 +2075,7 @@ export interface VirtualFunctionMac {
     mac?: number[]
 }
 
-/** Parses the attributes of a [[VirtualFunctionMac]] object */
+/** Parses the attributes of a {@link VirtualFunctionMac} object */
 export function parseVirtualFunctionMac(r: Buffer): VirtualFunctionMac {
     if (r.length !== __LENGTH_VirtualFunctionMac) throw Error('Unexpected length for VirtualFunctionMac')
     const x: VirtualFunctionMac = {}
@@ -2084,7 +2084,7 @@ export function parseVirtualFunctionMac(r: Buffer): VirtualFunctionMac {
     return x
 }
 
-/** Encodes a [[VirtualFunctionMac]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionMac} object into a stream of attributes */
 export function formatVirtualFunctionMac(x: VirtualFunctionMac, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionMac)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionMac) throw Error('Unexpected length for VirtualFunctionMac')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2100,7 +2100,7 @@ export interface VirtualFunctionBroadcast {
     broadcast?: number[]
 }
 
-/** Parses the attributes of a [[VirtualFunctionBroadcast]] object */
+/** Parses the attributes of a {@link VirtualFunctionBroadcast} object */
 export function parseVirtualFunctionBroadcast(r: Buffer): VirtualFunctionBroadcast {
     if (r.length !== __LENGTH_VirtualFunctionBroadcast) throw Error('Unexpected length for VirtualFunctionBroadcast')
     const x: VirtualFunctionBroadcast = {}
@@ -2108,7 +2108,7 @@ export function parseVirtualFunctionBroadcast(r: Buffer): VirtualFunctionBroadca
     return x
 }
 
-/** Encodes a [[VirtualFunctionBroadcast]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionBroadcast} object into a stream of attributes */
 export function formatVirtualFunctionBroadcast(x: VirtualFunctionBroadcast, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionBroadcast)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionBroadcast) throw Error('Unexpected length for VirtualFunctionBroadcast')
     if (x.broadcast && x.broadcast.length !== 32)
@@ -2128,7 +2128,7 @@ export interface VirtualFunctionVlan {
     qos?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionVlan]] object */
+/** Parses the attributes of a {@link VirtualFunctionVlan} object */
 export function parseVirtualFunctionVlan(r: Buffer): VirtualFunctionVlan {
     if (r.length !== __LENGTH_VirtualFunctionVlan) throw Error('Unexpected length for VirtualFunctionVlan')
     const x: VirtualFunctionVlan = {}
@@ -2138,7 +2138,7 @@ export function parseVirtualFunctionVlan(r: Buffer): VirtualFunctionVlan {
     return x
 }
 
-/** Encodes a [[VirtualFunctionVlan]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionVlan} object into a stream of attributes */
 export function formatVirtualFunctionVlan(x: VirtualFunctionVlan, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionVlan)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionVlan) throw Error('Unexpected length for VirtualFunctionVlan')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2154,14 +2154,14 @@ export interface VlanList extends BaseObject {
     x?: Vlan[]
 }
 
-/** Parses the attributes of a [[VlanList]] object */
+/** Parses the attributes of a {@link VlanList} object */
 export function parseVlanList(r: Buffer): VlanList {
     return structs.getObject(r, {
         1: (data, obj) => (obj.x = obj.x || []).push(parseVlan(data)),
     })
 }
 
-/** Encodes a [[VlanList]] object into a stream of attributes */
+/** Encodes a {@link VlanList} object into a stream of attributes */
 export function formatVlanList(x: VlanList): StreamData {
     return structs.putObject(x, {
         x: (data, obj) => obj.x!.forEach(x => data.push(1, formatVlan(x))),
@@ -2180,7 +2180,7 @@ export interface VirtualFunctionVlanInfo {
     vlanProto?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionVlanInfo]] object */
+/** Parses the attributes of a {@link VirtualFunctionVlanInfo} object */
 export function parseVirtualFunctionVlanInfo(r: Buffer): VirtualFunctionVlanInfo {
     if (r.length !== __LENGTH_VirtualFunctionVlanInfo) throw Error('Unexpected length for VirtualFunctionVlanInfo')
     const x: VirtualFunctionVlanInfo = {}
@@ -2191,7 +2191,7 @@ export function parseVirtualFunctionVlanInfo(r: Buffer): VirtualFunctionVlanInfo
     return x
 }
 
-/** Encodes a [[VirtualFunctionVlanInfo]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionVlanInfo} object into a stream of attributes */
 export function formatVirtualFunctionVlanInfo(x: VirtualFunctionVlanInfo, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionVlanInfo)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionVlanInfo) throw Error('Unexpected length for VirtualFunctionVlanInfo')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2210,7 +2210,7 @@ export interface VirtualFunctionTxRate {
     rate?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionTxRate]] object */
+/** Parses the attributes of a {@link VirtualFunctionTxRate} object */
 export function parseVirtualFunctionTxRate(r: Buffer): VirtualFunctionTxRate {
     if (r.length !== __LENGTH_VirtualFunctionTxRate) throw Error('Unexpected length for VirtualFunctionTxRate')
     const x: VirtualFunctionTxRate = {}
@@ -2219,7 +2219,7 @@ export function parseVirtualFunctionTxRate(r: Buffer): VirtualFunctionTxRate {
     return x
 }
 
-/** Encodes a [[VirtualFunctionTxRate]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionTxRate} object into a stream of attributes */
 export function formatVirtualFunctionTxRate(x: VirtualFunctionTxRate, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionTxRate)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionTxRate) throw Error('Unexpected length for VirtualFunctionTxRate')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2239,7 +2239,7 @@ export interface VirtualFunctionRate {
     maxTxRate?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionRate]] object */
+/** Parses the attributes of a {@link VirtualFunctionRate} object */
 export function parseVirtualFunctionRate(r: Buffer): VirtualFunctionRate {
     if (r.length !== __LENGTH_VirtualFunctionRate) throw Error('Unexpected length for VirtualFunctionRate')
     const x: VirtualFunctionRate = {}
@@ -2249,7 +2249,7 @@ export function parseVirtualFunctionRate(r: Buffer): VirtualFunctionRate {
     return x
 }
 
-/** Encodes a [[VirtualFunctionRate]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionRate} object into a stream of attributes */
 export function formatVirtualFunctionRate(x: VirtualFunctionRate, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionRate)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionRate) throw Error('Unexpected length for VirtualFunctionRate')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2266,7 +2266,7 @@ export interface VirtualFunctionSpoofchk {
     setting?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionSpoofchk]] object */
+/** Parses the attributes of a {@link VirtualFunctionSpoofchk} object */
 export function parseVirtualFunctionSpoofchk(r: Buffer): VirtualFunctionSpoofchk {
     if (r.length !== __LENGTH_VirtualFunctionSpoofchk) throw Error('Unexpected length for VirtualFunctionSpoofchk')
     const x: VirtualFunctionSpoofchk = {}
@@ -2275,7 +2275,7 @@ export function parseVirtualFunctionSpoofchk(r: Buffer): VirtualFunctionSpoofchk
     return x
 }
 
-/** Encodes a [[VirtualFunctionSpoofchk]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionSpoofchk} object into a stream of attributes */
 export function formatVirtualFunctionSpoofchk(x: VirtualFunctionSpoofchk, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionSpoofchk)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionSpoofchk) throw Error('Unexpected length for VirtualFunctionSpoofchk')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2291,7 +2291,7 @@ export interface VirtualFunctionGuid {
     guid?: bigint
 }
 
-/** Parses the attributes of a [[VirtualFunctionGuid]] object */
+/** Parses the attributes of a {@link VirtualFunctionGuid} object */
 export function parseVirtualFunctionGuid(r: Buffer): VirtualFunctionGuid {
     if (r.length !== __LENGTH_VirtualFunctionGuid) throw Error('Unexpected length for VirtualFunctionGuid')
     const x: VirtualFunctionGuid = {}
@@ -2300,7 +2300,7 @@ export function parseVirtualFunctionGuid(r: Buffer): VirtualFunctionGuid {
     return x
 }
 
-/** Encodes a [[VirtualFunctionGuid]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionGuid} object into a stream of attributes */
 export function formatVirtualFunctionGuid(x: VirtualFunctionGuid, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionGuid)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionGuid) throw Error('Unexpected length for VirtualFunctionGuid')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2327,7 +2327,7 @@ export interface VirtualFunctionLinkState {
     linkState?: VirtualFunctionLinkStateId | keyof typeof VirtualFunctionLinkStateId
 }
 
-/** Parses the attributes of a [[VirtualFunctionLinkState]] object */
+/** Parses the attributes of a {@link VirtualFunctionLinkState} object */
 export function parseVirtualFunctionLinkState(r: Buffer): VirtualFunctionLinkState {
     if (r.length !== __LENGTH_VirtualFunctionLinkState) throw Error('Unexpected length for VirtualFunctionLinkState')
     const x: VirtualFunctionLinkState = {}
@@ -2336,7 +2336,7 @@ export function parseVirtualFunctionLinkState(r: Buffer): VirtualFunctionLinkSta
     return x
 }
 
-/** Encodes a [[VirtualFunctionLinkState]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionLinkState} object into a stream of attributes */
 export function formatVirtualFunctionLinkState(x: VirtualFunctionLinkState, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionLinkState)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionLinkState) throw Error('Unexpected length for VirtualFunctionLinkState')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2352,7 +2352,7 @@ export interface VirtualFunctionRssQueryEn {
     setting?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionRssQueryEn]] object */
+/** Parses the attributes of a {@link VirtualFunctionRssQueryEn} object */
 export function parseVirtualFunctionRssQueryEn(r: Buffer): VirtualFunctionRssQueryEn {
     if (r.length !== __LENGTH_VirtualFunctionRssQueryEn) throw Error('Unexpected length for VirtualFunctionRssQueryEn')
     const x: VirtualFunctionRssQueryEn = {}
@@ -2361,7 +2361,7 @@ export function parseVirtualFunctionRssQueryEn(r: Buffer): VirtualFunctionRssQue
     return x
 }
 
-/** Encodes a [[VirtualFunctionRssQueryEn]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionRssQueryEn} object into a stream of attributes */
 export function formatVirtualFunctionRssQueryEn(x: VirtualFunctionRssQueryEn, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionRssQueryEn)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionRssQueryEn) throw Error('Unexpected length for VirtualFunctionRssQueryEn')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2391,7 +2391,7 @@ export interface VirtualFunctionStats extends BaseObject {
     txDropped?: Buffer
 }
 
-/** Parses the attributes of a [[VirtualFunctionStats]] object */
+/** Parses the attributes of a {@link VirtualFunctionStats} object */
 export function parseVirtualFunctionStats(r: Buffer): VirtualFunctionStats {
     return structs.getObject(r, {
         0: (data, obj) => obj.rxPackets = data,
@@ -2406,7 +2406,7 @@ export function parseVirtualFunctionStats(r: Buffer): VirtualFunctionStats {
     })
 }
 
-/** Encodes a [[VirtualFunctionStats]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionStats} object into a stream of attributes */
 export function formatVirtualFunctionStats(x: VirtualFunctionStats): StreamData {
     return structs.putObject(x, {
         rxPackets: (data, obj) => data.push(0, obj.rxPackets!),
@@ -2427,7 +2427,7 @@ export interface VirtualFunctionTrust {
     setting?: number
 }
 
-/** Parses the attributes of a [[VirtualFunctionTrust]] object */
+/** Parses the attributes of a {@link VirtualFunctionTrust} object */
 export function parseVirtualFunctionTrust(r: Buffer): VirtualFunctionTrust {
     if (r.length !== __LENGTH_VirtualFunctionTrust) throw Error('Unexpected length for VirtualFunctionTrust')
     const x: VirtualFunctionTrust = {}
@@ -2436,7 +2436,7 @@ export function parseVirtualFunctionTrust(r: Buffer): VirtualFunctionTrust {
     return x
 }
 
-/** Encodes a [[VirtualFunctionTrust]] object into a stream of attributes */
+/** Encodes a {@link VirtualFunctionTrust} object into a stream of attributes */
 export function formatVirtualFunctionTrust(x: VirtualFunctionTrust, r: Buffer = Buffer.alloc(__LENGTH_VirtualFunctionTrust)): Buffer {
     if (r.length !== __LENGTH_VirtualFunctionTrust) throw Error('Unexpected length for VirtualFunctionTrust')
     x.vf && structs.writeU32.call(r, x.vf, 0)
@@ -2451,14 +2451,14 @@ export interface PortList extends BaseObject {
     x?: Port[]
 }
 
-/** Parses the attributes of a [[PortList]] object */
+/** Parses the attributes of a {@link PortList} object */
 export function parsePortList(r: Buffer): PortList {
     return structs.getObject(r, {
         1: (data, obj) => (obj.x = obj.x || []).push(parsePort(data)),
     })
 }
 
-/** Encodes a [[PortList]] object into a stream of attributes */
+/** Encodes a {@link PortList} object into a stream of attributes */
 export function formatPortList(x: PortList): StreamData {
     return structs.putObject(x, {
         x: (data, obj) => obj.x!.forEach(x => data.push(1, formatPort(x))),
@@ -2487,7 +2487,7 @@ export interface Port extends BaseObject {
     response?: Buffer
 }
 
-/** Parses the attributes of a [[Port]] object */
+/** Parses the attributes of a {@link Port} object */
 export function parsePort(r: Buffer): Port {
     return structs.getObject(r, {
         1: (data, obj) => obj.vf = data,
@@ -2500,7 +2500,7 @@ export function parsePort(r: Buffer): Port {
     })
 }
 
-/** Encodes a [[Port]] object into a stream of attributes */
+/** Encodes a {@link Port} object into a stream of attributes */
 export function formatPort(x: Port): StreamData {
     return structs.putObject(x, {
         vf: (data, obj) => data.push(1, obj.vf!),
@@ -2564,7 +2564,7 @@ export interface PortVsi {
     __pad?: number[]
 }
 
-/** Parses the attributes of a [[PortVsi]] object */
+/** Parses the attributes of a {@link PortVsi} object */
 export function parsePortVsi(r: Buffer): PortVsi {
     if (r.length !== __LENGTH_PortVsi) throw Error('Unexpected length for PortVsi')
     const x: PortVsi = {}
@@ -2575,7 +2575,7 @@ export function parsePortVsi(r: Buffer): PortVsi {
     return x
 }
 
-/** Encodes a [[PortVsi]] object into a stream of attributes */
+/** Encodes a {@link PortVsi} object into a stream of attributes */
 export function formatPortVsi(x: PortVsi, r: Buffer = Buffer.alloc(__LENGTH_PortVsi)): Buffer {
     if (r.length !== __LENGTH_PortVsi) throw Error('Unexpected length for PortVsi')
     x.vsiMgrId && structs.writeU8.call(r, x.vsiMgrId, 0)
@@ -2600,7 +2600,7 @@ export interface Ipoib extends BaseObject {
     umcast?: Buffer
 }
 
-/** Parses the attributes of a [[Ipoib]] object */
+/** Parses the attributes of a {@link Ipoib} object */
 export function parseIpoib(r: Buffer): Ipoib {
     return structs.getObject(r, {
         1: (data, obj) => obj.pkey = data,
@@ -2609,7 +2609,7 @@ export function parseIpoib(r: Buffer): Ipoib {
     })
 }
 
-/** Encodes a [[Ipoib]] object into a stream of attributes */
+/** Encodes a {@link Ipoib} object into a stream of attributes */
 export function formatIpoib(x: Ipoib): StreamData {
     return structs.putObject(x, {
         pkey: (data, obj) => data.push(1, obj.pkey!),
@@ -2644,7 +2644,7 @@ export interface Hsr extends BaseObject {
     version?: Buffer
 }
 
-/** Parses the attributes of a [[Hsr]] object */
+/** Parses the attributes of a {@link Hsr} object */
 export function parseHsr(r: Buffer): Hsr {
     return structs.getObject(r, {
         1: (data, obj) => obj.slave1 = data,
@@ -2656,7 +2656,7 @@ export function parseHsr(r: Buffer): Hsr {
     })
 }
 
-/** Encodes a [[Hsr]] object into a stream of attributes */
+/** Encodes a {@link Hsr} object into a stream of attributes */
 export function formatHsr(x: Hsr): StreamData {
     return structs.putObject(x, {
         slave1: (data, obj) => data.push(1, obj.slave1!),
@@ -2681,7 +2681,7 @@ export interface IfStatsMsg {
     filterMask?: number
 }
 
-/** Parses the attributes of a [[IfStatsMsg]] object */
+/** Parses the attributes of a {@link IfStatsMsg} object */
 export function parseIfStatsMsg(r: Buffer): IfStatsMsg {
     if (r.length !== __LENGTH_IfStatsMsg) throw Error('Unexpected length for IfStatsMsg')
     const x: IfStatsMsg = {}
@@ -2693,7 +2693,7 @@ export function parseIfStatsMsg(r: Buffer): IfStatsMsg {
     return x
 }
 
-/** Encodes a [[IfStatsMsg]] object into a stream of attributes */
+/** Encodes a {@link IfStatsMsg} object into a stream of attributes */
 export function formatIfStatsMsg(x: IfStatsMsg, r: Buffer = Buffer.alloc(__LENGTH_IfStatsMsg)): Buffer {
     if (r.length !== __LENGTH_IfStatsMsg) throw Error('Unexpected length for IfStatsMsg')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -2718,7 +2718,7 @@ export interface Stats extends BaseObject {
     afSpec?: Map<number, Buffer>
 }
 
-/** Parses the attributes of a [[Stats]] object */
+/** Parses the attributes of a {@link Stats} object */
 export function parseStats(r: Buffer): Stats {
     return structs.getObject(r, {
         1: (data, obj) => obj.link64 = data,
@@ -2729,7 +2729,7 @@ export function parseStats(r: Buffer): Stats {
     })
 }
 
-/** Encodes a [[Stats]] object into a stream of attributes */
+/** Encodes a {@link Stats} object into a stream of attributes */
 export function formatStats(x: Stats): StreamData {
     return structs.putObject(x, {
         link64: (data, obj) => data.push(1, obj.link64!),
@@ -2746,7 +2746,7 @@ export interface Xstats extends BaseObject {
     bond?: Buffer
 }
 
-/** Parses the attributes of a [[Xstats]] object */
+/** Parses the attributes of a {@link Xstats} object */
 export function parseXstats(r: Buffer): Xstats {
     return structs.getObject(r, {
         1: (data, obj) => obj.bridge = parseBridgeXstats(data),
@@ -2754,7 +2754,7 @@ export function parseXstats(r: Buffer): Xstats {
     })
 }
 
-/** Encodes a [[Xstats]] object into a stream of attributes */
+/** Encodes a {@link Xstats} object into a stream of attributes */
 export function formatXstats(x: Xstats): StreamData {
     return structs.putObject(x, {
         bridge: (data, obj) => data.push(1, formatBridgeXstats(obj.bridge!)),
@@ -2768,14 +2768,14 @@ export interface OffloadXstats extends BaseObject {
     cpuHit?: LinkStats64
 }
 
-/** Parses the attributes of a [[OffloadXstats]] object */
+/** Parses the attributes of a {@link OffloadXstats} object */
 export function parseOffloadXstats(r: Buffer): OffloadXstats {
     return structs.getObject(r, {
         1: (data, obj) => obj.cpuHit = parseLinkStats64(data),
     })
 }
 
-/** Encodes a [[OffloadXstats]] object into a stream of attributes */
+/** Encodes a {@link OffloadXstats} object into a stream of attributes */
 export function formatOffloadXstats(x: OffloadXstats): StreamData {
     return structs.putObject(x, {
         cpuHit: (data, obj) => data.push(1, formatLinkStats64(obj.cpuHit!)),
@@ -2795,7 +2795,7 @@ export interface XdpFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[XdpFlags]] bitmask */
+/** Parses the flags in a {@link XdpFlags} bitmask */
 export function parseXdpFlags(r: number): XdpFlags {
     const x: XdpFlags = {}
     if (r & (1)) (x.updateIfNoexist = true, r &= ~(1))
@@ -2806,7 +2806,7 @@ export function parseXdpFlags(r: number): XdpFlags {
     return x
 }
 
-/** Encodes a [[XdpFlags]] bitmask */
+/** Encodes a {@link XdpFlags} bitmask */
 export function formatXdpFlags(x: XdpFlags): number {
     let r = x.__unknown || 0
     if (x.updateIfNoexist) r |= 1
@@ -2845,7 +2845,7 @@ export interface Xdp extends BaseObject {
     hwProgId?: Buffer
 }
 
-/** Parses the attributes of a [[Xdp]] object */
+/** Parses the attributes of a {@link Xdp} object */
 export function parseXdp(r: Buffer): Xdp {
     return structs.getObject(r, {
         1: (data, obj) => obj.fd = data,
@@ -2858,7 +2858,7 @@ export function parseXdp(r: Buffer): Xdp {
     })
 }
 
-/** Encodes a [[Xdp]] object into a stream of attributes */
+/** Encodes a {@link Xdp} object into a stream of attributes */
 export function formatXdp(x: Xdp): StreamData {
     return structs.putObject(x, {
         fd: (data, obj) => data.push(1, obj.fd!),
@@ -2914,7 +2914,7 @@ export interface Tun extends BaseObject {
     numDisabledQueues?: Buffer
 }
 
-/** Parses the attributes of a [[Tun]] object */
+/** Parses the attributes of a {@link Tun} object */
 export function parseTun(r: Buffer): Tun {
     return structs.getObject(r, {
         1: (data, obj) => obj.owner = data,
@@ -2929,7 +2929,7 @@ export function parseTun(r: Buffer): Tun {
     })
 }
 
-/** Encodes a [[Tun]] object into a stream of attributes */
+/** Encodes a {@link Tun} object into a stream of attributes */
 export function formatTun(x: Tun): StreamData {
     return structs.putObject(x, {
         owner: (data, obj) => data.push(1, obj.owner!),
@@ -2957,7 +2957,7 @@ export interface RmnetFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RmnetFlags]] bitmask */
+/** Parses the flags in a {@link RmnetFlags} bitmask */
 export function parseRmnetFlags(r: number): RmnetFlags {
     const x: RmnetFlags = {}
     if (r & (1)) (x.ingressDeaggregation = true, r &= ~(1))
@@ -2968,7 +2968,7 @@ export function parseRmnetFlags(r: number): RmnetFlags {
     return x
 }
 
-/** Encodes a [[RmnetFlags]] bitmask */
+/** Encodes a {@link RmnetFlags} bitmask */
 export function formatRmnetFlags(x: RmnetFlags): number {
     let r = x.__unknown || 0
     if (x.ingressDeaggregation) r |= 1
@@ -2984,7 +2984,7 @@ export interface Rmnet extends BaseObject {
     flags?: Buffer
 }
 
-/** Parses the attributes of a [[Rmnet]] object */
+/** Parses the attributes of a {@link Rmnet} object */
 export function parseRmnet(r: Buffer): Rmnet {
     return structs.getObject(r, {
         1: (data, obj) => obj.muxId = data,
@@ -2992,7 +2992,7 @@ export function parseRmnet(r: Buffer): Rmnet {
     })
 }
 
-/** Encodes a [[Rmnet]] object into a stream of attributes */
+/** Encodes a {@link Rmnet} object into a stream of attributes */
 export function formatRmnet(x: Rmnet): StreamData {
     return structs.putObject(x, {
         muxId: (data, obj) => data.push(1, obj.muxId!),
@@ -3006,7 +3006,7 @@ export interface RmnetFlagsMask {
     mask?: RmnetFlags
 }
 
-/** Parses the attributes of a [[RmnetFlagsMask]] object */
+/** Parses the attributes of a {@link RmnetFlagsMask} object */
 export function parseRmnetFlagsMask(r: Buffer): RmnetFlagsMask {
     if (r.length !== __LENGTH_RmnetFlagsMask) throw Error('Unexpected length for RmnetFlagsMask')
     const x: RmnetFlagsMask = {}
@@ -3015,7 +3015,7 @@ export function parseRmnetFlagsMask(r: Buffer): RmnetFlagsMask {
     return x
 }
 
-/** Encodes a [[RmnetFlagsMask]] object into a stream of attributes */
+/** Encodes a {@link RmnetFlagsMask} object into a stream of attributes */
 export function formatRmnetFlagsMask(x: RmnetFlagsMask, r: Buffer = Buffer.alloc(__LENGTH_RmnetFlagsMask)): Buffer {
     if (r.length !== __LENGTH_RmnetFlagsMask) throw Error('Unexpected length for RmnetFlagsMask')
     x.flags && structs.writeU32.call(r, formatRmnetFlags(x.flags), 0)
@@ -3029,14 +3029,14 @@ export interface VethInfo extends BaseObject {
     peer?: Buffer
 }
 
-/** Parses the attributes of a [[VethInfo]] object */
+/** Parses the attributes of a {@link VethInfo} object */
 export function parseVethInfo(r: Buffer): VethInfo {
     return structs.getObject(r, {
         1: (data, obj) => obj.peer = data,
     })
 }
 
-/** Encodes a [[VethInfo]] object into a stream of attributes */
+/** Encodes a {@link VethInfo} object into a stream of attributes */
 export function formatVethInfo(x: VethInfo): StreamData {
     return structs.putObject(x, {
         peer: (data, obj) => data.push(1, obj.peer!),
@@ -3057,7 +3057,7 @@ export interface VlanFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[VlanFlags]] bitmask */
+/** Parses the flags in a {@link VlanFlags} bitmask */
 export function parseVlanFlags(r: number): VlanFlags {
     const x: VlanFlags = {}
     if (r & (1)) (x.reorderHdr = true, r &= ~(1))
@@ -3069,7 +3069,7 @@ export function parseVlanFlags(r: number): VlanFlags {
     return x
 }
 
-/** Encodes a [[VlanFlags]] bitmask */
+/** Encodes a {@link VlanFlags} bitmask */
 export function formatVlanFlags(x: VlanFlags): number {
     let r = x.__unknown || 0
     if (x.reorderHdr) r |= 1
@@ -3117,7 +3117,7 @@ export interface BridgeFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[BridgeFlags]] bitmask */
+/** Parses the flags in a {@link BridgeFlags} bitmask */
 export function parseBridgeFlags(r: number): BridgeFlags {
     const x: BridgeFlags = {}
     if (r & (1)) (x.master = true, r &= ~(1))
@@ -3126,7 +3126,7 @@ export function parseBridgeFlags(r: number): BridgeFlags {
     return x
 }
 
-/** Encodes a [[BridgeFlags]] bitmask */
+/** Encodes a {@link BridgeFlags} bitmask */
 export function formatBridgeFlags(x: BridgeFlags): number {
     let r = x.__unknown || 0
     if (x.master) r |= 1
@@ -3155,7 +3155,7 @@ export interface BridgeSpec extends BaseObject {
     vlanTunnelInfo?: Buffer
 }
 
-/** Parses the attributes of a [[BridgeSpec]] object */
+/** Parses the attributes of a {@link BridgeSpec} object */
 export function parseBridgeSpec(r: Buffer): BridgeSpec {
     return structs.getObject(r, {
         0: (data, obj) => obj.flags = structs.getU16(data),
@@ -3165,7 +3165,7 @@ export function parseBridgeSpec(r: Buffer): BridgeSpec {
     })
 }
 
-/** Encodes a [[BridgeSpec]] object into a stream of attributes */
+/** Encodes a {@link BridgeSpec} object into a stream of attributes */
 export function formatBridgeSpec(x: BridgeSpec): StreamData {
     return structs.putObject(x, {
         flags: (data, obj) => data.push(0, structs.putU16(obj.flags!)),
@@ -3200,7 +3200,7 @@ export interface BridgeVlanFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[BridgeVlanFlags]] bitmask */
+/** Parses the flags in a {@link BridgeVlanFlags} bitmask */
 export function parseBridgeVlanFlags(r: number): BridgeVlanFlags {
     const x: BridgeVlanFlags = {}
     if (r & (1)) (x.master = true, r &= ~(1))
@@ -3214,7 +3214,7 @@ export function parseBridgeVlanFlags(r: number): BridgeVlanFlags {
     return x
 }
 
-/** Encodes a [[BridgeVlanFlags]] bitmask */
+/** Encodes a {@link BridgeVlanFlags} bitmask */
 export function formatBridgeVlanFlags(x: BridgeVlanFlags): number {
     let r = x.__unknown || 0
     if (x.master) r |= 1
@@ -3233,7 +3233,7 @@ export interface BridgeVlanInfo {
     vid?: number
 }
 
-/** Parses the attributes of a [[BridgeVlanInfo]] object */
+/** Parses the attributes of a {@link BridgeVlanInfo} object */
 export function parseBridgeVlanInfo(r: Buffer): BridgeVlanInfo {
     if (r.length !== __LENGTH_BridgeVlanInfo) throw Error('Unexpected length for BridgeVlanInfo')
     const x: BridgeVlanInfo = {}
@@ -3242,7 +3242,7 @@ export function parseBridgeVlanInfo(r: Buffer): BridgeVlanInfo {
     return x
 }
 
-/** Encodes a [[BridgeVlanInfo]] object into a stream of attributes */
+/** Encodes a {@link BridgeVlanInfo} object into a stream of attributes */
 export function formatBridgeVlanInfo(x: BridgeVlanInfo, r: Buffer = Buffer.alloc(__LENGTH_BridgeVlanInfo)): Buffer {
     if (r.length !== __LENGTH_BridgeVlanInfo) throw Error('Unexpected length for BridgeVlanInfo')
     x.flags && structs.writeU16.call(r, x.flags, 0)
@@ -3260,7 +3260,7 @@ export interface BridgeVlanTunnel extends BaseObject {
     flags?: Buffer
 }
 
-/** Parses the attributes of a [[BridgeVlanTunnel]] object */
+/** Parses the attributes of a {@link BridgeVlanTunnel} object */
 export function parseBridgeVlanTunnel(r: Buffer): BridgeVlanTunnel {
     return structs.getObject(r, {
         1: (data, obj) => obj.id = data,
@@ -3269,7 +3269,7 @@ export function parseBridgeVlanTunnel(r: Buffer): BridgeVlanTunnel {
     })
 }
 
-/** Encodes a [[BridgeVlanTunnel]] object into a stream of attributes */
+/** Encodes a {@link BridgeVlanTunnel} object into a stream of attributes */
 export function formatBridgeVlanTunnel(x: BridgeVlanTunnel): StreamData {
     return structs.putObject(x, {
         id: (data, obj) => data.push(1, obj.id!),
@@ -3294,7 +3294,7 @@ export interface BridgeVlanXstats {
     __pad2?: number
 }
 
-/** Parses the attributes of a [[BridgeVlanXstats]] object */
+/** Parses the attributes of a {@link BridgeVlanXstats} object */
 export function parseBridgeVlanXstats(r: Buffer): BridgeVlanXstats {
     if (r.length !== __LENGTH_BridgeVlanXstats) throw Error('Unexpected length for BridgeVlanXstats')
     const x: BridgeVlanXstats = {}
@@ -3308,7 +3308,7 @@ export function parseBridgeVlanXstats(r: Buffer): BridgeVlanXstats {
     return x
 }
 
-/** Encodes a [[BridgeVlanXstats]] object into a stream of attributes */
+/** Encodes a {@link BridgeVlanXstats} object into a stream of attributes */
 export function formatBridgeVlanXstats(x: BridgeVlanXstats, r: Buffer = Buffer.alloc(__LENGTH_BridgeVlanXstats)): Buffer {
     if (r.length !== __LENGTH_BridgeVlanXstats) throw Error('Unexpected length for BridgeVlanXstats')
     x.rxBytes && structs.writeU64.call(r, x.rxBytes, 0)
@@ -3337,7 +3337,7 @@ export interface BridgeStpXstats {
     txTcn?: bigint
 }
 
-/** Parses the attributes of a [[BridgeStpXstats]] object */
+/** Parses the attributes of a {@link BridgeStpXstats} object */
 export function parseBridgeStpXstats(r: Buffer): BridgeStpXstats {
     if (r.length !== __LENGTH_BridgeStpXstats) throw Error('Unexpected length for BridgeStpXstats')
     const x: BridgeStpXstats = {}
@@ -3350,7 +3350,7 @@ export function parseBridgeStpXstats(r: Buffer): BridgeStpXstats {
     return x
 }
 
-/** Encodes a [[BridgeStpXstats]] object into a stream of attributes */
+/** Encodes a {@link BridgeStpXstats} object into a stream of attributes */
 export function formatBridgeStpXstats(x: BridgeStpXstats, r: Buffer = Buffer.alloc(__LENGTH_BridgeStpXstats)): Buffer {
     if (r.length !== __LENGTH_BridgeStpXstats) throw Error('Unexpected length for BridgeStpXstats')
     x.transitionBlk && structs.writeU64.call(r, x.transitionBlk, 0)
@@ -3375,7 +3375,7 @@ export interface BridgeVlanMsg {
     ifindex?: number
 }
 
-/** Parses the attributes of a [[BridgeVlanMsg]] object */
+/** Parses the attributes of a {@link BridgeVlanMsg} object */
 export function parseBridgeVlanMsg(r: Buffer): BridgeVlanMsg {
     if (r.length !== __LENGTH_BridgeVlanMsg) throw Error('Unexpected length for BridgeVlanMsg')
     const x: BridgeVlanMsg = {}
@@ -3386,7 +3386,7 @@ export function parseBridgeVlanMsg(r: Buffer): BridgeVlanMsg {
     return x
 }
 
-/** Encodes a [[BridgeVlanMsg]] object into a stream of attributes */
+/** Encodes a {@link BridgeVlanMsg} object into a stream of attributes */
 export function formatBridgeVlanMsg(x: BridgeVlanMsg, r: Buffer = Buffer.alloc(__LENGTH_BridgeVlanMsg)): Buffer {
     if (r.length !== __LENGTH_BridgeVlanMsg) throw Error('Unexpected length for BridgeVlanMsg')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -3402,14 +3402,14 @@ export interface BridgeVlanDb extends BaseObject {
     entry?: BridgeVlanDbEntry
 }
 
-/** Parses the attributes of a [[BridgeVlanDb]] object */
+/** Parses the attributes of a {@link BridgeVlanDb} object */
 export function parseBridgeVlanDb(r: Buffer): BridgeVlanDb {
     return structs.getObject(r, {
         1: (data, obj) => obj.entry = parseBridgeVlanDbEntry(data),
     })
 }
 
-/** Encodes a [[BridgeVlanDb]] object into a stream of attributes */
+/** Encodes a {@link BridgeVlanDb} object into a stream of attributes */
 export function formatBridgeVlanDb(x: BridgeVlanDb): StreamData {
     return structs.putObject(x, {
         entry: (data, obj) => data.push(1, formatBridgeVlanDbEntry(obj.entry!)),
@@ -3424,7 +3424,7 @@ export interface BridgeVlanDbEntry extends BaseObject {
     state?: Buffer
 }
 
-/** Parses the attributes of a [[BridgeVlanDbEntry]] object */
+/** Parses the attributes of a {@link BridgeVlanDbEntry} object */
 export function parseBridgeVlanDbEntry(r: Buffer): BridgeVlanDbEntry {
     return structs.getObject(r, {
         1: (data, obj) => obj.info = data,
@@ -3433,7 +3433,7 @@ export function parseBridgeVlanDbEntry(r: Buffer): BridgeVlanDbEntry {
     })
 }
 
-/** Encodes a [[BridgeVlanDbEntry]] object into a stream of attributes */
+/** Encodes a {@link BridgeVlanDbEntry} object into a stream of attributes */
 export function formatBridgeVlanDbEntry(x: BridgeVlanDbEntry): StreamData {
     return structs.putObject(x, {
         info: (data, obj) => data.push(1, obj.info!),
@@ -3448,7 +3448,7 @@ export interface Mdba extends BaseObject {
     router?: MdbaRouter
 }
 
-/** Parses the attributes of a [[Mdba]] object */
+/** Parses the attributes of a {@link Mdba} object */
 export function parseMdba(r: Buffer): Mdba {
     return structs.getObject(r, {
         1: (data, obj) => obj.mdb = parseMdbaMdb(data),
@@ -3456,7 +3456,7 @@ export function parseMdba(r: Buffer): Mdba {
     })
 }
 
-/** Encodes a [[Mdba]] object into a stream of attributes */
+/** Encodes a {@link Mdba} object into a stream of attributes */
 export function formatMdba(x: Mdba): StreamData {
     return structs.putObject(x, {
         mdb: (data, obj) => data.push(1, formatMdbaMdb(obj.mdb!)),
@@ -3468,14 +3468,14 @@ export interface MdbaMdb extends BaseObject {
     entry?: MdbaMdbEntry
 }
 
-/** Parses the attributes of a [[MdbaMdb]] object */
+/** Parses the attributes of a {@link MdbaMdb} object */
 export function parseMdbaMdb(r: Buffer): MdbaMdb {
     return structs.getObject(r, {
         1: (data, obj) => obj.entry = parseMdbaMdbEntry(data),
     })
 }
 
-/** Encodes a [[MdbaMdb]] object into a stream of attributes */
+/** Encodes a {@link MdbaMdb} object into a stream of attributes */
 export function formatMdbaMdb(x: MdbaMdb): StreamData {
     return structs.putObject(x, {
         entry: (data, obj) => data.push(1, formatMdbaMdbEntry(obj.entry!)),
@@ -3486,14 +3486,14 @@ export interface MdbaMdbEntry extends BaseObject {
     info?: Buffer
 }
 
-/** Parses the attributes of a [[MdbaMdbEntry]] object */
+/** Parses the attributes of a {@link MdbaMdbEntry} object */
 export function parseMdbaMdbEntry(r: Buffer): MdbaMdbEntry {
     return structs.getObject(r, {
         1: (data, obj) => obj.info = data,
     })
 }
 
-/** Encodes a [[MdbaMdbEntry]] object into a stream of attributes */
+/** Encodes a {@link MdbaMdbEntry} object into a stream of attributes */
 export function formatMdbaMdbEntry(x: MdbaMdbEntry): StreamData {
     return structs.putObject(x, {
         info: (data, obj) => data.push(1, obj.info!),
@@ -3505,14 +3505,14 @@ export interface MdbaMdbEattr extends BaseObject {
     timer?: Buffer
 }
 
-/** Parses the attributes of a [[MdbaMdbEattr]] object */
+/** Parses the attributes of a {@link MdbaMdbEattr} object */
 export function parseMdbaMdbEattr(r: Buffer): MdbaMdbEattr {
     return structs.getObject(r, {
         1: (data, obj) => obj.timer = data,
     })
 }
 
-/** Encodes a [[MdbaMdbEattr]] object into a stream of attributes */
+/** Encodes a {@link MdbaMdbEattr} object into a stream of attributes */
 export function formatMdbaMdbEattr(x: MdbaMdbEattr): StreamData {
     return structs.putObject(x, {
         timer: (data, obj) => data.push(1, obj.timer!),
@@ -3534,14 +3534,14 @@ export interface MdbaRouter extends BaseObject {
     port?: Buffer
 }
 
-/** Parses the attributes of a [[MdbaRouter]] object */
+/** Parses the attributes of a {@link MdbaRouter} object */
 export function parseMdbaRouter(r: Buffer): MdbaRouter {
     return structs.getObject(r, {
         1: (data, obj) => obj.port = data,
     })
 }
 
-/** Encodes a [[MdbaRouter]] object into a stream of attributes */
+/** Encodes a {@link MdbaRouter} object into a stream of attributes */
 export function formatMdbaRouter(x: MdbaRouter): StreamData {
     return structs.putObject(x, {
         port: (data, obj) => data.push(1, obj.port!),
@@ -3555,7 +3555,7 @@ export interface MdbaRouterPattr extends BaseObject {
     type?: Buffer
 }
 
-/** Parses the attributes of a [[MdbaRouterPattr]] object */
+/** Parses the attributes of a {@link MdbaRouterPattr} object */
 export function parseMdbaRouterPattr(r: Buffer): MdbaRouterPattr {
     return structs.getObject(r, {
         1: (data, obj) => obj.timer = data,
@@ -3563,7 +3563,7 @@ export function parseMdbaRouterPattr(r: Buffer): MdbaRouterPattr {
     })
 }
 
-/** Encodes a [[MdbaRouterPattr]] object into a stream of attributes */
+/** Encodes a {@link MdbaRouterPattr} object into a stream of attributes */
 export function formatMdbaRouterPattr(x: MdbaRouterPattr): StreamData {
     return structs.putObject(x, {
         timer: (data, obj) => data.push(1, obj.timer!),
@@ -3577,7 +3577,7 @@ export interface BridgePortMsg {
     ifindex?: number
 }
 
-/** Parses the attributes of a [[BridgePortMsg]] object */
+/** Parses the attributes of a {@link BridgePortMsg} object */
 export function parseBridgePortMsg(r: Buffer): BridgePortMsg {
     if (r.length !== __LENGTH_BridgePortMsg) throw Error('Unexpected length for BridgePortMsg')
     const x: BridgePortMsg = {}
@@ -3586,7 +3586,7 @@ export function parseBridgePortMsg(r: Buffer): BridgePortMsg {
     return x
 }
 
-/** Encodes a [[BridgePortMsg]] object into a stream of attributes */
+/** Encodes a {@link BridgePortMsg} object into a stream of attributes */
 export function formatBridgePortMsg(x: BridgePortMsg, r: Buffer = Buffer.alloc(__LENGTH_BridgePortMsg)): Buffer {
     if (r.length !== __LENGTH_BridgePortMsg) throw Error('Unexpected length for BridgePortMsg')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -3603,7 +3603,7 @@ export interface _IpWithProto {
     proto?: number
 }
 
-/** Parses the attributes of a [[_IpWithProto]] object */
+/** Parses the attributes of a {@link _IpWithProto} object */
 export function parse_IpWithProto(r: Buffer): _IpWithProto {
     if (r.length !== __LENGTH__IpWithProto) throw Error('Unexpected length for _IpWithProto')
     const x: _IpWithProto = {}
@@ -3612,7 +3612,7 @@ export function parse_IpWithProto(r: Buffer): _IpWithProto {
     return x
 }
 
-/** Encodes a [[_IpWithProto]] object into a stream of attributes */
+/** Encodes a {@link _IpWithProto} object into a stream of attributes */
 export function format_IpWithProto(x: _IpWithProto, r: Buffer = Buffer.alloc(__LENGTH__IpWithProto)): Buffer {
     if (r.length !== __LENGTH__IpWithProto) throw Error('Unexpected length for _IpWithProto')
     if (x.ip && x.ip.length !== 16)
@@ -3636,7 +3636,7 @@ export interface BridgeMdbEntry {
     addr?: _IpWithProto
 }
 
-/** Parses the attributes of a [[BridgeMdbEntry]] object */
+/** Parses the attributes of a {@link BridgeMdbEntry} object */
 export function parseBridgeMdbEntry(r: Buffer): BridgeMdbEntry {
     if (r.length !== __LENGTH_BridgeMdbEntry) throw Error('Unexpected length for BridgeMdbEntry')
     const x: BridgeMdbEntry = {}
@@ -3649,7 +3649,7 @@ export function parseBridgeMdbEntry(r: Buffer): BridgeMdbEntry {
     return x
 }
 
-/** Encodes a [[BridgeMdbEntry]] object into a stream of attributes */
+/** Encodes a {@link BridgeMdbEntry} object into a stream of attributes */
 export function formatBridgeMdbEntry(x: BridgeMdbEntry, r: Buffer = Buffer.alloc(__LENGTH_BridgeMdbEntry)): Buffer {
     if (r.length !== __LENGTH_BridgeMdbEntry) throw Error('Unexpected length for BridgeMdbEntry')
     let pos = 0
@@ -3677,7 +3677,7 @@ export interface MdbFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[MdbFlags]] bitmask */
+/** Parses the flags in a {@link MdbFlags} bitmask */
 export function parseMdbFlags(r: number): MdbFlags {
     const x: MdbFlags = {}
     if (r & (1)) (x.offload = true, r &= ~(1))
@@ -3686,7 +3686,7 @@ export function parseMdbFlags(r: number): MdbFlags {
     return x
 }
 
-/** Encodes a [[MdbFlags]] bitmask */
+/** Encodes a {@link MdbFlags} bitmask */
 export function formatMdbFlags(x: MdbFlags): number {
     let r = x.__unknown || 0
     if (x.offload) r |= 1
@@ -3698,14 +3698,14 @@ export interface MdbaSetEntry extends BaseObject {
     x?: MdbaSetEntry[]
 }
 
-/** Parses the attributes of a [[MdbaSetEntry]] object */
+/** Parses the attributes of a {@link MdbaSetEntry} object */
 export function parseMdbaSetEntry(r: Buffer): MdbaSetEntry {
     return structs.getObject(r, {
         1: (data, obj) => (obj.x = obj.x || []).push(parseMdbaSetEntry(data)),
     })
 }
 
-/** Encodes a [[MdbaSetEntry]] object into a stream of attributes */
+/** Encodes a {@link MdbaSetEntry} object into a stream of attributes */
 export function formatMdbaSetEntry(x: MdbaSetEntry): StreamData {
     return structs.putObject(x, {
         x: (data, obj) => obj.x!.forEach(x => data.push(1, formatMdbaSetEntry(x))),
@@ -3723,7 +3723,7 @@ export interface BridgeXstats extends BaseObject {
     stp?: Buffer
 }
 
-/** Parses the attributes of a [[BridgeXstats]] object */
+/** Parses the attributes of a {@link BridgeXstats} object */
 export function parseBridgeXstats(r: Buffer): BridgeXstats {
     return structs.getObject(r, {
         1: (data, obj) => obj.vlan = data,
@@ -3733,7 +3733,7 @@ export function parseBridgeXstats(r: Buffer): BridgeXstats {
     })
 }
 
-/** Encodes a [[BridgeXstats]] object into a stream of attributes */
+/** Encodes a {@link BridgeXstats} object into a stream of attributes */
 export function formatBridgeXstats(x: BridgeXstats): StreamData {
     return structs.putObject(x, {
         vlan: (data, obj) => data.push(1, obj.vlan!),
@@ -3785,7 +3785,7 @@ export interface BridgeMcastStats {
     mcastPackets?: bigint[]
 }
 
-/** Parses the attributes of a [[BridgeMcastStats]] object */
+/** Parses the attributes of a {@link BridgeMcastStats} object */
 export function parseBridgeMcastStats(r: Buffer): BridgeMcastStats {
     if (r.length !== __LENGTH_BridgeMcastStats) throw Error('Unexpected length for BridgeMcastStats')
     const x: BridgeMcastStats = {}
@@ -3808,7 +3808,7 @@ export function parseBridgeMcastStats(r: Buffer): BridgeMcastStats {
     return x
 }
 
-/** Encodes a [[BridgeMcastStats]] object into a stream of attributes */
+/** Encodes a {@link BridgeMcastStats} object into a stream of attributes */
 export function formatBridgeMcastStats(x: BridgeMcastStats, r: Buffer = Buffer.alloc(__LENGTH_BridgeMcastStats)): Buffer {
     if (r.length !== __LENGTH_BridgeMcastStats) throw Error('Unexpected length for BridgeMcastStats')
     if (x.igmpV1queries && x.igmpV1queries.length !== 2)
@@ -3870,7 +3870,7 @@ export interface BridgeBooloptMask {
     mask?: number
 }
 
-/** Parses the attributes of a [[BridgeBooloptMask]] object */
+/** Parses the attributes of a {@link BridgeBooloptMask} object */
 export function parseBridgeBooloptMask(r: Buffer): BridgeBooloptMask {
     if (r.length !== __LENGTH_BridgeBooloptMask) throw Error('Unexpected length for BridgeBooloptMask')
     const x: BridgeBooloptMask = {}
@@ -3879,7 +3879,7 @@ export function parseBridgeBooloptMask(r: Buffer): BridgeBooloptMask {
     return x
 }
 
-/** Encodes a [[BridgeBooloptMask]] object into a stream of attributes */
+/** Encodes a {@link BridgeBooloptMask} object into a stream of attributes */
 export function formatBridgeBooloptMask(x: BridgeBooloptMask, r: Buffer = Buffer.alloc(__LENGTH_BridgeBooloptMask)): Buffer {
     if (r.length !== __LENGTH_BridgeBooloptMask) throw Error('Unexpected length for BridgeBooloptMask')
     x.flags && structs.writeU32.call(r, x.flags, 0)
@@ -3931,7 +3931,7 @@ export interface Iptun extends BaseObject {
     fwmark?: Buffer
 }
 
-/** Parses the attributes of a [[Iptun]] object */
+/** Parses the attributes of a {@link Iptun} object */
 export function parseIptun(r: Buffer): Iptun {
     return structs.getObject(r, {
         1: (data, obj) => obj.link = structs.getU32(data),
@@ -3957,7 +3957,7 @@ export function parseIptun(r: Buffer): Iptun {
     })
 }
 
-/** Encodes a [[Iptun]] object into a stream of attributes */
+/** Encodes a {@link Iptun} object into a stream of attributes */
 export function formatIptun(x: Iptun): StreamData {
     return structs.putObject(x, {
         link: (data, obj) => data.push(1, structs.putU32(obj.link!)),
@@ -4003,7 +4003,7 @@ export interface TunnelEncapFlag {
     __unknown?: number
 }
 
-/** Parses the flags in a [[TunnelEncapFlag]] bitmask */
+/** Parses the flags in a {@link TunnelEncapFlag} bitmask */
 export function parseTunnelEncapFlag(r: number): TunnelEncapFlag {
     const x: TunnelEncapFlag = {}
     if (r & (1)) (x.csum = true, r &= ~(1))
@@ -4013,7 +4013,7 @@ export function parseTunnelEncapFlag(r: number): TunnelEncapFlag {
     return x
 }
 
-/** Encodes a [[TunnelEncapFlag]] bitmask */
+/** Encodes a {@link TunnelEncapFlag} bitmask */
 export function formatTunnelEncapFlag(x: TunnelEncapFlag): number {
     let r = x.__unknown || 0
     if (x.csum) r |= 1
@@ -4034,7 +4034,7 @@ export interface IpTunnelPrl {
     __reserved2?: number
 }
 
-/** Parses the attributes of a [[IpTunnelPrl]] object */
+/** Parses the attributes of a {@link IpTunnelPrl} object */
 export function parseIpTunnelPrl(r: Buffer): IpTunnelPrl {
     if (r.length !== __LENGTH_IpTunnelPrl) throw Error('Unexpected length for IpTunnelPrl')
     const x: IpTunnelPrl = {}
@@ -4046,7 +4046,7 @@ export function parseIpTunnelPrl(r: Buffer): IpTunnelPrl {
     return x
 }
 
-/** Encodes a [[IpTunnelPrl]] object into a stream of attributes */
+/** Encodes a {@link IpTunnelPrl} object into a stream of attributes */
 export function formatIpTunnelPrl(x: IpTunnelPrl, r: Buffer = Buffer.alloc(__LENGTH_IpTunnelPrl)): Buffer {
     if (r.length !== __LENGTH_IpTunnelPrl) throw Error('Unexpected length for IpTunnelPrl')
     x.addr && structs.writeU32be.call(r, x.addr, 0)
@@ -4070,7 +4070,7 @@ export interface IpTunnel6rd {
     relayPrefixlen?: number
 }
 
-/** Parses the attributes of a [[IpTunnel6rd]] object */
+/** Parses the attributes of a {@link IpTunnel6rd} object */
 export function parseIpTunnel6rd(r: Buffer): IpTunnel6rd {
     if (r.length !== __LENGTH_IpTunnel6rd) throw Error('Unexpected length for IpTunnel6rd')
     const x: IpTunnel6rd = {}
@@ -4081,7 +4081,7 @@ export function parseIpTunnel6rd(r: Buffer): IpTunnel6rd {
     return x
 }
 
-/** Encodes a [[IpTunnel6rd]] object into a stream of attributes */
+/** Encodes a {@link IpTunnel6rd} object into a stream of attributes */
 export function formatIpTunnel6rd(x: IpTunnel6rd, r: Buffer = Buffer.alloc(__LENGTH_IpTunnel6rd)): Buffer {
     if (r.length !== __LENGTH_IpTunnel6rd) throw Error('Unexpected length for IpTunnel6rd')
     if (x.prefix && x.prefix.length !== 16)
@@ -4145,7 +4145,7 @@ export interface Gre extends BaseObject {
     erspanHwid?: Buffer
 }
 
-/** Parses the attributes of a [[Gre]] object */
+/** Parses the attributes of a {@link Gre} object */
 export function parseGre(r: Buffer): Gre {
     return structs.getObject(r, {
         1: (data, obj) => obj.link = structs.getU32(data),
@@ -4175,7 +4175,7 @@ export function parseGre(r: Buffer): Gre {
     })
 }
 
-/** Encodes a [[Gre]] object into a stream of attributes */
+/** Encodes a {@link Gre} object into a stream of attributes */
 export function formatGre(x: Gre): StreamData {
     return structs.putObject(x, {
         link: (data, obj) => data.push(1, structs.putU32(obj.link!)),
@@ -4219,7 +4219,7 @@ export interface Vti extends BaseObject {
     fwmark?: Buffer
 }
 
-/** Parses the attributes of a [[Vti]] object */
+/** Parses the attributes of a {@link Vti} object */
 export function parseVti(r: Buffer): Vti {
     return structs.getObject(r, {
         1: (data, obj) => obj.link = structs.getU32(data),
@@ -4231,7 +4231,7 @@ export function parseVti(r: Buffer): Vti {
     })
 }
 
-/** Encodes a [[Vti]] object into a stream of attributes */
+/** Encodes a {@link Vti} object into a stream of attributes */
 export function formatVti(x: Vti): StreamData {
     return structs.putObject(x, {
         link: (data, obj) => data.push(1, structs.putU32(obj.link!)),
@@ -4278,7 +4278,7 @@ export interface Tunnel {
     __unknown?: number
 }
 
-/** Parses the flags in a [[Tunnel]] bitmask */
+/** Parses the flags in a {@link Tunnel} bitmask */
 export function parseTunnel(r: number): Tunnel {
     const x: Tunnel = {}
     if (r & (1)) (x.csum = true, r &= ~(1))
@@ -4300,7 +4300,7 @@ export function parseTunnel(r: number): Tunnel {
     return x
 }
 
-/** Encodes a [[Tunnel]] bitmask */
+/** Encodes a {@link Tunnel} bitmask */
 export function formatTunnel(x: Tunnel): number {
     let r = x.__unknown || 0
     if (x.csum) r |= 1
@@ -4354,7 +4354,7 @@ export interface CanBittiming {
     brp?: number
 }
 
-/** Parses the attributes of a [[CanBittiming]] object */
+/** Parses the attributes of a {@link CanBittiming} object */
 export function parseCanBittiming(r: Buffer): CanBittiming {
     if (r.length !== __LENGTH_CanBittiming) throw Error('Unexpected length for CanBittiming')
     const x: CanBittiming = {}
@@ -4369,7 +4369,7 @@ export function parseCanBittiming(r: Buffer): CanBittiming {
     return x
 }
 
-/** Encodes a [[CanBittiming]] object into a stream of attributes */
+/** Encodes a {@link CanBittiming} object into a stream of attributes */
 export function formatCanBittiming(x: CanBittiming, r: Buffer = Buffer.alloc(__LENGTH_CanBittiming)): Buffer {
     if (r.length !== __LENGTH_CanBittiming) throw Error('Unexpected length for CanBittiming')
     x.bitrate && structs.writeU32.call(r, x.bitrate, 0)
@@ -4415,7 +4415,7 @@ export interface CanBittimingConst {
     brpInc?: number
 }
 
-/** Parses the attributes of a [[CanBittimingConst]] object */
+/** Parses the attributes of a {@link CanBittimingConst} object */
 export function parseCanBittimingConst(r: Buffer): CanBittimingConst {
     if (r.length !== __LENGTH_CanBittimingConst) throw Error('Unexpected length for CanBittimingConst')
     const x: CanBittimingConst = {}
@@ -4431,7 +4431,7 @@ export function parseCanBittimingConst(r: Buffer): CanBittimingConst {
     return x
 }
 
-/** Encodes a [[CanBittimingConst]] object into a stream of attributes */
+/** Encodes a {@link CanBittimingConst} object into a stream of attributes */
 export function formatCanBittimingConst(x: CanBittimingConst, r: Buffer = Buffer.alloc(__LENGTH_CanBittimingConst)): Buffer {
     if (r.length !== __LENGTH_CanBittimingConst) throw Error('Unexpected length for CanBittimingConst')
     if (x.name && x.name.length !== 16)
@@ -4456,7 +4456,7 @@ export interface CanClock {
     freq?: number
 }
 
-/** Parses the attributes of a [[CanClock]] object */
+/** Parses the attributes of a {@link CanClock} object */
 export function parseCanClock(r: Buffer): CanClock {
     if (r.length !== __LENGTH_CanClock) throw Error('Unexpected length for CanClock')
     const x: CanClock = {}
@@ -4464,7 +4464,7 @@ export function parseCanClock(r: Buffer): CanClock {
     return x
 }
 
-/** Encodes a [[CanClock]] object into a stream of attributes */
+/** Encodes a {@link CanClock} object into a stream of attributes */
 export function formatCanClock(x: CanClock, r: Buffer = Buffer.alloc(__LENGTH_CanClock)): Buffer {
     if (r.length !== __LENGTH_CanClock) throw Error('Unexpected length for CanClock')
     x.freq && structs.writeU32.call(r, x.freq, 0)
@@ -4501,7 +4501,7 @@ export interface CanBerrCounter {
     rxerr?: number
 }
 
-/** Parses the attributes of a [[CanBerrCounter]] object */
+/** Parses the attributes of a {@link CanBerrCounter} object */
 export function parseCanBerrCounter(r: Buffer): CanBerrCounter {
     if (r.length !== __LENGTH_CanBerrCounter) throw Error('Unexpected length for CanBerrCounter')
     const x: CanBerrCounter = {}
@@ -4510,7 +4510,7 @@ export function parseCanBerrCounter(r: Buffer): CanBerrCounter {
     return x
 }
 
-/** Encodes a [[CanBerrCounter]] object into a stream of attributes */
+/** Encodes a {@link CanBerrCounter} object into a stream of attributes */
 export function formatCanBerrCounter(x: CanBerrCounter, r: Buffer = Buffer.alloc(__LENGTH_CanBerrCounter)): Buffer {
     if (r.length !== __LENGTH_CanBerrCounter) throw Error('Unexpected length for CanBerrCounter')
     x.txerr && structs.writeU16.call(r, x.txerr, 0)
@@ -4527,7 +4527,7 @@ export interface CanCtrlModeMask {
     flags?: CanCtrlMode
 }
 
-/** Parses the attributes of a [[CanCtrlModeMask]] object */
+/** Parses the attributes of a {@link CanCtrlModeMask} object */
 export function parseCanCtrlModeMask(r: Buffer): CanCtrlModeMask {
     if (r.length !== __LENGTH_CanCtrlModeMask) throw Error('Unexpected length for CanCtrlModeMask')
     const x: CanCtrlModeMask = {}
@@ -4536,7 +4536,7 @@ export function parseCanCtrlModeMask(r: Buffer): CanCtrlModeMask {
     return x
 }
 
-/** Encodes a [[CanCtrlModeMask]] object into a stream of attributes */
+/** Encodes a {@link CanCtrlModeMask} object into a stream of attributes */
 export function formatCanCtrlModeMask(x: CanCtrlModeMask, r: Buffer = Buffer.alloc(__LENGTH_CanCtrlModeMask)): Buffer {
     if (r.length !== __LENGTH_CanCtrlModeMask) throw Error('Unexpected length for CanCtrlModeMask')
     x.mask && structs.writeU32.call(r, formatCanCtrlMode(x.mask), 0)
@@ -4574,7 +4574,7 @@ export interface CanCtrlMode {
     __unknown?: number
 }
 
-/** Parses the flags in a [[CanCtrlMode]] bitmask */
+/** Parses the flags in a {@link CanCtrlMode} bitmask */
 export function parseCanCtrlMode(r: number): CanCtrlMode {
     const x: CanCtrlMode = {}
     if (r & (1)) (x.loopback = true, r &= ~(1))
@@ -4589,7 +4589,7 @@ export function parseCanCtrlMode(r: number): CanCtrlMode {
     return x
 }
 
-/** Encodes a [[CanCtrlMode]] bitmask */
+/** Encodes a {@link CanCtrlMode} bitmask */
 export function formatCanCtrlMode(x: CanCtrlMode): number {
     let r = x.__unknown || 0
     if (x.loopback) r |= 1
@@ -4624,7 +4624,7 @@ export interface CanDeviceStats {
     restarts?: number
 }
 
-/** Parses the attributes of a [[CanDeviceStats]] object */
+/** Parses the attributes of a {@link CanDeviceStats} object */
 export function parseCanDeviceStats(r: Buffer): CanDeviceStats {
     if (r.length !== __LENGTH_CanDeviceStats) throw Error('Unexpected length for CanDeviceStats')
     const x: CanDeviceStats = {}
@@ -4637,7 +4637,7 @@ export function parseCanDeviceStats(r: Buffer): CanDeviceStats {
     return x
 }
 
-/** Encodes a [[CanDeviceStats]] object into a stream of attributes */
+/** Encodes a {@link CanDeviceStats} object into a stream of attributes */
 export function formatCanDeviceStats(x: CanDeviceStats, r: Buffer = Buffer.alloc(__LENGTH_CanDeviceStats)): Buffer {
     if (r.length !== __LENGTH_CanDeviceStats) throw Error('Unexpected length for CanDeviceStats')
     x.busError && structs.writeU32.call(r, x.busError, 0)
@@ -4684,7 +4684,7 @@ export interface Can extends BaseObject {
     bitrateMax?: Buffer
 }
 
-/** Parses the attributes of a [[Can]] object */
+/** Parses the attributes of a {@link Can} object */
 export function parseCan(r: Buffer): Can {
     return structs.getObject(r, {
         1: (data, obj) => obj.bittiming = data,
@@ -4705,7 +4705,7 @@ export function parseCan(r: Buffer): Can {
     })
 }
 
-/** Encodes a [[Can]] object into a stream of attributes */
+/** Encodes a {@link Can} object into a stream of attributes */
 export function formatCan(x: Can): StreamData {
     return structs.putObject(x, {
         bittiming: (data, obj) => data.push(1, obj.bittiming!),

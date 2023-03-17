@@ -3184,7 +3184,7 @@ export interface Message extends BaseObject {
     vlanId?: number
 }
 
-/** Parses the attributes of a [[Message]] object */
+/** Parses the attributes of a {@link Message} object */
 export function parseMessage(r: Buffer): Message {
     return structs.getObject(r, {
         1: (data, obj) => obj.wiphy = structs.getU32(data),
@@ -3472,7 +3472,7 @@ export function parseMessage(r: Buffer): Message {
     })
 }
 
-/** Encodes a [[Message]] object into a stream of attributes */
+/** Encodes a {@link Message} object into a stream of attributes */
 export function formatMessage(x: Message): StreamData {
     return structs.putObject(x, {
         wiphy: (data, obj) => data.push(1, structs.putU32(obj.wiphy!)),
@@ -3821,7 +3821,7 @@ export enum InterfaceType {
     NAN = 12,
 }
 
-/** Set of flags from [[InterfaceType]] bits */
+/** Set of flags from {@link InterfaceType} bits */
 export interface InterfaceTypeSet extends BaseObject {
     /** unspecified type, driver decides */
     unspecified?: true
@@ -3875,7 +3875,7 @@ export interface InterfaceTypeSet extends BaseObject {
     nan?: true
 }
 
-/** Parses flags attributes with [[InterfaceType]] types */
+/** Parses flags attributes with {@link InterfaceType} types */
 export function parseInterfaceTypeSetAttr(r: Buffer): InterfaceTypeSet {
     return structs.getObject(r, {
         [InterfaceType.UNSPECIFIED]: (data, obj) => obj.unspecified = structs.getFlag(data),
@@ -3894,7 +3894,7 @@ export function parseInterfaceTypeSetAttr(r: Buffer): InterfaceTypeSet {
     })
 }
 
-/** Encodes a set of [[InterfaceType]] flags into a stream of attributes */
+/** Encodes a set of {@link InterfaceType} flags into a stream of attributes */
 export function formatInterfaceTypeSetAttr(x: InterfaceTypeSet): StreamData {
     return structs.putObject(x, {
         unspecified: (data, obj) => data.push(InterfaceType.UNSPECIFIED, structs.putFlag(obj.unspecified!)),
@@ -3955,7 +3955,7 @@ export interface StationFlags extends BaseObject {
     associated?: true
 }
 
-/** Parses the attributes of a [[StationFlags]] object */
+/** Parses the attributes of a {@link StationFlags} object */
 export function parseStationFlags(r: Buffer): StationFlags {
     return structs.getObject(r, {
         1: (data, obj) => obj.authorized = structs.getFlag(data),
@@ -3968,7 +3968,7 @@ export function parseStationFlags(r: Buffer): StationFlags {
     })
 }
 
-/** Encodes a [[StationFlags]] object into a stream of attributes */
+/** Encodes a {@link StationFlags} object into a stream of attributes */
 export function formatStationFlags(x: StationFlags): StreamData {
     return structs.putObject(x, {
         authorized: (data, obj) => data.push(1, structs.putFlag(obj.authorized!)),
@@ -4112,7 +4112,7 @@ export interface RateInfo extends BaseObject {
     heRuAlloc?: HeRuAllocation | keyof typeof HeRuAllocation
 }
 
-/** Parses the attributes of a [[RateInfo]] object */
+/** Parses the attributes of a {@link RateInfo} object */
 export function parseRateInfo(r: Buffer): RateInfo {
     return structs.getObject(r, {
         1: (data, obj) => obj.bitrate = structs.getU16(data),
@@ -4135,7 +4135,7 @@ export function parseRateInfo(r: Buffer): RateInfo {
     })
 }
 
-/** Encodes a [[RateInfo]] object into a stream of attributes */
+/** Encodes a {@link RateInfo} object into a stream of attributes */
 export function formatRateInfo(x: RateInfo): StreamData {
     return structs.putObject(x, {
         bitrate: (data, obj) => data.push(1, structs.putU16(obj.bitrate!)),
@@ -4187,7 +4187,7 @@ export interface StationBssParam extends BaseObject {
     beaconInterval?: number
 }
 
-/** Parses the attributes of a [[StationBssParam]] object */
+/** Parses the attributes of a {@link StationBssParam} object */
 export function parseStationBssParam(r: Buffer): StationBssParam {
     return structs.getObject(r, {
         1: (data, obj) => obj.ctsProt = structs.getFlag(data),
@@ -4198,7 +4198,7 @@ export function parseStationBssParam(r: Buffer): StationBssParam {
     })
 }
 
-/** Encodes a [[StationBssParam]] object into a stream of attributes */
+/** Encodes a {@link StationBssParam} object into a stream of attributes */
 export function formatStationBssParam(x: StationBssParam): StreamData {
     return structs.putObject(x, {
         ctsProt: (data, obj) => data.push(1, structs.putFlag(obj.ctsProt!)),
@@ -4420,7 +4420,7 @@ export interface StationInfo extends BaseObject {
     assocAtBoottime?: bigint
 }
 
-/** Parses the attributes of a [[StationInfo]] object */
+/** Parses the attributes of a {@link StationInfo} object */
 export function parseStationInfo(r: Buffer): StationInfo {
     return structs.getObject(r, {
         1: (data, obj) => obj.inactiveTime = structs.getU32(data),
@@ -4468,7 +4468,7 @@ export function parseStationInfo(r: Buffer): StationInfo {
     })
 }
 
-/** Encodes a [[StationInfo]] object into a stream of attributes */
+/** Encodes a {@link StationInfo} object into a stream of attributes */
 export function formatStationInfo(x: StationInfo): StreamData {
     return structs.putObject(x, {
         inactiveTime: (data, obj) => data.push(1, structs.putU32(obj.inactiveTime!)),
@@ -4546,7 +4546,7 @@ export interface TidStats extends BaseObject {
     txqStats?: TxqStats
 }
 
-/** Parses the attributes of a [[TidStats]] object */
+/** Parses the attributes of a {@link TidStats} object */
 export function parseTidStats(r: Buffer): TidStats {
     return structs.getObject(r, {
         1: (data, obj) => obj.rxMsdu = structs.getU64(data),
@@ -4558,7 +4558,7 @@ export function parseTidStats(r: Buffer): TidStats {
     })
 }
 
-/** Encodes a [[TidStats]] object into a stream of attributes */
+/** Encodes a {@link TidStats} object into a stream of attributes */
 export function formatTidStats(x: TidStats): StreamData {
     return structs.putObject(x, {
         rxMsdu: (data, obj) => data.push(1, structs.putU64(obj.rxMsdu!)),
@@ -4612,7 +4612,7 @@ export interface TxqStats extends BaseObject {
     maxFlows?: Buffer
 }
 
-/** Parses the attributes of a [[TxqStats]] object */
+/** Parses the attributes of a {@link TxqStats} object */
 export function parseTxqStats(r: Buffer): TxqStats {
     return structs.getObject(r, {
         1: (data, obj) => obj.backlogBytes = data,
@@ -4629,7 +4629,7 @@ export function parseTxqStats(r: Buffer): TxqStats {
     })
 }
 
-/** Encodes a [[TxqStats]] object into a stream of attributes */
+/** Encodes a {@link TxqStats} object into a stream of attributes */
 export function formatTxqStats(x: TxqStats): StreamData {
     return structs.putObject(x, {
         backlogBytes: (data, obj) => data.push(1, obj.backlogBytes!),
@@ -4666,7 +4666,7 @@ export interface MpathFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[MpathFlags]] bitmask */
+/** Parses the flags in a {@link MpathFlags} bitmask */
 export function parseMpathFlags(r: number): MpathFlags {
     const x: MpathFlags = {}
     if (r & (1)) (x.active = true, r &= ~(1))
@@ -4678,7 +4678,7 @@ export function parseMpathFlags(r: number): MpathFlags {
     return x
 }
 
-/** Encodes a [[MpathFlags]] bitmask */
+/** Encodes a {@link MpathFlags} bitmask */
 export function formatMpathFlags(x: MpathFlags): number {
     let r = x.__unknown || 0
     if (x.active) r |= 1
@@ -4727,7 +4727,7 @@ export interface MpathInfo extends BaseObject {
     pathChange?: Buffer
 }
 
-/** Parses the attributes of a [[MpathInfo]] object */
+/** Parses the attributes of a {@link MpathInfo} object */
 export function parseMpathInfo(r: Buffer): MpathInfo {
     return structs.getObject(r, {
         1: (data, obj) => obj.frameQlen = structs.getU32(data),
@@ -4742,7 +4742,7 @@ export function parseMpathInfo(r: Buffer): MpathInfo {
     })
 }
 
-/** Encodes a [[MpathInfo]] object into a stream of attributes */
+/** Encodes a {@link MpathInfo} object into a stream of attributes */
 export function formatMpathInfo(x: MpathInfo): StreamData {
     return structs.putObject(x, {
         frameQlen: (data, obj) => data.push(1, structs.putU32(obj.frameQlen!)),
@@ -4790,7 +4790,7 @@ export interface BandInterfaceType extends BaseObject {
     heCapPpe?: Buffer
 }
 
-/** Parses the attributes of a [[BandInterfaceType]] object */
+/** Parses the attributes of a {@link BandInterfaceType} object */
 export function parseBandInterfaceType(r: Buffer): BandInterfaceType {
     return structs.getObject(r, {
         1: (data, obj) => obj.iftypes = parseInterfaceTypeSetAttr(data),
@@ -4801,7 +4801,7 @@ export function parseBandInterfaceType(r: Buffer): BandInterfaceType {
     })
 }
 
-/** Encodes a [[BandInterfaceType]] object into a stream of attributes */
+/** Encodes a {@link BandInterfaceType} object into a stream of attributes */
 export function formatBandInterfaceType(x: BandInterfaceType): StreamData {
     return structs.putObject(x, {
         iftypes: (data, obj) => data.push(1, formatInterfaceTypeSetAttr(obj.iftypes!)),
@@ -4871,7 +4871,7 @@ export interface Band extends BaseObject {
     edmgBwConfig?: Buffer
 }
 
-/** Parses the attributes of a [[Band]] object */
+/** Parses the attributes of a {@link Band} object */
 export function parseBand(r: Buffer): Band {
     return structs.getObject(r, {
         1: (data, obj) => obj.freqs = structs.getArray(data, x => parseFrequency(x), { zero: true }),
@@ -4888,7 +4888,7 @@ export function parseBand(r: Buffer): Band {
     })
 }
 
-/** Encodes a [[Band]] object into a stream of attributes */
+/** Encodes a {@link Band} object into a stream of attributes */
 export function formatBand(x: Band): StreamData {
     return structs.putObject(x, {
         freqs: (data, obj) => data.push(1, structs.putArray(obj.freqs!, x => formatFrequency(x), { zero: true })),
@@ -4920,7 +4920,7 @@ export interface WmmRule extends BaseObject {
     txop?: Buffer
 }
 
-/** Parses the attributes of a [[WmmRule]] object */
+/** Parses the attributes of a {@link WmmRule} object */
 export function parseWmmRule(r: Buffer): WmmRule {
     return structs.getObject(r, {
         1: (data, obj) => obj.cwMin = data,
@@ -4930,7 +4930,7 @@ export function parseWmmRule(r: Buffer): WmmRule {
     })
 }
 
-/** Encodes a [[WmmRule]] object into a stream of attributes */
+/** Encodes a {@link WmmRule} object into a stream of attributes */
 export function formatWmmRule(x: WmmRule): StreamData {
     return structs.putObject(x, {
         cwMin: (data, obj) => data.push(1, obj.cwMin!),
@@ -5065,7 +5065,7 @@ export interface Frequency extends BaseObject {
     wmm?: WmmRule
 }
 
-/** Parses the attributes of a [[Frequency]] object */
+/** Parses the attributes of a {@link Frequency} object */
 export function parseFrequency(r: Buffer): Frequency {
     return structs.getObject(r, {
         1: (data, obj) => obj.freq = structs.getU32(data),
@@ -5089,7 +5089,7 @@ export function parseFrequency(r: Buffer): Frequency {
     })
 }
 
-/** Encodes a [[Frequency]] object into a stream of attributes */
+/** Encodes a {@link Frequency} object into a stream of attributes */
 export function formatFrequency(x: Frequency): StreamData {
     return structs.putObject(x, {
         freq: (data, obj) => data.push(1, structs.putU32(obj.freq!)),
@@ -5125,7 +5125,7 @@ export interface Bitrate extends BaseObject {
     _2ghzShortpreamble?: true
 }
 
-/** Parses the attributes of a [[Bitrate]] object */
+/** Parses the attributes of a {@link Bitrate} object */
 export function parseBitrate(r: Buffer): Bitrate {
     return structs.getObject(r, {
         1: (data, obj) => obj.rate = structs.getU32(data),
@@ -5133,7 +5133,7 @@ export function parseBitrate(r: Buffer): Bitrate {
     })
 }
 
-/** Encodes a [[Bitrate]] object into a stream of attributes */
+/** Encodes a {@link Bitrate} object into a stream of attributes */
 export function formatBitrate(x: Bitrate): StreamData {
     return structs.putObject(x, {
         rate: (data, obj) => data.push(1, structs.putU32(obj.rate!)),
@@ -5254,7 +5254,7 @@ export interface RegulatoryRule extends BaseObject {
     dfsCacTime?: number
 }
 
-/** Parses the attributes of a [[RegulatoryRule]] object */
+/** Parses the attributes of a {@link RegulatoryRule} object */
 export function parseRegulatoryRule(r: Buffer): RegulatoryRule {
     return structs.getObject(r, {
         1: (data, obj) => obj.regRuleFlags = parseRegulatoryRuleFlags(structs.getU32(data)),
@@ -5267,7 +5267,7 @@ export function parseRegulatoryRule(r: Buffer): RegulatoryRule {
     })
 }
 
-/** Encodes a [[RegulatoryRule]] object into a stream of attributes */
+/** Encodes a {@link RegulatoryRule} object into a stream of attributes */
 export function formatRegulatoryRule(x: RegulatoryRule): StreamData {
     return structs.putObject(x, {
         regRuleFlags: (data, obj) => data.push(1, structs.putU32(formatRegulatoryRuleFlags(obj.regRuleFlags!))),
@@ -5335,7 +5335,7 @@ export interface ScheduledScanMatch extends BaseObject {
     perBandRssi?: BandId | keyof typeof BandId
 }
 
-/** Parses the attributes of a [[ScheduledScanMatch]] object */
+/** Parses the attributes of a {@link ScheduledScanMatch} object */
 export function parseScheduledScanMatch(r: Buffer): ScheduledScanMatch {
     return structs.getObject(r, {
         1: (data, obj) => obj.attrSsid = data,
@@ -5347,7 +5347,7 @@ export function parseScheduledScanMatch(r: Buffer): ScheduledScanMatch {
     })
 }
 
-/** Encodes a [[ScheduledScanMatch]] object into a stream of attributes */
+/** Encodes a {@link ScheduledScanMatch} object into a stream of attributes */
 export function formatScheduledScanMatch(x: ScheduledScanMatch): StreamData {
     return structs.putObject(x, {
         attrSsid: (data, obj) => data.push(1, obj.attrSsid!),
@@ -5416,7 +5416,7 @@ export interface RegulatoryRuleFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RegulatoryRuleFlags]] bitmask */
+/** Parses the flags in a {@link RegulatoryRuleFlags} bitmask */
 export function parseRegulatoryRuleFlags(r: number): RegulatoryRuleFlags {
     const x: RegulatoryRuleFlags = {}
     if (r & (1)) (x.noOfdm = true, r &= ~(1))
@@ -5438,7 +5438,7 @@ export function parseRegulatoryRuleFlags(r: number): RegulatoryRuleFlags {
     return x
 }
 
-/** Encodes a [[RegulatoryRuleFlags]] bitmask */
+/** Encodes a {@link RegulatoryRuleFlags} bitmask */
 export function formatRegulatoryRuleFlags(x: RegulatoryRuleFlags): number {
     let r = x.__unknown || 0
     if (x.noOfdm) r |= 1
@@ -5564,7 +5564,7 @@ export interface SurveyInfo extends BaseObject {
     timeBssRx?: Buffer
 }
 
-/** Parses the attributes of a [[SurveyInfo]] object */
+/** Parses the attributes of a {@link SurveyInfo} object */
 export function parseSurveyInfo(r: Buffer): SurveyInfo {
     return structs.getObject(r, {
         1: (data, obj) => obj.frequency = structs.getU32(data),
@@ -5581,7 +5581,7 @@ export function parseSurveyInfo(r: Buffer): SurveyInfo {
     })
 }
 
-/** Encodes a [[SurveyInfo]] object into a stream of attributes */
+/** Encodes a {@link SurveyInfo} object into a stream of attributes */
 export function formatSurveyInfo(x: SurveyInfo): StreamData {
     return structs.putObject(x, {
         frequency: (data, obj) => data.push(1, structs.putU32(obj.frequency!)),
@@ -5629,7 +5629,7 @@ export interface MonitorFlags extends BaseObject {
     active?: true
 }
 
-/** Parses the attributes of a [[MonitorFlags]] object */
+/** Parses the attributes of a {@link MonitorFlags} object */
 export function parseMonitorFlags(r: Buffer): MonitorFlags {
     return structs.getObject(r, {
         1: (data, obj) => obj.fcsfail = structs.getFlag(data),
@@ -5641,7 +5641,7 @@ export function parseMonitorFlags(r: Buffer): MonitorFlags {
     })
 }
 
-/** Encodes a [[MonitorFlags]] object into a stream of attributes */
+/** Encodes a {@link MonitorFlags} object into a stream of attributes */
 export function formatMonitorFlags(x: MonitorFlags): StreamData {
     return structs.putObject(x, {
         fcsfail: (data, obj) => data.push(1, structs.putFlag(obj.fcsfail!)),
@@ -5877,7 +5877,7 @@ export interface MeshconfParams extends BaseObject {
     connectedToGate?: true
 }
 
-/** Parses the attributes of a [[MeshconfParams]] object */
+/** Parses the attributes of a {@link MeshconfParams} object */
 export function parseMeshconfParams(r: Buffer): MeshconfParams {
     return structs.getObject(r, {
         1: (data, obj) => obj.retryTimeout = data,
@@ -5912,7 +5912,7 @@ export function parseMeshconfParams(r: Buffer): MeshconfParams {
     })
 }
 
-/** Encodes a [[MeshconfParams]] object into a stream of attributes */
+/** Encodes a {@link MeshconfParams} object into a stream of attributes */
 export function formatMeshconfParams(x: MeshconfParams): StreamData {
     return structs.putObject(x, {
         retryTimeout: (data, obj) => data.push(1, obj.retryTimeout!),
@@ -6016,7 +6016,7 @@ export interface MeshSetupParams extends BaseObject {
     authProtocol?: number
 }
 
-/** Parses the attributes of a [[MeshSetupParams]] object */
+/** Parses the attributes of a {@link MeshSetupParams} object */
 export function parseMeshSetupParams(r: Buffer): MeshSetupParams {
     return structs.getObject(r, {
         1: (data, obj) => obj.enableVendorPathSel = structs.getFlag(data),
@@ -6030,7 +6030,7 @@ export function parseMeshSetupParams(r: Buffer): MeshSetupParams {
     })
 }
 
-/** Encodes a [[MeshSetupParams]] object into a stream of attributes */
+/** Encodes a {@link MeshSetupParams} object into a stream of attributes */
 export function formatMeshSetupParams(x: MeshSetupParams): StreamData {
     return structs.putObject(x, {
         enableVendorPathSel: (data, obj) => data.push(1, structs.putFlag(obj.enableVendorPathSel!)),
@@ -6071,7 +6071,7 @@ export interface Txq extends BaseObject {
     aifs?: number
 }
 
-/** Parses the attributes of a [[Txq]] object */
+/** Parses the attributes of a {@link Txq} object */
 export function parseTxq(r: Buffer): Txq {
     return structs.getObject(r, {
         1: (data, obj) => obj.ac = data,
@@ -6082,7 +6082,7 @@ export function parseTxq(r: Buffer): Txq {
     })
 }
 
-/** Encodes a [[Txq]] object into a stream of attributes */
+/** Encodes a {@link Txq} object into a stream of attributes */
 export function formatTxq(x: Txq): StreamData {
     return structs.putObject(x, {
         ac: (data, obj) => data.push(1, obj.ac!),
@@ -6195,7 +6195,7 @@ export enum ChannelWidth {
     _10 = 7,
 }
 
-/** Set of flags from [[ChannelWidth]] bits */
+/** Set of flags from {@link ChannelWidth} bits */
 export interface ChannelWidthSet extends BaseObject {
     /** 20 MHz, non-HT channel */
     _20Noht?: true
@@ -6234,7 +6234,7 @@ export interface ChannelWidthSet extends BaseObject {
     _10?: true
 }
 
-/** Parses the flags in a bitmask with [[ChannelWidth]] bits */
+/** Parses the flags in a bitmask with {@link ChannelWidth} bits */
 export function parseChannelWidthSet(r: number): ChannelWidthSet {
     const x: ChannelWidthSet = {}
     if (r & (1 << ChannelWidth._20_NOHT)) x._20Noht = true
@@ -6248,7 +6248,7 @@ export function parseChannelWidthSet(r: number): ChannelWidthSet {
     return x
 }
 
-/** Encodes a [[ChannelWidth]] bitmask */
+/** Encodes a {@link ChannelWidth} bitmask */
 export function formatChannelWidthSet(x: ChannelWidthSet): number {
     let r = 0
     if (x._20Noht) r |= 1 << ChannelWidth._20_NOHT
@@ -6388,7 +6388,7 @@ export interface Bss extends BaseObject {
     chainSignal?: number
 }
 
-/** Parses the attributes of a [[Bss]] object */
+/** Parses the attributes of a {@link Bss} object */
 export function parseBss(r: Buffer): Bss {
     return structs.getObject(r, {
         1: (data, obj) => obj.bssid = data,
@@ -6413,7 +6413,7 @@ export function parseBss(r: Buffer): Bss {
     })
 }
 
-/** Encodes a [[Bss]] object into a stream of attributes */
+/** Encodes a {@link Bss} object into a stream of attributes */
 export function formatBss(x: Bss): StreamData {
     return structs.putObject(x, {
         bssid: (data, obj) => data.push(1, obj.bssid!),
@@ -6528,7 +6528,7 @@ export interface WpaVersions {
     __unknown?: number
 }
 
-/** Parses the flags in a [[WpaVersions]] bitmask */
+/** Parses the flags in a {@link WpaVersions} bitmask */
 export function parseWpaVersions(r: number): WpaVersions {
     const x: WpaVersions = {}
     if (r & (1)) (x._1 = true, r &= ~(1))
@@ -6538,7 +6538,7 @@ export function parseWpaVersions(r: number): WpaVersions {
     return x
 }
 
-/** Encodes a [[WpaVersions]] bitmask */
+/** Encodes a {@link WpaVersions} bitmask */
 export function formatWpaVersions(x: WpaVersions): number {
     let r = x.__unknown || 0
     if (x._1) r |= 1
@@ -6562,7 +6562,7 @@ export interface KeyDefaultTypes extends BaseObject {
     multicast?: true
 }
 
-/** Parses the attributes of a [[KeyDefaultTypes]] object */
+/** Parses the attributes of a {@link KeyDefaultTypes} object */
 export function parseKeyDefaultTypes(r: Buffer): KeyDefaultTypes {
     return structs.getObject(r, {
         1: (data, obj) => obj.unicast = structs.getFlag(data),
@@ -6570,7 +6570,7 @@ export function parseKeyDefaultTypes(r: Buffer): KeyDefaultTypes {
     })
 }
 
-/** Encodes a [[KeyDefaultTypes]] object into a stream of attributes */
+/** Encodes a {@link KeyDefaultTypes} object into a stream of attributes */
 export function formatKeyDefaultTypes(x: KeyDefaultTypes): StreamData {
     return structs.putObject(x, {
         unicast: (data, obj) => data.push(1, structs.putFlag(obj.unicast!)),
@@ -6629,7 +6629,7 @@ export interface Key extends BaseObject {
     mode?: Buffer
 }
 
-/** Parses the attributes of a [[Key]] object */
+/** Parses the attributes of a {@link Key} object */
 export function parseKey(r: Buffer): Key {
     return structs.getObject(r, {
         1: (data, obj) => obj.data = data,
@@ -6644,7 +6644,7 @@ export function parseKey(r: Buffer): Key {
     })
 }
 
-/** Encodes a [[Key]] object into a stream of attributes */
+/** Encodes a {@link Key} object into a stream of attributes */
 export function formatKey(x: Key): StreamData {
     return structs.putObject(x, {
         data: (data, obj) => data.push(1, obj.data!),
@@ -6685,7 +6685,7 @@ export interface TxRate extends BaseObject {
     gi?: Buffer
 }
 
-/** Parses the attributes of a [[TxRate]] object */
+/** Parses the attributes of a {@link TxRate} object */
 export function parseTxRate(r: Buffer): TxRate {
     return structs.getObject(r, {
         1: (data, obj) => obj.legacy = data,
@@ -6695,7 +6695,7 @@ export function parseTxRate(r: Buffer): TxRate {
     })
 }
 
-/** Encodes a [[TxRate]] object into a stream of attributes */
+/** Encodes a {@link TxRate} object into a stream of attributes */
 export function formatTxRate(x: TxRate): StreamData {
     return structs.putObject(x, {
         legacy: (data, obj) => data.push(1, obj.legacy!),
@@ -6728,7 +6728,7 @@ export enum BandId {
     _6GHZ = 3,
 }
 
-/** Set of flags from [[BandId]] bits */
+/** Set of flags from {@link BandId} bits */
 export interface BandIdSet extends BaseObject {
     /** 2.4 GHz ISM band */
     _2ghz?: true
@@ -6743,7 +6743,7 @@ export interface BandIdSet extends BaseObject {
     _6ghz?: true
 }
 
-/** Parses the flags in a bitmask with [[BandId]] bits */
+/** Parses the flags in a bitmask with {@link BandId} bits */
 export function parseBandIdSet(r: number): BandIdSet {
     const x: BandIdSet = {}
     if (r & (1 << BandId._2GHZ)) x._2ghz = true
@@ -6753,7 +6753,7 @@ export function parseBandIdSet(r: number): BandIdSet {
     return x
 }
 
-/** Encodes a [[BandId]] bitmask */
+/** Encodes a {@link BandId} bitmask */
 export function formatBandIdSet(x: BandIdSet): number {
     let r = 0
     if (x._2ghz) r |= 1 << BandId._2GHZ
@@ -6836,7 +6836,7 @@ export interface Cqm extends BaseObject {
     rssiLevel?: Buffer
 }
 
-/** Parses the attributes of a [[Cqm]] object */
+/** Parses the attributes of a {@link Cqm} object */
 export function parseCqm(r: Buffer): Cqm {
     return structs.getObject(r, {
         1: (data, obj) => obj.rssiThold = structs.getU32(data),
@@ -6851,7 +6851,7 @@ export function parseCqm(r: Buffer): Cqm {
     })
 }
 
-/** Encodes a [[Cqm]] object into a stream of attributes */
+/** Encodes a {@link Cqm} object into a stream of attributes */
 export function formatCqm(x: Cqm): StreamData {
     return structs.putObject(x, {
         rssiThold: (data, obj) => data.push(1, structs.putU32(obj.rssiThold!)),
@@ -6926,7 +6926,7 @@ export interface PacketPattern extends BaseObject {
     offset?: number
 }
 
-/** Parses the attributes of a [[PacketPattern]] object */
+/** Parses the attributes of a {@link PacketPattern} object */
 export function parsePacketPattern(r: Buffer): PacketPattern {
     return structs.getObject(r, {
         1: (data, obj) => obj.mask = data,
@@ -6935,7 +6935,7 @@ export function parsePacketPattern(r: Buffer): PacketPattern {
     })
 }
 
-/** Encodes a [[PacketPattern]] object into a stream of attributes */
+/** Encodes a {@link PacketPattern} object into a stream of attributes */
 export function formatPacketPattern(x: PacketPattern): StreamData {
     return structs.putObject(x, {
         mask: (data, obj) => data.push(1, obj.mask!),
@@ -7106,7 +7106,7 @@ export interface WowlanTriggers extends BaseObject {
     netDetectResults?: Message[]
 }
 
-/** Parses the attributes of a [[WowlanTriggers]] object */
+/** Parses the attributes of a {@link WowlanTriggers} object */
 export function parseWowlanTriggers(r: Buffer): WowlanTriggers {
     return structs.getObject(r, {
         1: (data, obj) => obj.any = structs.getFlag(data),
@@ -7131,7 +7131,7 @@ export function parseWowlanTriggers(r: Buffer): WowlanTriggers {
     })
 }
 
-/** Encodes a [[WowlanTriggers]] object into a stream of attributes */
+/** Encodes a {@link WowlanTriggers} object into a stream of attributes */
 export function formatWowlanTriggers(x: WowlanTriggers): StreamData {
     return structs.putObject(x, {
         any: (data, obj) => data.push(1, structs.putFlag(obj.any!)),
@@ -7225,7 +7225,7 @@ export interface WowlanTcp extends BaseObject {
     wakeMask?: Buffer
 }
 
-/** Parses the attributes of a [[WowlanTcp]] object */
+/** Parses the attributes of a {@link WowlanTcp} object */
 export function parseWowlanTcp(r: Buffer): WowlanTcp {
     return structs.getObject(r, {
         1: (data, obj) => obj.srcIpv4 = structs.getU32(data),
@@ -7242,7 +7242,7 @@ export function parseWowlanTcp(r: Buffer): WowlanTcp {
     })
 }
 
-/** Encodes a [[WowlanTcp]] object into a stream of attributes */
+/** Encodes a {@link WowlanTcp} object into a stream of attributes */
 export function formatWowlanTcp(x: WowlanTcp): StreamData {
     return structs.putObject(x, {
         srcIpv4: (data, obj) => data.push(1, structs.putU32(obj.srcIpv4!)),
@@ -7277,7 +7277,7 @@ export interface CoalesceRule extends BaseObject {
     pktPattern?: Buffer
 }
 
-/** Parses the attributes of a [[CoalesceRule]] object */
+/** Parses the attributes of a {@link CoalesceRule} object */
 export function parseCoalesceRule(r: Buffer): CoalesceRule {
     return structs.getObject(r, {
         1: (data, obj) => obj.delay = structs.getU32(data),
@@ -7286,7 +7286,7 @@ export function parseCoalesceRule(r: Buffer): CoalesceRule {
     })
 }
 
-/** Encodes a [[CoalesceRule]] object into a stream of attributes */
+/** Encodes a {@link CoalesceRule} object into a stream of attributes */
 export function formatCoalesceRule(x: CoalesceRule): StreamData {
     return structs.putObject(x, {
         delay: (data, obj) => data.push(1, structs.putU32(obj.delay!)),
@@ -7325,7 +7325,7 @@ export interface InterfaceLimit extends BaseObject {
     types?: InterfaceTypeSet
 }
 
-/** Parses the attributes of a [[InterfaceLimit]] object */
+/** Parses the attributes of a {@link InterfaceLimit} object */
 export function parseInterfaceLimit(r: Buffer): InterfaceLimit {
     return structs.getObject(r, {
         1: (data, obj) => obj.max = structs.getU32(data),
@@ -7333,7 +7333,7 @@ export function parseInterfaceLimit(r: Buffer): InterfaceLimit {
     })
 }
 
-/** Encodes a [[InterfaceLimit]] object into a stream of attributes */
+/** Encodes a {@link InterfaceLimit} object into a stream of attributes */
 export function formatInterfaceLimit(x: InterfaceLimit): StreamData {
     return structs.putObject(x, {
         max: (data, obj) => data.push(1, structs.putU32(obj.max!)),
@@ -7416,7 +7416,7 @@ export interface InterfaceCombination extends BaseObject {
     biMinGcd?: number
 }
 
-/** Parses the attributes of a [[InterfaceCombination]] object */
+/** Parses the attributes of a {@link InterfaceCombination} object */
 export function parseInterfaceCombination(r: Buffer): InterfaceCombination {
     return structs.getObject(r, {
         1: (data, obj) => obj.limits = structs.getArray(data, x => parseInterfaceLimit(x)),
@@ -7429,7 +7429,7 @@ export function parseInterfaceCombination(r: Buffer): InterfaceCombination {
     })
 }
 
-/** Encodes a [[InterfaceCombination]] object into a stream of attributes */
+/** Encodes a {@link InterfaceCombination} object into a stream of attributes */
 export function formatInterfaceCombination(x: InterfaceCombination): StreamData {
     return structs.putObject(x, {
         limits: (data, obj) => data.push(1, structs.putArray(obj.limits!, x => formatInterfaceLimit(x))),
@@ -7505,7 +7505,7 @@ export interface RekeyData extends BaseObject {
     replayCtr?: Buffer
 }
 
-/** Parses the attributes of a [[RekeyData]] object */
+/** Parses the attributes of a {@link RekeyData} object */
 export function parseRekeyData(r: Buffer): RekeyData {
     return structs.getObject(r, {
         1: (data, obj) => obj.kek = data,
@@ -7514,7 +7514,7 @@ export function parseRekeyData(r: Buffer): RekeyData {
     })
 }
 
-/** Encodes a [[RekeyData]] object into a stream of attributes */
+/** Encodes a {@link RekeyData} object into a stream of attributes */
 export function formatRekeyData(x: RekeyData): StreamData {
     return structs.putObject(x, {
         kek: (data, obj) => data.push(1, obj.kek!),
@@ -7559,7 +7559,7 @@ export interface StationWme extends BaseObject {
     maxSp?: Buffer
 }
 
-/** Parses the attributes of a [[StationWme]] object */
+/** Parses the attributes of a {@link StationWme} object */
 export function parseStationWme(r: Buffer): StationWme {
     return structs.getObject(r, {
         1: (data, obj) => obj.uapsdQueues = data,
@@ -7567,7 +7567,7 @@ export function parseStationWme(r: Buffer): StationWme {
     })
 }
 
-/** Encodes a [[StationWme]] object into a stream of attributes */
+/** Encodes a {@link StationWme} object into a stream of attributes */
 export function formatStationWme(x: StationWme): StreamData {
     return structs.putObject(x, {
         uapsdQueues: (data, obj) => data.push(1, obj.uapsdQueues!),
@@ -7590,7 +7590,7 @@ export interface PmksaCandidate extends BaseObject {
     preauth?: true
 }
 
-/** Parses the attributes of a [[PmksaCandidate]] object */
+/** Parses the attributes of a {@link PmksaCandidate} object */
 export function parsePmksaCandidate(r: Buffer): PmksaCandidate {
     return structs.getObject(r, {
         1: (data, obj) => obj.index = structs.getU32(data),
@@ -7599,7 +7599,7 @@ export function parsePmksaCandidate(r: Buffer): PmksaCandidate {
     })
 }
 
-/** Encodes a [[PmksaCandidate]] object into a stream of attributes */
+/** Encodes a {@link PmksaCandidate} object into a stream of attributes */
 export function formatPmksaCandidate(x: PmksaCandidate): StreamData {
     return structs.putObject(x, {
         index: (data, obj) => data.push(1, structs.putU32(obj.index!)),
@@ -7835,7 +7835,7 @@ export interface FeatureFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[FeatureFlags]] bitmask */
+/** Parses the flags in a {@link FeatureFlags} bitmask */
 export function parseFeatureFlags(r: number): FeatureFlags {
     const x: FeatureFlags = {}
     if (r & (1)) (x.skTxStatus = true, r &= ~(1))
@@ -7873,7 +7873,7 @@ export function parseFeatureFlags(r: number): FeatureFlags {
     return x
 }
 
-/** Encodes a [[FeatureFlags]] bitmask */
+/** Encodes a {@link FeatureFlags} bitmask */
 export function formatFeatureFlags(x: FeatureFlags): number {
     let r = x.__unknown || 0
     if (x.skTxStatus) r |= 1
@@ -8192,7 +8192,7 @@ export interface ProbeResponseOffloadSupport {
     __unknown?: number
 }
 
-/** Parses the flags in a [[ProbeResponseOffloadSupport]] bitmask */
+/** Parses the flags in a {@link ProbeResponseOffloadSupport} bitmask */
 export function parseProbeResponseOffloadSupport(r: number): ProbeResponseOffloadSupport {
     const x: ProbeResponseOffloadSupport = {}
     if (r & (1)) (x.wps = true, r &= ~(1))
@@ -8203,7 +8203,7 @@ export function parseProbeResponseOffloadSupport(r: number): ProbeResponseOffloa
     return x
 }
 
-/** Encodes a [[ProbeResponseOffloadSupport]] bitmask */
+/** Encodes a {@link ProbeResponseOffloadSupport} bitmask */
 export function formatProbeResponseOffloadSupport(x: ProbeResponseOffloadSupport): number {
     let r = x.__unknown || 0
     if (x.wps) r |= 1
@@ -8348,7 +8348,7 @@ export interface ScanFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[ScanFlags]] bitmask */
+/** Parses the flags in a {@link ScanFlags} bitmask */
 export function parseScanFlags(r: number): ScanFlags {
     const x: ScanFlags = {}
     if (r & (1)) (x.lowPriority = true, r &= ~(1))
@@ -8368,7 +8368,7 @@ export function parseScanFlags(r: number): ScanFlags {
     return x
 }
 
-/** Encodes a [[ScanFlags]] bitmask */
+/** Encodes a {@link ScanFlags} bitmask */
 export function formatScanFlags(x: ScanFlags): number {
     let r = x.__unknown || 0
     if (x.lowPriority) r |= 1
@@ -8510,7 +8510,7 @@ export interface ProtocolFeatures {
     __unknown?: number
 }
 
-/** Parses the flags in a [[ProtocolFeatures]] bitmask */
+/** Parses the flags in a {@link ProtocolFeatures} bitmask */
 export function parseProtocolFeatures(r: number): ProtocolFeatures {
     const x: ProtocolFeatures = {}
     if (r & (1)) (x.phyDump = true, r &= ~(1))
@@ -8518,7 +8518,7 @@ export function parseProtocolFeatures(r: number): ProtocolFeatures {
     return x
 }
 
-/** Encodes a [[ProtocolFeatures]] bitmask */
+/** Encodes a {@link ProtocolFeatures} bitmask */
 export function formatProtocolFeatures(x: ProtocolFeatures): number {
     let r = x.__unknown || 0
     if (x.phyDump) r |= 1
@@ -8557,7 +8557,7 @@ export interface RxmgmtFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RxmgmtFlags]] bitmask */
+/** Parses the flags in a {@link RxmgmtFlags} bitmask */
 export function parseRxmgmtFlags(r: number): RxmgmtFlags {
     const x: RxmgmtFlags = {}
     if (r & (1)) (x.answered = true, r &= ~(1))
@@ -8566,7 +8566,7 @@ export function parseRxmgmtFlags(r: number): RxmgmtFlags {
     return x
 }
 
-/** Encodes a [[RxmgmtFlags]] bitmask */
+/** Encodes a {@link RxmgmtFlags} bitmask */
 export function formatRxmgmtFlags(x: RxmgmtFlags): number {
     let r = x.__unknown || 0
     if (x.answered) r |= 1
@@ -8593,7 +8593,7 @@ export interface TdlsPeerCapability {
     __unknown?: number
 }
 
-/** Parses the flags in a [[TdlsPeerCapability]] bitmask */
+/** Parses the flags in a {@link TdlsPeerCapability} bitmask */
 export function parseTdlsPeerCapability(r: number): TdlsPeerCapability {
     const x: TdlsPeerCapability = {}
     if (r & (1)) (x.ht = true, r &= ~(1))
@@ -8603,7 +8603,7 @@ export function parseTdlsPeerCapability(r: number): TdlsPeerCapability {
     return x
 }
 
-/** Encodes a [[TdlsPeerCapability]] bitmask */
+/** Encodes a {@link TdlsPeerCapability} bitmask */
 export function formatTdlsPeerCapability(x: TdlsPeerCapability): number {
     let r = x.__unknown || 0
     if (x.ht) r |= 1
@@ -8629,7 +8629,7 @@ export interface ScheduledScanPlan extends BaseObject {
     terations?: number
 }
 
-/** Parses the attributes of a [[ScheduledScanPlan]] object */
+/** Parses the attributes of a {@link ScheduledScanPlan} object */
 export function parseScheduledScanPlan(r: Buffer): ScheduledScanPlan {
     return structs.getObject(r, {
         1: (data, obj) => obj.nterval = structs.getU32(data),
@@ -8637,7 +8637,7 @@ export function parseScheduledScanPlan(r: Buffer): ScheduledScanPlan {
     })
 }
 
-/** Encodes a [[ScheduledScanPlan]] object into a stream of attributes */
+/** Encodes a {@link ScheduledScanPlan} object into a stream of attributes */
 export function formatScheduledScanPlan(x: ScheduledScanPlan): StreamData {
     return structs.putObject(x, {
         nterval: (data, obj) => data.push(1, structs.putU32(obj.nterval!)),
@@ -8677,7 +8677,7 @@ export interface BssSelect extends BaseObject {
     rssiAdjust?: Buffer
 }
 
-/** Parses the attributes of a [[BssSelect]] object */
+/** Parses the attributes of a {@link BssSelect} object */
 export function parseBssSelect(r: Buffer): BssSelect {
     return structs.getObject(r, {
         1: (data, obj) => obj.rssi = structs.getFlag(data),
@@ -8686,7 +8686,7 @@ export function parseBssSelect(r: Buffer): BssSelect {
     })
 }
 
-/** Encodes a [[BssSelect]] object into a stream of attributes */
+/** Encodes a {@link BssSelect} object into a stream of attributes */
 export function formatBssSelect(x: BssSelect): StreamData {
     return structs.putObject(x, {
         rssi: (data, obj) => data.push(1, structs.putFlag(obj.rssi!)),
@@ -8726,7 +8726,7 @@ export interface NanPublishType {
     __unknown?: number
 }
 
-/** Parses the flags in a [[NanPublishType]] bitmask */
+/** Parses the flags in a {@link NanPublishType} bitmask */
 export function parseNanPublishType(r: number): NanPublishType {
     const x: NanPublishType = {}
     if (r & (1)) (x.solicitedPublish = true, r &= ~(1))
@@ -8735,7 +8735,7 @@ export function parseNanPublishType(r: number): NanPublishType {
     return x
 }
 
-/** Encodes a [[NanPublishType]] bitmask */
+/** Encodes a {@link NanPublishType} bitmask */
 export function formatNanPublishType(x: NanPublishType): number {
     let r = x.__unknown || 0
     if (x.solicitedPublish) r |= 1
@@ -8859,7 +8859,7 @@ export interface NanFunction extends BaseObject {
     termReason?: NanFunctionTerminationReason | keyof typeof NanFunctionTerminationReason
 }
 
-/** Parses the attributes of a [[NanFunction]] object */
+/** Parses the attributes of a {@link NanFunction} object */
 export function parseNanFunction(r: Buffer): NanFunction {
     return structs.getObject(r, {
         1: (data, obj) => obj.type = structs.getEnum(NanFunctionType, structs.getU8(data)),
@@ -8881,7 +8881,7 @@ export function parseNanFunction(r: Buffer): NanFunction {
     })
 }
 
-/** Encodes a [[NanFunction]] object into a stream of attributes */
+/** Encodes a {@link NanFunction} object into a stream of attributes */
 export function formatNanFunction(x: NanFunction): StreamData {
     return structs.putObject(x, {
         type: (data, obj) => data.push(1, structs.putU8(structs.putEnum(NanFunctionType, obj.type!))),
@@ -8931,7 +8931,7 @@ export interface NanSrf extends BaseObject {
     macAddrs?: Buffer[]
 }
 
-/** Parses the attributes of a [[NanSrf]] object */
+/** Parses the attributes of a {@link NanSrf} object */
 export function parseNanSrf(r: Buffer): NanSrf {
     return structs.getObject(r, {
         1: (data, obj) => obj.include = structs.getFlag(data),
@@ -8941,7 +8941,7 @@ export function parseNanSrf(r: Buffer): NanSrf {
     })
 }
 
-/** Encodes a [[NanSrf]] object into a stream of attributes */
+/** Encodes a {@link NanSrf} object into a stream of attributes */
 export function formatNanSrf(x: NanSrf): StreamData {
     return structs.putObject(x, {
         include: (data, obj) => data.push(1, structs.putFlag(obj.include!)),
@@ -8968,7 +8968,7 @@ export interface NanMatch extends BaseObject {
     peer?: NanFunction
 }
 
-/** Parses the attributes of a [[NanMatch]] object */
+/** Parses the attributes of a {@link NanMatch} object */
 export function parseNanMatch(r: Buffer): NanMatch {
     return structs.getObject(r, {
         1: (data, obj) => obj.local = parseNanFunction(data),
@@ -8976,7 +8976,7 @@ export function parseNanMatch(r: Buffer): NanMatch {
     })
 }
 
-/** Encodes a [[NanMatch]] object into a stream of attributes */
+/** Encodes a {@link NanMatch} object into a stream of attributes */
 export function formatNanMatch(x: NanMatch): StreamData {
     return structs.putObject(x, {
         local: (data, obj) => data.push(1, formatNanFunction(obj.local!)),
@@ -9019,7 +9019,7 @@ export interface FtmResponder extends BaseObject {
     civicloc?: Buffer
 }
 
-/** Parses the attributes of a [[FtmResponder]] object */
+/** Parses the attributes of a {@link FtmResponder} object */
 export function parseFtmResponder(r: Buffer): FtmResponder {
     return structs.getObject(r, {
         1: (data, obj) => obj.enabled = data,
@@ -9028,7 +9028,7 @@ export function parseFtmResponder(r: Buffer): FtmResponder {
     })
 }
 
-/** Encodes a [[FtmResponder]] object into a stream of attributes */
+/** Encodes a {@link FtmResponder} object into a stream of attributes */
 export function formatFtmResponder(x: FtmResponder): StreamData {
     return structs.putObject(x, {
         enabled: (data, obj) => data.push(1, obj.enabled!),
@@ -9095,7 +9095,7 @@ export interface FtmResponderStats extends BaseObject {
     __pad?: Buffer
 }
 
-/** Parses the attributes of a [[FtmResponderStats]] object */
+/** Parses the attributes of a {@link FtmResponderStats} object */
 export function parseFtmResponderStats(r: Buffer): FtmResponderStats {
     return structs.getObject(r, {
         1: (data, obj) => obj.successNum = structs.getU32(data),
@@ -9111,7 +9111,7 @@ export function parseFtmResponderStats(r: Buffer): FtmResponderStats {
     })
 }
 
-/** Encodes a [[FtmResponderStats]] object into a stream of attributes */
+/** Encodes a {@link FtmResponderStats} object into a stream of attributes */
 export function formatFtmResponderStats(x: FtmResponderStats): StreamData {
     return structs.putObject(x, {
         successNum: (data, obj) => data.push(1, structs.putU32(obj.successNum!)),
@@ -9142,7 +9142,7 @@ export enum Preamble {
     DMG = 3,
 }
 
-/** Set of flags from [[Preamble]] bits */
+/** Set of flags from {@link Preamble} bits */
 export interface PreambleSet extends BaseObject {
     /** legacy (HR/DSSS, OFDM, ERP PHY) preamble */
     legacy?: true
@@ -9157,7 +9157,7 @@ export interface PreambleSet extends BaseObject {
     dmg?: true
 }
 
-/** Parses the flags in a bitmask with [[Preamble]] bits */
+/** Parses the flags in a bitmask with {@link Preamble} bits */
 export function parsePreambleSet(r: number): PreambleSet {
     const x: PreambleSet = {}
     if (r & (1 << Preamble.LEGACY)) x.legacy = true
@@ -9167,7 +9167,7 @@ export function parsePreambleSet(r: number): PreambleSet {
     return x
 }
 
-/** Encodes a [[Preamble]] bitmask */
+/** Encodes a {@link Preamble} bitmask */
 export function formatPreambleSet(x: PreambleSet): number {
     let r = 0
     if (x.legacy) r |= 1 << Preamble.LEGACY
@@ -9223,7 +9223,7 @@ export interface PeerMeasurementRequest extends BaseObject {
     getApTsf?: true
 }
 
-/** Parses the attributes of a [[PeerMeasurementRequest]] object */
+/** Parses the attributes of a {@link PeerMeasurementRequest} object */
 export function parsePeerMeasurementRequest(r: Buffer): PeerMeasurementRequest {
     return structs.getObject(r, {
         1: (data, obj) => obj.data = data,
@@ -9231,7 +9231,7 @@ export function parsePeerMeasurementRequest(r: Buffer): PeerMeasurementRequest {
     })
 }
 
-/** Encodes a [[PeerMeasurementRequest]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurementRequest} object into a stream of attributes */
 export function formatPeerMeasurementRequest(x: PeerMeasurementRequest): StreamData {
     return structs.putObject(x, {
         data: (data, obj) => data.push(1, obj.data!),
@@ -9281,7 +9281,7 @@ export interface PeerMeasurementResponse extends BaseObject {
     __pad?: Buffer
 }
 
-/** Parses the attributes of a [[PeerMeasurementResponse]] object */
+/** Parses the attributes of a {@link PeerMeasurementResponse} object */
 export function parsePeerMeasurementResponse(r: Buffer): PeerMeasurementResponse {
     return structs.getObject(r, {
         1: (data, obj) => obj.data = data,
@@ -9293,7 +9293,7 @@ export function parsePeerMeasurementResponse(r: Buffer): PeerMeasurementResponse
     })
 }
 
-/** Encodes a [[PeerMeasurementResponse]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurementResponse} object into a stream of attributes */
 export function formatPeerMeasurementResponse(x: PeerMeasurementResponse): StreamData {
     return structs.putObject(x, {
         data: (data, obj) => data.push(1, obj.data!),
@@ -9331,7 +9331,7 @@ export interface PeerMeasurementPeerAttrs extends BaseObject {
     resp?: Map<number, PeerMeasurementResponse>
 }
 
-/** Parses the attributes of a [[PeerMeasurementPeerAttrs]] object */
+/** Parses the attributes of a {@link PeerMeasurementPeerAttrs} object */
 export function parsePeerMeasurementPeerAttrs(r: Buffer): PeerMeasurementPeerAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.addr = data,
@@ -9341,7 +9341,7 @@ export function parsePeerMeasurementPeerAttrs(r: Buffer): PeerMeasurementPeerAtt
     })
 }
 
-/** Encodes a [[PeerMeasurementPeerAttrs]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurementPeerAttrs} object into a stream of attributes */
 export function formatPeerMeasurementPeerAttrs(x: PeerMeasurementPeerAttrs): StreamData {
     return structs.putObject(x, {
         addr: (data, obj) => data.push(1, obj.addr!),
@@ -9390,7 +9390,7 @@ export interface PeerMeasurement extends BaseObject {
     peers?: PeerMeasurementPeerAttrs
 }
 
-/** Parses the attributes of a [[PeerMeasurement]] object */
+/** Parses the attributes of a {@link PeerMeasurement} object */
 export function parsePeerMeasurement(r: Buffer): PeerMeasurement {
     return structs.getObject(r, {
         1: (data, obj) => obj.maxPeers = structs.getU32(data),
@@ -9401,7 +9401,7 @@ export function parsePeerMeasurement(r: Buffer): PeerMeasurement {
     })
 }
 
-/** Encodes a [[PeerMeasurement]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurement} object into a stream of attributes */
 export function formatPeerMeasurement(x: PeerMeasurement): StreamData {
     return structs.putObject(x, {
         maxPeers: (data, obj) => data.push(1, structs.putU32(obj.maxPeers!)),
@@ -9467,7 +9467,7 @@ export interface PeerMeasurementFtmCapabilities extends BaseObject {
     maxFtmsPerBurst?: number
 }
 
-/** Parses the attributes of a [[PeerMeasurementFtmCapabilities]] object */
+/** Parses the attributes of a {@link PeerMeasurementFtmCapabilities} object */
 export function parsePeerMeasurementFtmCapabilities(r: Buffer): PeerMeasurementFtmCapabilities {
     return structs.getObject(r, {
         1: (data, obj) => obj.asap = structs.getFlag(data),
@@ -9481,7 +9481,7 @@ export function parsePeerMeasurementFtmCapabilities(r: Buffer): PeerMeasurementF
     })
 }
 
-/** Encodes a [[PeerMeasurementFtmCapabilities]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurementFtmCapabilities} object into a stream of attributes */
 export function formatPeerMeasurementFtmCapabilities(x: PeerMeasurementFtmCapabilities): StreamData {
     return structs.putObject(x, {
         asap: (data, obj) => data.push(1, structs.putFlag(obj.asap!)),
@@ -9549,7 +9549,7 @@ export interface PeerMeasurementFtmRequest extends BaseObject {
     requestCivicloc?: true
 }
 
-/** Parses the attributes of a [[PeerMeasurementFtmRequest]] object */
+/** Parses the attributes of a {@link PeerMeasurementFtmRequest} object */
 export function parsePeerMeasurementFtmRequest(r: Buffer): PeerMeasurementFtmRequest {
     return structs.getObject(r, {
         1: (data, obj) => obj.asap = structs.getFlag(data),
@@ -9564,7 +9564,7 @@ export function parsePeerMeasurementFtmRequest(r: Buffer): PeerMeasurementFtmReq
     })
 }
 
-/** Encodes a [[PeerMeasurementFtmRequest]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurementFtmRequest} object into a stream of attributes */
 export function formatPeerMeasurementFtmRequest(x: PeerMeasurementFtmRequest): StreamData {
     return structs.putObject(x, {
         asap: (data, obj) => data.push(1, structs.putFlag(obj.asap!)),
@@ -9749,7 +9749,7 @@ export interface PeerMeasurementFtmResponse extends BaseObject {
     __pad?: Buffer
 }
 
-/** Parses the attributes of a [[PeerMeasurementFtmResponse]] object */
+/** Parses the attributes of a {@link PeerMeasurementFtmResponse} object */
 export function parsePeerMeasurementFtmResponse(r: Buffer): PeerMeasurementFtmResponse {
     return structs.getObject(r, {
         1: (data, obj) => obj.failReason = structs.getU32(data),
@@ -9776,7 +9776,7 @@ export function parsePeerMeasurementFtmResponse(r: Buffer): PeerMeasurementFtmRe
     })
 }
 
-/** Encodes a [[PeerMeasurementFtmResponse]] object into a stream of attributes */
+/** Encodes a {@link PeerMeasurementFtmResponse} object into a stream of attributes */
 export function formatPeerMeasurementFtmResponse(x: PeerMeasurementFtmResponse): StreamData {
     return structs.putObject(x, {
         failReason: (data, obj) => data.push(1, structs.putU32(obj.failReason!)),
@@ -9812,7 +9812,7 @@ export interface ObssPd extends BaseObject {
     axOffset?: Buffer
 }
 
-/** Parses the attributes of a [[ObssPd]] object */
+/** Parses the attributes of a {@link ObssPd} object */
 export function parseObssPd(r: Buffer): ObssPd {
     return structs.getObject(r, {
         1: (data, obj) => obj.inOffset = data,
@@ -9820,7 +9820,7 @@ export function parseObssPd(r: Buffer): ObssPd {
     })
 }
 
-/** Encodes a [[ObssPd]] object into a stream of attributes */
+/** Encodes a {@link ObssPd} object into a stream of attributes */
 export function formatObssPd(x: ObssPd): StreamData {
     return structs.putObject(x, {
         inOffset: (data, obj) => data.push(1, obj.inOffset!),

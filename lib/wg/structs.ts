@@ -14,7 +14,7 @@ export interface DeviceFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[DeviceFlags]] bitmask */
+/** Parses the flags in a {@link DeviceFlags} bitmask */
 export function parseDeviceFlags(r: number): DeviceFlags {
     const x: DeviceFlags = {}
     if (r & (1)) (x.replacePeers = true, r &= ~(1))
@@ -22,7 +22,7 @@ export function parseDeviceFlags(r: number): DeviceFlags {
     return x
 }
 
-/** Encodes a [[DeviceFlags]] bitmask */
+/** Encodes a {@link DeviceFlags} bitmask */
 export function formatDeviceFlags(x: DeviceFlags): number {
     let r = x.__unknown || 0
     if (x.replacePeers) r |= 1
@@ -56,7 +56,7 @@ export interface Device extends BaseObject {
     peers?: Peer[]
 }
 
-/** Parses the attributes of a [[Device]] object */
+/** Parses the attributes of a {@link Device} object */
 export function parseDevice(r: Buffer): Device {
     return structs.getObject(r, {
         1: (data, obj) => obj.ifindex = structs.getU32(data),
@@ -70,7 +70,7 @@ export function parseDevice(r: Buffer): Device {
     })
 }
 
-/** Encodes a [[Device]] object into a stream of attributes */
+/** Encodes a {@link Device} object into a stream of attributes */
 export function formatDevice(x: Device): StreamData {
     return structs.putObject(x, {
         ifindex: (data, obj) => data.push(1, structs.putU32(obj.ifindex!)),
@@ -100,7 +100,7 @@ export interface PeerFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[PeerFlags]] bitmask */
+/** Parses the flags in a {@link PeerFlags} bitmask */
 export function parsePeerFlags(r: number): PeerFlags {
     const x: PeerFlags = {}
     if (r & (1)) (x.removeMe = true, r &= ~(1))
@@ -110,7 +110,7 @@ export function parsePeerFlags(r: number): PeerFlags {
     return x
 }
 
-/** Encodes a [[PeerFlags]] bitmask */
+/** Encodes a {@link PeerFlags} bitmask */
 export function formatPeerFlags(x: PeerFlags): number {
     let r = x.__unknown || 0
     if (x.removeMe) r |= 1
@@ -154,7 +154,7 @@ export interface Peer extends BaseObject {
     protocolVersion?: number
 }
 
-/** Parses the attributes of a [[Peer]] object */
+/** Parses the attributes of a {@link Peer} object */
 export function parsePeer(r: Buffer): Peer {
     return structs.getObject(r, {
         1: (data, obj) => obj.publicKey = data,
@@ -170,7 +170,7 @@ export function parsePeer(r: Buffer): Peer {
     })
 }
 
-/** Encodes a [[Peer]] object into a stream of attributes */
+/** Encodes a {@link Peer} object into a stream of attributes */
 export function formatPeer(x: Peer): StreamData {
     return structs.putObject(x, {
         publicKey: (data, obj) => data.push(1, obj.publicKey!),
@@ -195,7 +195,7 @@ export interface AllowedIp extends BaseObject {
     cidrMask?: number
 }
 
-/** Parses the attributes of a [[AllowedIp]] object */
+/** Parses the attributes of a {@link AllowedIp} object */
 export function parseAllowedIp(r: Buffer): AllowedIp {
     return structs.getObject(r, {
         1: (data, obj) => obj.family = structs.getU16(data),
@@ -204,7 +204,7 @@ export function parseAllowedIp(r: Buffer): AllowedIp {
     })
 }
 
-/** Encodes a [[AllowedIp]] object into a stream of attributes */
+/** Encodes a {@link AllowedIp} object into a stream of attributes */
 export function formatAllowedIp(x: AllowedIp): StreamData {
     return structs.putObject(x, {
         family: (data, obj) => data.push(1, structs.putU16(obj.family!)),

@@ -231,7 +231,7 @@ export interface Route {
     flags?: RouteFlags
 }
 
-/** Parses the attributes of a [[Route]] object */
+/** Parses the attributes of a {@link Route} object */
 export function parseRoute(r: Buffer): Route {
     if (r.length !== __LENGTH_Route) throw Error('Unexpected length for Route')
     const x: Route = {}
@@ -247,7 +247,7 @@ export function parseRoute(r: Buffer): Route {
     return x
 }
 
-/** Encodes a [[Route]] object into a stream of attributes */
+/** Encodes a {@link Route} object into a stream of attributes */
 export function formatRoute(x: Route, r: Buffer = Buffer.alloc(__LENGTH_Route)): Buffer {
     if (r.length !== __LENGTH_Route) throw Error('Unexpected length for Route')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -420,7 +420,7 @@ export interface RouteFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RouteFlags]] bitmask */
+/** Parses the flags in a {@link RouteFlags} bitmask */
 export function parseRouteFlags(r: number): RouteFlags {
     const x: RouteFlags = {}
     if (r & (256)) (x.notify = true, r &= ~(256))
@@ -435,7 +435,7 @@ export function parseRouteFlags(r: number): RouteFlags {
     return x
 }
 
-/** Encodes a [[RouteFlags]] bitmask */
+/** Encodes a {@link RouteFlags} bitmask */
 export function formatRouteFlags(x: RouteFlags): number {
     let r = x.__unknown || 0
     if (x.notify) r |= 256
@@ -526,7 +526,7 @@ export interface RouteAttrs extends BaseObject {
     nhId?: Buffer
 }
 
-/** Parses the attributes of a [[RouteAttrs]] object */
+/** Parses the attributes of a {@link RouteAttrs} object */
 export function parseRouteAttrs(r: Buffer): RouteAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.dst = data,
@@ -562,7 +562,7 @@ export function parseRouteAttrs(r: Buffer): RouteAttrs {
     })
 }
 
-/** Encodes a [[RouteAttrs]] object into a stream of attributes */
+/** Encodes a {@link RouteAttrs} object into a stream of attributes */
 export function formatRouteAttrs(x: RouteAttrs): StreamData {
     return structs.putObject(x, {
         dst: (data, obj) => data.push(1, obj.dst!),
@@ -615,7 +615,7 @@ export interface RouteNextHop {
     ifindex?: number
 }
 
-/** Parses the attributes of a [[RouteNextHop]] object */
+/** Parses the attributes of a {@link RouteNextHop} object */
 export function parseRouteNextHop(r: Buffer): RouteNextHop {
     if (r.length !== __LENGTH_RouteNextHop) throw Error('Unexpected length for RouteNextHop')
     const x: RouteNextHop = {}
@@ -626,7 +626,7 @@ export function parseRouteNextHop(r: Buffer): RouteNextHop {
     return x
 }
 
-/** Encodes a [[RouteNextHop]] object into a stream of attributes */
+/** Encodes a {@link RouteNextHop} object into a stream of attributes */
 export function formatRouteNextHop(x: RouteNextHop, r: Buffer = Buffer.alloc(__LENGTH_RouteNextHop)): Buffer {
     if (r.length !== __LENGTH_RouteNextHop) throw Error('Unexpected length for RouteNextHop')
     x.len && structs.writeU16.call(r, x.len, 0)
@@ -660,7 +660,7 @@ export interface RouteNextHopFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RouteNextHopFlags]] bitmask */
+/** Parses the flags in a {@link RouteNextHopFlags} bitmask */
 export function parseRouteNextHopFlags(r: number): RouteNextHopFlags {
     const x: RouteNextHopFlags = {}
     if (r & (1)) (x.dead = true, r &= ~(1))
@@ -673,7 +673,7 @@ export function parseRouteNextHopFlags(r: number): RouteNextHopFlags {
     return x
 }
 
-/** Encodes a [[RouteNextHopFlags]] bitmask */
+/** Encodes a {@link RouteNextHopFlags} bitmask */
 export function formatRouteNextHopFlags(x: RouteNextHopFlags): number {
     let r = x.__unknown || 0
     if (x.dead) r |= 1
@@ -691,7 +691,7 @@ export interface RouteVia {
     addr?: number
 }
 
-/** Parses the attributes of a [[RouteVia]] object */
+/** Parses the attributes of a {@link RouteVia} object */
 export function parseRouteVia(r: Buffer): RouteVia {
     if (r.length !== __LENGTH_RouteVia) throw Error('Unexpected length for RouteVia')
     const x: RouteVia = {}
@@ -700,7 +700,7 @@ export function parseRouteVia(r: Buffer): RouteVia {
     return x
 }
 
-/** Encodes a [[RouteVia]] object into a stream of attributes */
+/** Encodes a {@link RouteVia} object into a stream of attributes */
 export function formatRouteVia(x: RouteVia, r: Buffer = Buffer.alloc(__LENGTH_RouteVia)): Buffer {
     if (r.length !== __LENGTH_RouteVia) throw Error('Unexpected length for RouteVia')
     x.family && structs.writeU16.call(r, x.family, 0)
@@ -728,7 +728,7 @@ export interface RouteCacheInfo {
     tsage?: number
 }
 
-/** Parses the attributes of a [[RouteCacheInfo]] object */
+/** Parses the attributes of a {@link RouteCacheInfo} object */
 export function parseRouteCacheInfo(r: Buffer): RouteCacheInfo {
     if (r.length !== __LENGTH_RouteCacheInfo) throw Error('Unexpected length for RouteCacheInfo')
     const x: RouteCacheInfo = {}
@@ -743,7 +743,7 @@ export function parseRouteCacheInfo(r: Buffer): RouteCacheInfo {
     return x
 }
 
-/** Encodes a [[RouteCacheInfo]] object into a stream of attributes */
+/** Encodes a {@link RouteCacheInfo} object into a stream of attributes */
 export function formatRouteCacheInfo(x: RouteCacheInfo, r: Buffer = Buffer.alloc(__LENGTH_RouteCacheInfo)): Buffer {
     if (r.length !== __LENGTH_RouteCacheInfo) throw Error('Unexpected length for RouteCacheInfo')
     x.clntref && structs.writeU32.call(r, x.clntref, 0)
@@ -795,7 +795,7 @@ export interface RouteMetrics extends BaseObject {
     fastopenNoCookie?: Buffer
 }
 
-/** Parses the attributes of a [[RouteMetrics]] object */
+/** Parses the attributes of a {@link RouteMetrics} object */
 export function parseRouteMetrics(r: Buffer): RouteMetrics {
     return structs.getObject(r, {
         1: (data, obj) => obj.lock = data,
@@ -818,7 +818,7 @@ export function parseRouteMetrics(r: Buffer): RouteMetrics {
     })
 }
 
-/** Encodes a [[RouteMetrics]] object into a stream of attributes */
+/** Encodes a {@link RouteMetrics} object into a stream of attributes */
 export function formatRouteMetrics(x: RouteMetrics): StreamData {
     return structs.putObject(x, {
         lock: (data, obj) => data.push(1, obj.lock!),
@@ -853,7 +853,7 @@ export interface RouteMetricsFeatures {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RouteMetricsFeatures]] bitmask */
+/** Parses the flags in a {@link RouteMetricsFeatures} bitmask */
 export function parseRouteMetricsFeatures(r: number): RouteMetricsFeatures {
     const x: RouteMetricsFeatures = {}
     if (r & (1)) (x.ecn = true, r &= ~(1))
@@ -864,7 +864,7 @@ export function parseRouteMetricsFeatures(r: number): RouteMetricsFeatures {
     return x
 }
 
-/** Encodes a [[RouteMetricsFeatures]] bitmask */
+/** Encodes a {@link RouteMetricsFeatures} bitmask */
 export function formatRouteMetricsFeatures(x: RouteMetricsFeatures): number {
     let r = x.__unknown || 0
     if (x.ecn) r |= 1
@@ -884,7 +884,7 @@ export interface RouteSession {
     u?: number[]
 }
 
-/** Parses the attributes of a [[RouteSession]] object */
+/** Parses the attributes of a {@link RouteSession} object */
 export function parseRouteSession(r: Buffer): RouteSession {
     if (r.length !== __LENGTH_RouteSession) throw Error('Unexpected length for RouteSession')
     const x: RouteSession = {}
@@ -895,7 +895,7 @@ export function parseRouteSession(r: Buffer): RouteSession {
     return x
 }
 
-/** Encodes a [[RouteSession]] object into a stream of attributes */
+/** Encodes a {@link RouteSession} object into a stream of attributes */
 export function formatRouteSession(x: RouteSession, r: Buffer = Buffer.alloc(__LENGTH_RouteSession)): Buffer {
     if (r.length !== __LENGTH_RouteSession) throw Error('Unexpected length for RouteSession')
     x.proto && structs.writeU8.call(r, x.proto, 0)
@@ -917,7 +917,7 @@ export interface RouteMfcStats {
     wrongIf?: bigint
 }
 
-/** Parses the attributes of a [[RouteMfcStats]] object */
+/** Parses the attributes of a {@link RouteMfcStats} object */
 export function parseRouteMfcStats(r: Buffer): RouteMfcStats {
     if (r.length !== __LENGTH_RouteMfcStats) throw Error('Unexpected length for RouteMfcStats')
     const x: RouteMfcStats = {}
@@ -927,7 +927,7 @@ export function parseRouteMfcStats(r: Buffer): RouteMfcStats {
     return x
 }
 
-/** Encodes a [[RouteMfcStats]] object into a stream of attributes */
+/** Encodes a {@link RouteMfcStats} object into a stream of attributes */
 export function formatRouteMfcStats(x: RouteMfcStats, r: Buffer = Buffer.alloc(__LENGTH_RouteMfcStats)): Buffer {
     if (r.length !== __LENGTH_RouteMfcStats) throw Error('Unexpected length for RouteMfcStats')
     x.packets && structs.writeU64.call(r, x.packets, 0)
@@ -954,7 +954,7 @@ export interface Address {
     index?: number
 }
 
-/** Parses the attributes of a [[Address]] object */
+/** Parses the attributes of a {@link Address} object */
 export function parseAddress(r: Buffer): Address {
     if (r.length !== __LENGTH_Address) throw Error('Unexpected length for Address')
     const x: Address = {}
@@ -966,7 +966,7 @@ export function parseAddress(r: Buffer): Address {
     return x
 }
 
-/** Encodes a [[Address]] object into a stream of attributes */
+/** Encodes a {@link Address} object into a stream of attributes */
 export function formatAddress(x: Address, r: Buffer = Buffer.alloc(__LENGTH_Address)): Buffer {
     if (r.length !== __LENGTH_Address) throw Error('Unexpected length for Address')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1013,7 +1013,7 @@ export interface AddressAttrs extends BaseObject {
     targetNetnsid?: Buffer
 }
 
-/** Parses the attributes of a [[AddressAttrs]] object */
+/** Parses the attributes of a {@link AddressAttrs} object */
 export function parseAddressAttrs(r: Buffer): AddressAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.address = data,
@@ -1029,7 +1029,7 @@ export function parseAddressAttrs(r: Buffer): AddressAttrs {
     })
 }
 
-/** Encodes a [[AddressAttrs]] object into a stream of attributes */
+/** Encodes a {@link AddressAttrs} object into a stream of attributes */
 export function formatAddressAttrs(x: AddressAttrs): StreamData {
     return structs.putObject(x, {
         address: (data, obj) => data.push(1, obj.address!),
@@ -1073,7 +1073,7 @@ export interface AddressFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[AddressFlags]] bitmask */
+/** Parses the flags in a {@link AddressFlags} bitmask */
 export function parseAddressFlags(r: number): AddressFlags {
     const x: AddressFlags = {}
     if (r & (1)) (x.secondary = true, r &= ~(1))
@@ -1092,7 +1092,7 @@ export function parseAddressFlags(r: number): AddressFlags {
     return x
 }
 
-/** Encodes a [[AddressFlags]] bitmask */
+/** Encodes a {@link AddressFlags} bitmask */
 export function formatAddressFlags(x: AddressFlags): number {
     let r = x.__unknown || 0
     if (x.secondary) r |= 1
@@ -1122,7 +1122,7 @@ export interface AddressCacheInfo {
     tstamp?: number
 }
 
-/** Parses the attributes of a [[AddressCacheInfo]] object */
+/** Parses the attributes of a {@link AddressCacheInfo} object */
 export function parseAddressCacheInfo(r: Buffer): AddressCacheInfo {
     if (r.length !== __LENGTH_AddressCacheInfo) throw Error('Unexpected length for AddressCacheInfo')
     const x: AddressCacheInfo = {}
@@ -1133,7 +1133,7 @@ export function parseAddressCacheInfo(r: Buffer): AddressCacheInfo {
     return x
 }
 
-/** Encodes a [[AddressCacheInfo]] object into a stream of attributes */
+/** Encodes a {@link AddressCacheInfo} object into a stream of attributes */
 export function formatAddressCacheInfo(x: AddressCacheInfo, r: Buffer = Buffer.alloc(__LENGTH_AddressCacheInfo)): Buffer {
     if (r.length !== __LENGTH_AddressCacheInfo) throw Error('Unexpected length for AddressCacheInfo')
     x.ifaPrefered && structs.writeU32.call(r, x.ifaPrefered, 0)
@@ -1163,7 +1163,7 @@ export interface Link {
     change?: DeviceFlags
 }
 
-/** Parses the attributes of a [[Link]] object */
+/** Parses the attributes of a {@link Link} object */
 export function parseLink(r: Buffer): Link {
     if (r.length !== __LENGTH_Link) throw Error('Unexpected length for Link')
     const x: Link = {}
@@ -1176,7 +1176,7 @@ export function parseLink(r: Buffer): Link {
     return x
 }
 
-/** Encodes a [[Link]] object into a stream of attributes */
+/** Encodes a {@link Link} object into a stream of attributes */
 export function formatLink(x: Link, r: Buffer = Buffer.alloc(__LENGTH_Link)): Buffer {
     if (r.length !== __LENGTH_Link) throw Error('Unexpected length for Link')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1203,7 +1203,7 @@ export interface RtExtFilter {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RtExtFilter]] bitmask */
+/** Parses the flags in a {@link RtExtFilter} bitmask */
 export function parseRtExtFilter(r: number): RtExtFilter {
     const x: RtExtFilter = {}
     if (r & (1)) (x.vf = true, r &= ~(1))
@@ -1214,7 +1214,7 @@ export function parseRtExtFilter(r: number): RtExtFilter {
     return x
 }
 
-/** Encodes a [[RtExtFilter]] bitmask */
+/** Encodes a {@link RtExtFilter} bitmask */
 export function formatRtExtFilter(x: RtExtFilter): number {
     let r = x.__unknown || 0
     if (x.vf) r |= 1
@@ -1309,7 +1309,7 @@ export interface DeviceFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[DeviceFlags]] bitmask */
+/** Parses the flags in a {@link DeviceFlags} bitmask */
 export function parseDeviceFlags(r: number): DeviceFlags {
     const x: DeviceFlags = {}
     if (r & (1)) (x.up = true, r &= ~(1))
@@ -1335,7 +1335,7 @@ export function parseDeviceFlags(r: number): DeviceFlags {
     return x
 }
 
-/** Encodes a [[DeviceFlags]] bitmask */
+/** Encodes a {@link DeviceFlags} bitmask */
 export function formatDeviceFlags(x: DeviceFlags): number {
     let r = x.__unknown || 0
     if (x.up) r |= 1
@@ -1575,7 +1575,7 @@ export interface Prefix {
     __pad3?: number
 }
 
-/** Parses the attributes of a [[Prefix]] object */
+/** Parses the attributes of a {@link Prefix} object */
 export function parsePrefix(r: Buffer): Prefix {
     if (r.length !== __LENGTH_Prefix) throw Error('Unexpected length for Prefix')
     const x: Prefix = {}
@@ -1590,7 +1590,7 @@ export function parsePrefix(r: Buffer): Prefix {
     return x
 }
 
-/** Encodes a [[Prefix]] object into a stream of attributes */
+/** Encodes a {@link Prefix} object into a stream of attributes */
 export function formatPrefix(x: Prefix, r: Buffer = Buffer.alloc(__LENGTH_Prefix)): Buffer {
     if (r.length !== __LENGTH_Prefix) throw Error('Unexpected length for Prefix')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1612,7 +1612,7 @@ export interface PrefixAttrs extends BaseObject {
     cacheInfo?: PrefixCacheInfo
 }
 
-/** Parses the attributes of a [[PrefixAttrs]] object */
+/** Parses the attributes of a {@link PrefixAttrs} object */
 export function parsePrefixAttrs(r: Buffer): PrefixAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.address = data,
@@ -1620,7 +1620,7 @@ export function parsePrefixAttrs(r: Buffer): PrefixAttrs {
     })
 }
 
-/** Encodes a [[PrefixAttrs]] object into a stream of attributes */
+/** Encodes a {@link PrefixAttrs} object into a stream of attributes */
 export function formatPrefixAttrs(x: PrefixAttrs): StreamData {
     return structs.putObject(x, {
         address: (data, obj) => data.push(1, obj.address!),
@@ -1634,7 +1634,7 @@ export interface PrefixCacheInfo {
     validTime?: number
 }
 
-/** Parses the attributes of a [[PrefixCacheInfo]] object */
+/** Parses the attributes of a {@link PrefixCacheInfo} object */
 export function parsePrefixCacheInfo(r: Buffer): PrefixCacheInfo {
     if (r.length !== __LENGTH_PrefixCacheInfo) throw Error('Unexpected length for PrefixCacheInfo')
     const x: PrefixCacheInfo = {}
@@ -1643,7 +1643,7 @@ export function parsePrefixCacheInfo(r: Buffer): PrefixCacheInfo {
     return x
 }
 
-/** Encodes a [[PrefixCacheInfo]] object into a stream of attributes */
+/** Encodes a {@link PrefixCacheInfo} object into a stream of attributes */
 export function formatPrefixCacheInfo(x: PrefixCacheInfo, r: Buffer = Buffer.alloc(__LENGTH_PrefixCacheInfo)): Buffer {
     if (r.length !== __LENGTH_PrefixCacheInfo) throw Error('Unexpected length for PrefixCacheInfo')
     x.preferredTime && structs.writeU32.call(r, x.preferredTime, 0)
@@ -1672,7 +1672,7 @@ export interface Tc {
     info?: number
 }
 
-/** Parses the attributes of a [[Tc]] object */
+/** Parses the attributes of a {@link Tc} object */
 export function parseTc(r: Buffer): Tc {
     if (r.length !== __LENGTH_Tc) throw Error('Unexpected length for Tc')
     const x: Tc = {}
@@ -1686,7 +1686,7 @@ export function parseTc(r: Buffer): Tc {
     return x
 }
 
-/** Encodes a [[Tc]] object into a stream of attributes */
+/** Encodes a {@link Tc} object into a stream of attributes */
 export function formatTc(x: Tc, r: Buffer = Buffer.alloc(__LENGTH_Tc)): Buffer {
     if (r.length !== __LENGTH_Tc) throw Error('Unexpected length for Tc')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1731,7 +1731,7 @@ export interface TcAttrs extends BaseObject {
     egressBlock?: Buffer
 }
 
-/** Parses the attributes of a [[TcAttrs]] object */
+/** Parses the attributes of a {@link TcAttrs} object */
 export function parseTcAttrs(r: Buffer): TcAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.kind = structs.getString(data),
@@ -1751,7 +1751,7 @@ export function parseTcAttrs(r: Buffer): TcAttrs {
     })
 }
 
-/** Encodes a [[TcAttrs]] object into a stream of attributes */
+/** Encodes a {@link TcAttrs} object into a stream of attributes */
 export function formatTcAttrs(x: TcAttrs): StreamData {
     return structs.putObject(x, {
         kind: (data, obj) => data.push(1, structs.putString(obj.kind!)),
@@ -1780,7 +1780,7 @@ export interface TcAction {
     __pad2?: number
 }
 
-/** Parses the attributes of a [[TcAction]] object */
+/** Parses the attributes of a {@link TcAction} object */
 export function parseTcAction(r: Buffer): TcAction {
     if (r.length !== __LENGTH_TcAction) throw Error('Unexpected length for TcAction')
     const x: TcAction = {}
@@ -1790,7 +1790,7 @@ export function parseTcAction(r: Buffer): TcAction {
     return x
 }
 
-/** Encodes a [[TcAction]] object into a stream of attributes */
+/** Encodes a {@link TcAction} object into a stream of attributes */
 export function formatTcAction(x: TcAction, r: Buffer = Buffer.alloc(__LENGTH_TcAction)): Buffer {
     if (r.length !== __LENGTH_TcAction) throw Error('Unexpected length for TcAction')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1812,7 +1812,7 @@ export interface TcActionRoot extends BaseObject {
     timeDelta?: Buffer
 }
 
-/** Parses the attributes of a [[TcActionRoot]] object */
+/** Parses the attributes of a {@link TcActionRoot} object */
 export function parseTcActionRoot(r: Buffer): TcActionRoot {
     return structs.getObject(r, {
         1: (data, obj) => obj.tab = data,
@@ -1822,7 +1822,7 @@ export function parseTcActionRoot(r: Buffer): TcActionRoot {
     })
 }
 
-/** Encodes a [[TcActionRoot]] object into a stream of attributes */
+/** Encodes a {@link TcActionRoot} object into a stream of attributes */
 export function formatTcActionRoot(x: TcActionRoot): StreamData {
     return structs.putObject(x, {
         tab: (data, obj) => data.push(1, obj.tab!),
@@ -1843,7 +1843,7 @@ export interface TcActionFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[TcActionFlags]] bitmask */
+/** Parses the flags in a {@link TcActionFlags} bitmask */
 export function parseTcActionFlags(r: number): TcActionFlags {
     const x: TcActionFlags = {}
     if (r & (1)) (x.largeDumpOn = true, r &= ~(1))
@@ -1851,7 +1851,7 @@ export function parseTcActionFlags(r: number): TcActionFlags {
     return x
 }
 
-/** Encodes a [[TcActionFlags]] bitmask */
+/** Encodes a {@link TcActionFlags} bitmask */
 export function formatTcActionFlags(x: TcActionFlags): number {
     let r = x.__unknown || 0
     if (x.largeDumpOn) r |= 1
@@ -1878,7 +1878,7 @@ export interface NdUserOption {
     __pad3?: number
 }
 
-/** Parses the attributes of a [[NdUserOption]] object */
+/** Parses the attributes of a {@link NdUserOption} object */
 export function parseNdUserOption(r: Buffer): NdUserOption {
     if (r.length !== __LENGTH_NdUserOption) throw Error('Unexpected length for NdUserOption')
     const x: NdUserOption = {}
@@ -1893,7 +1893,7 @@ export function parseNdUserOption(r: Buffer): NdUserOption {
     return x
 }
 
-/** Encodes a [[NdUserOption]] object into a stream of attributes */
+/** Encodes a {@link NdUserOption} object into a stream of attributes */
 export function formatNdUserOption(x: NdUserOption, r: Buffer = Buffer.alloc(__LENGTH_NdUserOption)): Buffer {
     if (r.length !== __LENGTH_NdUserOption) throw Error('Unexpected length for NdUserOption')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1913,14 +1913,14 @@ export interface NdUserOptionAttrs extends BaseObject {
     srcaddr?: Buffer
 }
 
-/** Parses the attributes of a [[NdUserOptionAttrs]] object */
+/** Parses the attributes of a {@link NdUserOptionAttrs} object */
 export function parseNdUserOptionAttrs(r: Buffer): NdUserOptionAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.srcaddr = data,
     })
 }
 
-/** Encodes a [[NdUserOptionAttrs]] object into a stream of attributes */
+/** Encodes a {@link NdUserOptionAttrs} object into a stream of attributes */
 export function formatNdUserOptionAttrs(x: NdUserOptionAttrs): StreamData {
     return structs.putObject(x, {
         srcaddr: (data, obj) => data.push(1, obj.srcaddr!),
@@ -1943,7 +1943,7 @@ export interface Neighbor {
     type?: number
 }
 
-/** Parses the attributes of a [[Neighbor]] object */
+/** Parses the attributes of a {@link Neighbor} object */
 export function parseNeighbor(r: Buffer): Neighbor {
     if (r.length !== __LENGTH_Neighbor) throw Error('Unexpected length for Neighbor')
     const x: Neighbor = {}
@@ -1957,7 +1957,7 @@ export function parseNeighbor(r: Buffer): Neighbor {
     return x
 }
 
-/** Encodes a [[Neighbor]] object into a stream of attributes */
+/** Encodes a {@link Neighbor} object into a stream of attributes */
 export function formatNeighbor(x: Neighbor, r: Buffer = Buffer.alloc(__LENGTH_Neighbor)): Buffer {
     if (r.length !== __LENGTH_Neighbor) throw Error('Unexpected length for Neighbor')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -1999,7 +1999,7 @@ export interface NeighborAttrs extends BaseObject {
     protocol?: Buffer
 }
 
-/** Parses the attributes of a [[NeighborAttrs]] object */
+/** Parses the attributes of a {@link NeighborAttrs} object */
 export function parseNeighborAttrs(r: Buffer): NeighborAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.dst = data,
@@ -2017,7 +2017,7 @@ export function parseNeighborAttrs(r: Buffer): NeighborAttrs {
     })
 }
 
-/** Encodes a [[NeighborAttrs]] object into a stream of attributes */
+/** Encodes a {@link NeighborAttrs} object into a stream of attributes */
 export function formatNeighborAttrs(x: NeighborAttrs): StreamData {
     return structs.putObject(x, {
         dst: (data, obj) => data.push(1, obj.dst!),
@@ -2057,7 +2057,7 @@ export interface NeighborFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[NeighborFlags]] bitmask */
+/** Parses the flags in a {@link NeighborFlags} bitmask */
 export function parseNeighborFlags(r: number): NeighborFlags {
     const x: NeighborFlags = {}
     if (r & (1)) (x.use = true, r &= ~(1))
@@ -2072,7 +2072,7 @@ export function parseNeighborFlags(r: number): NeighborFlags {
     return x
 }
 
-/** Encodes a [[NeighborFlags]] bitmask */
+/** Encodes a {@link NeighborFlags} bitmask */
 export function formatNeighborFlags(x: NeighborFlags): number {
     let r = x.__unknown || 0
     if (x.use) r |= 1
@@ -2114,7 +2114,7 @@ export interface NeighborState {
     __unknown?: number
 }
 
-/** Parses the flags in a [[NeighborState]] bitmask */
+/** Parses the flags in a {@link NeighborState} bitmask */
 export function parseNeighborState(r: number): NeighborState {
     const x: NeighborState = {}
     if (r & (1)) (x.incomplete = true, r &= ~(1))
@@ -2129,7 +2129,7 @@ export function parseNeighborState(r: number): NeighborState {
     return x
 }
 
-/** Encodes a [[NeighborState]] bitmask */
+/** Encodes a {@link NeighborState} bitmask */
 export function formatNeighborState(x: NeighborState): number {
     let r = x.__unknown || 0
     if (x.incomplete) r |= 1
@@ -2153,7 +2153,7 @@ export interface NeighborCacheInfo {
     refcnt?: number
 }
 
-/** Parses the attributes of a [[NeighborCacheInfo]] object */
+/** Parses the attributes of a {@link NeighborCacheInfo} object */
 export function parseNeighborCacheInfo(r: Buffer): NeighborCacheInfo {
     if (r.length !== __LENGTH_NeighborCacheInfo) throw Error('Unexpected length for NeighborCacheInfo')
     const x: NeighborCacheInfo = {}
@@ -2164,7 +2164,7 @@ export function parseNeighborCacheInfo(r: Buffer): NeighborCacheInfo {
     return x
 }
 
-/** Encodes a [[NeighborCacheInfo]] object into a stream of attributes */
+/** Encodes a {@link NeighborCacheInfo} object into a stream of attributes */
 export function formatNeighborCacheInfo(x: NeighborCacheInfo, r: Buffer = Buffer.alloc(__LENGTH_NeighborCacheInfo)): Buffer {
     if (r.length !== __LENGTH_NeighborCacheInfo) throw Error('Unexpected length for NeighborCacheInfo')
     x.confirmed && structs.writeU32.call(r, x.confirmed, 0)
@@ -2208,7 +2208,7 @@ export interface NeighborTable {
     __pad2?: number
 }
 
-/** Parses the attributes of a [[NeighborTable]] object */
+/** Parses the attributes of a {@link NeighborTable} object */
 export function parseNeighborTable(r: Buffer): NeighborTable {
     if (r.length !== __LENGTH_NeighborTable) throw Error('Unexpected length for NeighborTable')
     const x: NeighborTable = {}
@@ -2218,7 +2218,7 @@ export function parseNeighborTable(r: Buffer): NeighborTable {
     return x
 }
 
-/** Encodes a [[NeighborTable]] object into a stream of attributes */
+/** Encodes a {@link NeighborTable} object into a stream of attributes */
 export function formatNeighborTable(x: NeighborTable, r: Buffer = Buffer.alloc(__LENGTH_NeighborTable)): Buffer {
     if (r.length !== __LENGTH_NeighborTable) throw Error('Unexpected length for NeighborTable')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -2255,7 +2255,7 @@ export interface NeighborTableAttrs extends BaseObject {
     __pad?: Buffer
 }
 
-/** Parses the attributes of a [[NeighborTableAttrs]] object */
+/** Parses the attributes of a {@link NeighborTableAttrs} object */
 export function parseNeighborTableAttrs(r: Buffer): NeighborTableAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.name = structs.getString(data),
@@ -2270,7 +2270,7 @@ export function parseNeighborTableAttrs(r: Buffer): NeighborTableAttrs {
     })
 }
 
-/** Encodes a [[NeighborTableAttrs]] object into a stream of attributes */
+/** Encodes a {@link NeighborTableAttrs} object into a stream of attributes */
 export function formatNeighborTableAttrs(x: NeighborTableAttrs): StreamData {
     return structs.putObject(x, {
         name: (data, obj) => data.push(1, structs.putString(obj.name!)),
@@ -2306,7 +2306,7 @@ export interface NeighborTableConfig {
     proxyQlen?: number
 }
 
-/** Parses the attributes of a [[NeighborTableConfig]] object */
+/** Parses the attributes of a {@link NeighborTableConfig} object */
 export function parseNeighborTableConfig(r: Buffer): NeighborTableConfig {
     if (r.length !== __LENGTH_NeighborTableConfig) throw Error('Unexpected length for NeighborTableConfig')
     const x: NeighborTableConfig = {}
@@ -2322,7 +2322,7 @@ export function parseNeighborTableConfig(r: Buffer): NeighborTableConfig {
     return x
 }
 
-/** Encodes a [[NeighborTableConfig]] object into a stream of attributes */
+/** Encodes a {@link NeighborTableConfig} object into a stream of attributes */
 export function formatNeighborTableConfig(x: NeighborTableConfig, r: Buffer = Buffer.alloc(__LENGTH_NeighborTableConfig)): Buffer {
     if (r.length !== __LENGTH_NeighborTableConfig) throw Error('Unexpected length for NeighborTableConfig')
     x.keyLen && structs.writeU16.call(r, x.keyLen, 0)
@@ -2363,7 +2363,7 @@ export interface NeighborTableStats {
     tableFulls?: bigint
 }
 
-/** Parses the attributes of a [[NeighborTableStats]] object */
+/** Parses the attributes of a {@link NeighborTableStats} object */
 export function parseNeighborTableStats(r: Buffer): NeighborTableStats {
     if (r.length !== __LENGTH_NeighborTableStats) throw Error('Unexpected length for NeighborTableStats')
     const x: NeighborTableStats = {}
@@ -2381,7 +2381,7 @@ export function parseNeighborTableStats(r: Buffer): NeighborTableStats {
     return x
 }
 
-/** Encodes a [[NeighborTableStats]] object into a stream of attributes */
+/** Encodes a {@link NeighborTableStats} object into a stream of attributes */
 export function formatNeighborTableStats(x: NeighborTableStats, r: Buffer = Buffer.alloc(__LENGTH_NeighborTableStats)): Buffer {
     if (r.length !== __LENGTH_NeighborTableStats) throw Error('Unexpected length for NeighborTableStats')
     x.allocs && structs.writeU64.call(r, x.allocs, 0)
@@ -2447,7 +2447,7 @@ export interface NeighborTableParams extends BaseObject {
     __pad?: Buffer
 }
 
-/** Parses the attributes of a [[NeighborTableParams]] object */
+/** Parses the attributes of a {@link NeighborTableParams} object */
 export function parseNeighborTableParams(r: Buffer): NeighborTableParams {
     return structs.getObject(r, {
         1: (data, obj) => obj.ifindex = structs.getU32(data),
@@ -2471,7 +2471,7 @@ export function parseNeighborTableParams(r: Buffer): NeighborTableParams {
     })
 }
 
-/** Encodes a [[NeighborTableParams]] object into a stream of attributes */
+/** Encodes a {@link NeighborTableParams} object into a stream of attributes */
 export function formatNeighborTableParams(x: NeighborTableParams): StreamData {
     return structs.putObject(x, {
         ifindex: (data, obj) => data.push(1, structs.putU32(obj.ifindex!)),
@@ -2517,7 +2517,7 @@ export interface Rule {
     flags?: RuleFlags
 }
 
-/** Parses the attributes of a [[Rule]] object */
+/** Parses the attributes of a {@link Rule} object */
 export function parseRule(r: Buffer): Rule {
     if (r.length !== __LENGTH_Rule) throw Error('Unexpected length for Rule')
     const x: Rule = {}
@@ -2533,7 +2533,7 @@ export function parseRule(r: Buffer): Rule {
     return x
 }
 
-/** Encodes a [[Rule]] object into a stream of attributes */
+/** Encodes a {@link Rule} object into a stream of attributes */
 export function formatRule(x: Rule, r: Buffer = Buffer.alloc(__LENGTH_Rule)): Buffer {
     if (r.length !== __LENGTH_Rule) throw Error('Unexpected length for Rule')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -2589,7 +2589,7 @@ export interface RuleAttrs extends BaseObject {
     /** Extended table id */
     table?: number
     
-    /** mask for [[fwmark]] */
+    /** mask for {@link fwmark} */
     fwmask?: number
     
     /** output interface name */
@@ -2612,7 +2612,7 @@ export interface RuleAttrs extends BaseObject {
     dportRange?: RulePortRange
 }
 
-/** Parses the attributes of a [[RuleAttrs]] object */
+/** Parses the attributes of a {@link RuleAttrs} object */
 export function parseRuleAttrs(r: Buffer): RuleAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.dst = data,
@@ -2642,7 +2642,7 @@ export function parseRuleAttrs(r: Buffer): RuleAttrs {
     })
 }
 
-/** Encodes a [[RuleAttrs]] object into a stream of attributes */
+/** Encodes a {@link RuleAttrs} object into a stream of attributes */
 export function formatRuleAttrs(x: RuleAttrs): StreamData {
     return structs.putObject(x, {
         dst: (data, obj) => data.push(1, obj.dst!),
@@ -2692,7 +2692,7 @@ export interface RuleFlags {
     __unknown?: number
 }
 
-/** Parses the flags in a [[RuleFlags]] bitmask */
+/** Parses the flags in a {@link RuleFlags} bitmask */
 export function parseRuleFlags(r: number): RuleFlags {
     const x: RuleFlags = {}
     if (r & (1)) (x.permanent = true, r &= ~(1))
@@ -2705,7 +2705,7 @@ export function parseRuleFlags(r: number): RuleFlags {
     return x
 }
 
-/** Encodes a [[RuleFlags]] bitmask */
+/** Encodes a {@link RuleFlags} bitmask */
 export function formatRuleFlags(x: RuleFlags): number {
     let r = x.__unknown || 0
     if (x.permanent) r |= 1
@@ -2723,7 +2723,7 @@ export interface RuleUidRange {
     end?: number
 }
 
-/** Parses the attributes of a [[RuleUidRange]] object */
+/** Parses the attributes of a {@link RuleUidRange} object */
 export function parseRuleUidRange(r: Buffer): RuleUidRange {
     if (r.length !== __LENGTH_RuleUidRange) throw Error('Unexpected length for RuleUidRange')
     const x: RuleUidRange = {}
@@ -2732,7 +2732,7 @@ export function parseRuleUidRange(r: Buffer): RuleUidRange {
     return x
 }
 
-/** Encodes a [[RuleUidRange]] object into a stream of attributes */
+/** Encodes a {@link RuleUidRange} object into a stream of attributes */
 export function formatRuleUidRange(x: RuleUidRange, r: Buffer = Buffer.alloc(__LENGTH_RuleUidRange)): Buffer {
     if (r.length !== __LENGTH_RuleUidRange) throw Error('Unexpected length for RuleUidRange')
     x.start && structs.writeU32.call(r, x.start, 0)
@@ -2748,7 +2748,7 @@ export interface RulePortRange {
     end?: number
 }
 
-/** Parses the attributes of a [[RulePortRange]] object */
+/** Parses the attributes of a {@link RulePortRange} object */
 export function parseRulePortRange(r: Buffer): RulePortRange {
     if (r.length !== __LENGTH_RulePortRange) throw Error('Unexpected length for RulePortRange')
     const x: RulePortRange = {}
@@ -2757,7 +2757,7 @@ export function parseRulePortRange(r: Buffer): RulePortRange {
     return x
 }
 
-/** Encodes a [[RulePortRange]] object into a stream of attributes */
+/** Encodes a {@link RulePortRange} object into a stream of attributes */
 export function formatRulePortRange(x: RulePortRange, r: Buffer = Buffer.alloc(__LENGTH_RulePortRange)): Buffer {
     if (r.length !== __LENGTH_RulePortRange) throw Error('Unexpected length for RulePortRange')
     x.start && structs.writeU16.call(r, x.start, 0)
@@ -2807,7 +2807,7 @@ export interface NextHop {
     flags?: RouteNextHopFlags
 }
 
-/** Parses the attributes of a [[NextHop]] object */
+/** Parses the attributes of a {@link NextHop} object */
 export function parseNextHop(r: Buffer): NextHop {
     if (r.length !== __LENGTH_NextHop) throw Error('Unexpected length for NextHop')
     const x: NextHop = {}
@@ -2819,7 +2819,7 @@ export function parseNextHop(r: Buffer): NextHop {
     return x
 }
 
-/** Encodes a [[NextHop]] object into a stream of attributes */
+/** Encodes a {@link NextHop} object into a stream of attributes */
 export function formatNextHop(x: NextHop, r: Buffer = Buffer.alloc(__LENGTH_NextHop)): Buffer {
     if (r.length !== __LENGTH_NextHop) throw Error('Unexpected length for NextHop')
     x.family && structs.writeU8.call(r, x.family, 0)
@@ -2881,7 +2881,7 @@ export interface NextHopAttrs extends BaseObject {
     resBucket?: NextHopResBucket
 }
 
-/** Parses the attributes of a [[NextHopAttrs]] object */
+/** Parses the attributes of a {@link NextHopAttrs} object */
 export function parseNextHopAttrs(r: Buffer): NextHopAttrs {
     return structs.getObject(r, {
         1: (data, obj) => obj.id = structs.getU32(data),
@@ -2900,7 +2900,7 @@ export function parseNextHopAttrs(r: Buffer): NextHopAttrs {
     })
 }
 
-/** Encodes a [[NextHopAttrs]] object into a stream of attributes */
+/** Encodes a {@link NextHopAttrs} object into a stream of attributes */
 export function formatNextHopAttrs(x: NextHopAttrs): StreamData {
     return structs.putObject(x, {
         id: (data, obj) => data.push(1, structs.putU32(obj.id!)),
@@ -2932,7 +2932,7 @@ export interface NextHopGroup {
     __reserved2?: number
 }
 
-/** Parses the attributes of a [[NextHopGroup]] object */
+/** Parses the attributes of a {@link NextHopGroup} object */
 export function parseNextHopGroup(r: Buffer): NextHopGroup {
     if (r.length !== __LENGTH_NextHopGroup) throw Error('Unexpected length for NextHopGroup')
     const x: NextHopGroup = {}
@@ -2943,7 +2943,7 @@ export function parseNextHopGroup(r: Buffer): NextHopGroup {
     return x
 }
 
-/** Encodes a [[NextHopGroup]] object into a stream of attributes */
+/** Encodes a {@link NextHopGroup} object into a stream of attributes */
 export function formatNextHopGroup(x: NextHopGroup, r: Buffer = Buffer.alloc(__LENGTH_NextHopGroup)): Buffer {
     if (r.length !== __LENGTH_NextHopGroup) throw Error('Unexpected length for NextHopGroup')
     x.id && structs.writeU32.call(r, x.id, 0)
@@ -2983,7 +2983,7 @@ export interface NextHopResGroup extends BaseObject {
     unbalancedTime?: bigint
 }
 
-/** Parses the attributes of a [[NextHopResGroup]] object */
+/** Parses the attributes of a {@link NextHopResGroup} object */
 export function parseNextHopResGroup(r: Buffer): NextHopResGroup {
     return structs.getObject(r, {
         0: (data, obj) => obj.__pad = data,
@@ -2994,7 +2994,7 @@ export function parseNextHopResGroup(r: Buffer): NextHopResGroup {
     })
 }
 
-/** Encodes a [[NextHopResGroup]] object into a stream of attributes */
+/** Encodes a {@link NextHopResGroup} object into a stream of attributes */
 export function formatNextHopResGroup(x: NextHopResGroup): StreamData {
     return structs.putObject(x, {
         __pad: (data, obj) => data.push(0, obj.__pad!),
@@ -3019,7 +3019,7 @@ export interface NextHopResBucket extends BaseObject {
     nexthopId?: number
 }
 
-/** Parses the attributes of a [[NextHopResBucket]] object */
+/** Parses the attributes of a {@link NextHopResBucket} object */
 export function parseNextHopResBucket(r: Buffer): NextHopResBucket {
     return structs.getObject(r, {
         0: (data, obj) => obj.__pad = data,
@@ -3029,7 +3029,7 @@ export function parseNextHopResBucket(r: Buffer): NextHopResBucket {
     })
 }
 
-/** Encodes a [[NextHopResBucket]] object into a stream of attributes */
+/** Encodes a {@link NextHopResBucket} object into a stream of attributes */
 export function formatNextHopResBucket(x: NextHopResBucket): StreamData {
     return structs.putObject(x, {
         __pad: (data, obj) => data.push(0, obj.__pad!),
