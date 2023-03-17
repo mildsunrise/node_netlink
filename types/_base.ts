@@ -3,6 +3,7 @@ export interface TypeStore {
 }
 
 export interface TypeDef {
+    /** Kind of type being declared (default: "attrs") */
     kind?: "attrs" | "struct" | "enum" | "flags"
     /** Original declaration name in headers */
     orig?: string

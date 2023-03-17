@@ -121,7 +121,7 @@ writeFileSync(outFilename, output)
 function toCamelCase(x: string) {
     const m = /^(_*)(.+)$/.exec(x)!
     const words = m[2].toLowerCase().split('_')
-    return m[1] + words[0] + words.slice(1).map(x => x[0].toUpperCase() + x.substr(1)).join('')
+    return m[1] + words[0] + words.slice(1).map(x => x[0].toUpperCase() + x.substring(1)).join('')
 }
 function getFlagName(x: string) {
     return `${x}Set`
@@ -156,7 +156,7 @@ function processType(t: TypeExpr, lower?: AttributeOptions['type']): TypeResult 
             if (/64/.test(t) && lower)
                 console.warn('Warning: Lower type specified over a 64-bit value')
             const { type, parse, format } = processLower(lower)
-            const tname = t[0].toUpperCase() + t.substr(1)
+            const tname = t[0].toUpperCase() + t.substring(1)
             return { type: type || (/64/.test(t) ? 'bigint' : 'number'),
                 parse: x => parse(`structs.get${tname}(${x})`),
                 format: x => `structs.put${tname}(${format(x)})` }
@@ -164,7 +164,7 @@ function processType(t: TypeExpr, lower?: AttributeOptions['type']): TypeResult 
             if (lower) console.warn(`Warning: Ignoring ${lower} since it's over data`)
             return { type: 'Buffer', parse: x => x, format: x => x }
         } else if (t === 'string' || t === 'flag' || t === 'bool') {
-            const tname = t[0].toUpperCase() + t.substr(1)
+            const tname = t[0].toUpperCase() + t.substring(1)
             if (lower) throw Error(`Lower type ${lower} specified over ${t}`)
             return { type: { string: 'string', flag: 'true', bool: 'boolean' }[t],
                 parse: x => `structs.get${tname}(${x})`,
@@ -311,7 +311,7 @@ function processStructType(t: TypeExpr, lower?: AttributeOptions['type']): Struc
         if (/64/.test(t) && lower)
             console.warn('Warning: Lower type specified over a 64-bit value')
         const { type, parse, format } = processLower(lower)
-        const tname = t[0].toUpperCase() + t.substr(1)
+        const tname = t[0].toUpperCase() + t.substring(1)
         return { type: type || (/64/.test(t) ? 'bigint' : 'number'),
             length: Number(/^[su](8|16|32|64)([bl]e)?$/.exec(t)![1]) / 8,
             parse: (o) => parse(`structs.read${tname}.call(r, ${o})`),
@@ -320,7 +320,7 @@ function processStructType(t: TypeExpr, lower?: AttributeOptions['type']): Struc
     } else if ({}.hasOwnProperty.call(types, t)) {
         const type = types[t]
         if (lower) throw Error(`Lower type ${lower} specified over struct type`)
-        if (type.kind && type.kind !== 'struct')
+        if (type.kind !== 'struct')
             throw Error(`Invalid type ${t} specified as struct type`)
         const length = getLengthName(t)
         return { type: t, length,
