@@ -3607,7 +3607,7 @@ export interface _IpWithProto {
 export function parse_IpWithProto(r: Buffer): _IpWithProto {
     if (r.length !== __LENGTH__IpWithProto) throw Error('Unexpected length for _IpWithProto')
     const x: _IpWithProto = {}
-    x.ip = r.slice(0, 0 + 16)
+    x.ip = r.subarray(0, 0 + 16)
     x.proto = structs.readU16be.call(r, 16)
     return x
 }
@@ -3645,7 +3645,7 @@ export function parseBridgeMdbEntry(r: Buffer): BridgeMdbEntry {
     x.state = structs.readU8.call(r, pos); pos += 1
     x.flags = structs.readU8.call(r, pos); pos += 1
     x.vid = structs.readU16.call(r, pos); pos += 2
-    x.addr = parse_IpWithProto(r.slice(pos, pos + __LENGTH__IpWithProto)); pos += __LENGTH__IpWithProto
+    x.addr = parse_IpWithProto(r.subarray(pos, pos + __LENGTH__IpWithProto)); pos += __LENGTH__IpWithProto
     return x
 }
 
@@ -3657,7 +3657,7 @@ export function formatBridgeMdbEntry(x: BridgeMdbEntry, r: Buffer = Buffer.alloc
     x.state && structs.writeU8.call(r, x.state, pos); pos += 1
     x.flags && structs.writeU8.call(r, x.flags, pos); pos += 1
     x.vid && structs.writeU16.call(r, x.vid, pos); pos += 2
-    x.addr && format_IpWithProto(x.addr, r.slice(pos, pos + __LENGTH__IpWithProto)); pos += __LENGTH__IpWithProto
+    x.addr && format_IpWithProto(x.addr, r.subarray(pos, pos + __LENGTH__IpWithProto)); pos += __LENGTH__IpWithProto
     return r
 }
 
@@ -4074,7 +4074,7 @@ export interface IpTunnel6rd {
 export function parseIpTunnel6rd(r: Buffer): IpTunnel6rd {
     if (r.length !== __LENGTH_IpTunnel6rd) throw Error('Unexpected length for IpTunnel6rd')
     const x: IpTunnel6rd = {}
-    x.prefix = r.slice(0, 0 + 16)
+    x.prefix = r.subarray(0, 0 + 16)
     x.relayPrefix = structs.readU32be.call(r, 16)
     x.prefixlen = structs.readU16.call(r, 20)
     x.relayPrefixlen = structs.readU16.call(r, 22)

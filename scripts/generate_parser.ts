@@ -324,8 +324,8 @@ function processStructType(t: TypeExpr, lower?: AttributeOptions['type']): Struc
             throw Error(`Invalid type ${t} specified as struct type`)
         const length = getLengthName(t)
         return { type: t, length,
-                 parse: (o) => `parse${t}(r.slice(${o}, ${o} + ${length}))`,
-                 format: (x, o) => `format${t}(${x}, r.slice(${o}, ${o} + ${length}))` }
+                 parse: (o) => `parse${t}(r.subarray(${o}, ${o} + ${length}))`,
+                 format: (x, o) => `format${t}(${x}, r.subarray(${o}, ${o} + ${length}))` }
     }
     throw Error(`Unknown type: ${t}`)
 }
@@ -354,8 +354,8 @@ function processStruct(name: string, type: TypeDef) {
             if (!(opts && opts.count))
                 throw Error(`Struct (${name}) data member defined without count`)
             fields.push({ name, type: 'Buffer', docs: opts && opts.docs && opts.docs.join('\n') })
-            parseCode.push(o => `x.${name} = r.slice(${o}, ${o} + ${opts.count})`)
-            formatCode.push(o => 
+            parseCode.push(o => `x.${name} = r.subarray(${o}, ${o} + ${opts.count})`)
+            formatCode.push(o =>
                 `if (x.${name} && x.${name}.length !== ${opts.count})\n` +
                 indent(`throw Error('${name}: Unexpected buffer length')\n`) +
                 `x.${name} && x.${name}.copy(r, ${o})`)

@@ -168,7 +168,7 @@ export function parseMessage(r: Buffer): ParseResult<NetlinkMessage> {
     const { length, type, flags, seq, port } = parseHeader(r).x
     if (length < HEADER_LENGTH || r.length < length)
         throw Error(`Invalid header length (${length})`)
-    const data = r.slice(HEADER_LENGTH, length)
+    const data = r.subarray(HEADER_LENGTH, length)
     return {
         x: { type, flags, seq, port, data },
         consumed: length,
@@ -187,7 +187,7 @@ export function parseMessages(r: Buffer): NetlinkMessage[] {
     while (r.length) {
         const { x: msg, consumed } = parseMessage(r)
         x.push(msg)
-        r = r.slice(align(consumed))
+        r = r.subarray(align(consumed))
     }
     return x
 }
@@ -208,7 +208,7 @@ export function parseError(r: Buffer, flags: number): NetlinkErrorMessage {
         throw Error('Invalid ERROR message length')
     let x: NetlinkErrorMessage = {
         errno: readS32.call(r, 0),
-        header: parseHeader(r.slice(4)).x,
+        header: parseHeader(r.subarray(4)).x,
     }
     // FIXME: TLV?
     return x
@@ -295,7 +295,7 @@ export function parseAttribute(r: Buffer): ParseResult<NetlinkAttribute> {
     const type = typeAndFlags & ((1 << 14) - 1)
     if (length < 4 || r.length < length)
         throw Error(`Invalid attribute length (${length})`)
-    const data = r.slice(4, length)
+    const data = r.subarray(4, length)
     return { x: { nested, no, type, data }, consumed: length }
 }
 
@@ -311,7 +311,7 @@ export function parseAttributes(r: Buffer, fn: (item: NetlinkAttribute) => any) 
     while (r.length) {
         const { x: msg, consumed } = parseAttribute(r)
         fn(msg)
-        r = r.slice(align(consumed))
+        r = r.subarray(align(consumed))
     }
 }
 

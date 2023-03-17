@@ -63,7 +63,7 @@ export class GenericNetlinkSocket extends EventEmitter {
         const { type: family, flags, seq, port } = omsg
         let { data } = omsg
         const { x: { cmd, version }, consumed } = parseGenlHeader(data)
-        data = data.slice(consumed)
+        data = data.subarray(consumed)
         const msg: GenericNetlinkMessage = { family, flags, seq, port, cmd, version, data }
         return msg
     }

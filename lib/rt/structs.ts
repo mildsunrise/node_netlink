@@ -25,8 +25,8 @@ export interface AddressMessage {
 export function parseAddressMessage(r: Buffer): AddressMessage {
     if (r.length < rt.__LENGTH_Address)
         throw Error(`Unexpected Address message length (${r.length})`)
-    const data = rt.parseAddress(r.slice(0, rt.__LENGTH_Address))
-    const attrs = rt.parseAddressAttrs(r.slice(rt.__LENGTH_Address))
+    const data = rt.parseAddress(r.subarray(0, rt.__LENGTH_Address))
+    const attrs = rt.parseAddressAttrs(r.subarray(rt.__LENGTH_Address))
     return { kind: 'address', data, attrs }
 }
 
@@ -44,8 +44,8 @@ export interface LinkMessage {
 export function parseLinkMessage(r: Buffer): LinkMessage {
     if (r.length < rt.__LENGTH_Link)
         throw Error(`Unexpected Link message length (${r.length})`)
-    const data = rt.parseLink(r.slice(0, rt.__LENGTH_Link))
-    const attrs = ifla.parseLinkAttrs(r.slice(rt.__LENGTH_Link))
+    const data = rt.parseLink(r.subarray(0, rt.__LENGTH_Link))
+    const attrs = ifla.parseLinkAttrs(r.subarray(rt.__LENGTH_Link))
     return { kind: 'link', data, attrs }
 }
 
@@ -63,8 +63,8 @@ export interface NdUserOptionMessage {
 export function parseNdUserOptionMessage(r: Buffer): NdUserOptionMessage {
     if (r.length < rt.__LENGTH_NdUserOption)
         throw Error(`Unexpected NdUserOption message length (${r.length})`)
-    const data = rt.parseNdUserOption(r.slice(0, rt.__LENGTH_NdUserOption))
-    const attrs = rt.parseNdUserOptionAttrs(r.slice(rt.__LENGTH_NdUserOption))
+    const data = rt.parseNdUserOption(r.subarray(0, rt.__LENGTH_NdUserOption))
+    const attrs = rt.parseNdUserOptionAttrs(r.subarray(rt.__LENGTH_NdUserOption))
     return { kind: 'ndUserOption', data, attrs }
 }
 
@@ -82,8 +82,8 @@ export interface NeighborMessage {
 export function parseNeighborMessage(r: Buffer): NeighborMessage {
     if (r.length < rt.__LENGTH_Neighbor)
         throw Error(`Unexpected Neighbor message length (${r.length})`)
-    const data = rt.parseNeighbor(r.slice(0, rt.__LENGTH_Neighbor))
-    const attrs = rt.parseNeighborAttrs(r.slice(rt.__LENGTH_Neighbor))
+    const data = rt.parseNeighbor(r.subarray(0, rt.__LENGTH_Neighbor))
+    const attrs = rt.parseNeighborAttrs(r.subarray(rt.__LENGTH_Neighbor))
     return { kind: 'neighbor', data, attrs }
 }
 
@@ -101,8 +101,8 @@ export interface NeighborTableMessage {
 export function parseNeighborTableMessage(r: Buffer): NeighborTableMessage {
     if (r.length < rt.__LENGTH_NeighborTable)
         throw Error(`Unexpected NeighborTable message length (${r.length})`)
-    const data = rt.parseNeighborTable(r.slice(0, rt.__LENGTH_NeighborTable))
-    const attrs = rt.parseNeighborTableAttrs(r.slice(rt.__LENGTH_NeighborTable))
+    const data = rt.parseNeighborTable(r.subarray(0, rt.__LENGTH_NeighborTable))
+    const attrs = rt.parseNeighborTableAttrs(r.subarray(rt.__LENGTH_NeighborTable))
     return { kind: 'neighborTable', data, attrs }
 }
 
@@ -120,8 +120,8 @@ export interface PrefixMessage {
 export function parsePrefixMessage(r: Buffer): PrefixMessage {
     if (r.length < rt.__LENGTH_Prefix)
         throw Error(`Unexpected Prefix message length (${r.length})`)
-    const data = rt.parsePrefix(r.slice(0, rt.__LENGTH_Prefix))
-    const attrs = rt.parsePrefixAttrs(r.slice(rt.__LENGTH_Prefix))
+    const data = rt.parsePrefix(r.subarray(0, rt.__LENGTH_Prefix))
+    const attrs = rt.parsePrefixAttrs(r.subarray(rt.__LENGTH_Prefix))
     return { kind: 'prefix', data, attrs }
 }
 
@@ -139,8 +139,8 @@ export interface RouteMessage {
 export function parseRouteMessage(r: Buffer): RouteMessage {
     if (r.length < rt.__LENGTH_Route)
         throw Error(`Unexpected Route message length (${r.length})`)
-    const data = rt.parseRoute(r.slice(0, rt.__LENGTH_Route))
-    const attrs = rt.parseRouteAttrs(r.slice(rt.__LENGTH_Route))
+    const data = rt.parseRoute(r.subarray(0, rt.__LENGTH_Route))
+    const attrs = rt.parseRouteAttrs(r.subarray(rt.__LENGTH_Route))
     return { kind: 'route', data, attrs }
 }
 
@@ -158,8 +158,8 @@ export interface RuleMessage {
 export function parseRuleMessage(r: Buffer): RuleMessage {
     if (r.length < rt.__LENGTH_Rule)
         throw Error(`Unexpected Rule message length (${r.length})`)
-    const data = rt.parseRule(r.slice(0, rt.__LENGTH_Rule))
-    const attrs = rt.parseRuleAttrs(r.slice(rt.__LENGTH_Rule))
+    const data = rt.parseRule(r.subarray(0, rt.__LENGTH_Rule))
+    const attrs = rt.parseRuleAttrs(r.subarray(rt.__LENGTH_Rule))
     return { kind: 'rule', data, attrs }
 }
 
@@ -177,8 +177,8 @@ export interface NextHopMessage {
 export function parseNextHopMessage(r: Buffer): NextHopMessage {
     if (r.length < rt.__LENGTH_NextHop)
         throw Error(`Unexpected NextHop message length (${r.length})`)
-    const data = rt.parseNextHop(r.slice(0, rt.__LENGTH_NextHop))
-    const attrs = rt.parseNextHopAttrs(r.slice(rt.__LENGTH_NextHop))
+    const data = rt.parseNextHop(r.subarray(0, rt.__LENGTH_NextHop))
+    const attrs = rt.parseNextHopAttrs(r.subarray(rt.__LENGTH_NextHop))
     return { kind: 'nexthop', data, attrs }
 }
 
@@ -196,8 +196,8 @@ export interface TcMessage {
 export function parseTcMessage(r: Buffer): TcMessage {
     if (r.length < rt.__LENGTH_Tc)
         throw Error(`Unexpected Tc message length (${r.length})`)
-    const data = rt.parseTc(r.slice(0, rt.__LENGTH_Tc))
-    const attrs = rt.parseTcAttrs(r.slice(rt.__LENGTH_Tc))
+    const data = rt.parseTc(r.subarray(0, rt.__LENGTH_Tc))
+    const attrs = rt.parseTcAttrs(r.subarray(rt.__LENGTH_Tc))
     return { kind: 'tc', data, attrs }
 }
 
@@ -214,7 +214,7 @@ export interface TcActionMessage {
 export function parseTcActionMessage(r: Buffer): TcActionMessage {
     if (r.length !== rt.__LENGTH_TcAction)
         throw Error(`Unexpected TcAction message length (${r.length})`)
-    const data = rt.parseTcAction(r.slice(0, rt.__LENGTH_TcAction))
+    const data = rt.parseTcAction(r.subarray(0, rt.__LENGTH_TcAction))
     return { kind: 'tcAction', data }
 }
 
