@@ -409,9 +409,43 @@ export function putMap<T>(x: Map<number, T>, fn: (item: T) => StreamData): Strea
 
 // Object parsing
 
+/**
+ * Common base interface for parsed structs that are "expandable"; meaning
+ * they could see new fields appended to them in future versions of the kernel.
+ */
+export interface BaseExpandableStruct {
+    /**
+     * Extra data present at the end of the struct, if any. This is normal for
+     * fields that were added to the struct on newer versions of the kernel and
+     * not yet added to the type definitions.
+     *
+     * **This is not part of the stable API**; depending on it may break your
+     * code even on minor releases, since the new fields could be finally
+     * added and no longer be present here. The type of this field could also
+     * change in the future.
+     */
+    __unparsed?: Buffer
+}
+
+/** Common base interface for parsed Netlink objects (series of attributes). */
 export interface BaseObject {
+    /**
+     * List of attributes that were discarded when parsing because their
+     * type did not match any known value (if any). This is normal for
+     * attributes that have been implemented into the kernel and not yet
+     * added to the type definitions. The main use of this field is to
+     * preserve those attributes when the struct is reformatted; you may
+     * otherwise ignore it or even want to remove it.
+     *
+     * **This is not part of the stable API**; depending on it may break
+     * your code even on minor releases, since the new attributes
+     * could be finally added and no longer be present here. The type of
+     * this field could also change in the future. Right now every item
+     * is a `[type, data]` pair (see {@link NetlinkAttribute}).
+     */
     __unparsed?: [number, Buffer][],
 }
+
 export function getObject<T extends BaseObject>(
     x: Buffer, fns: { [key: number]: (data: Buffer, obj: T) => any }
 ): T {

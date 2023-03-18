@@ -72,13 +72,11 @@ const types: TypeStore = {
         ['txFifoErrors', u32, { orig: 'tx_fifo_errors' }],
         ['txHeartbeatErrors', u32, { orig: 'tx_heartbeat_errors' }],
         ['txWindowErrors', u32, { orig: 'tx_window_errors' }],
-        ['rxCompressed', u32, { orig: 'rx_compressed', docs: [
-            'for cslip etc',
-        ] }],
-        ['txCompressed', u32, { orig: 'tx_compressed' }],
+        ['txCompressed', u32, { orig: 'tx_compressed', abi: '2.6.0' }],
+
         ['rxNohandler', u32, { orig: 'rx_nohandler', docs: [
             'dropped, no handler found',
-        ] }],
+        ], abi: '4.6' }],
     ]},
 
     LinkStats64: { kind: 'struct', orig: 'rtnl_link_stats64', docs: [
@@ -137,13 +135,11 @@ const types: TypeStore = {
         ['txFifoErrors', u64, { orig: 'tx_fifo_errors' }],
         ['txHeartbeatErrors', u64, { orig: 'tx_heartbeat_errors' }],
         ['txWindowErrors', u64, { orig: 'tx_window_errors' }],
-        ['rxCompressed', u64, { orig: 'rx_compressed', docs: [
-            'for cslip etc',
-        ] }],
-        ['txCompressed', u64, { orig: 'tx_compressed' }],
+        ['txCompressed', u64, { orig: 'tx_compressed', abi: '2.6.35' }],
+
         ['rxNohandler', u64, { orig: 'rx_nohandler', docs: [
             'dropped, no handler found',
-        ] }],
+        ], 'abi': '4.6' }],
     ]},
 
     LinkInterfaceMap: { kind: 'struct', orig: 'rtnl_link_ifmap', docs: [

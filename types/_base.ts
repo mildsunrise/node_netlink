@@ -34,6 +34,23 @@ export interface AttributeOptions {
     repeated?: boolean
     /** Struct fields only: if field is an array, its size */
     count?: number
+
+    /**
+     * Struct fields only. Specifying this for a field marks the struct as
+     * an "expandable" struct, meaning that it can see new fields appended to
+     * it in newer versions of the kernel. Because of this, the struct will
+     * only be directly allowed inside length-delimited contexts, such as an
+     * attribute, but not inside i.e. other structs.
+     *
+     * In particular, if a field has `abi` set to X, this means X is the first
+     * kernel release for which this field was the last one in the struct.
+     * If some release Y adds fields to the struct, those fields will be
+     * incorporated to the type definition, and the lsat of them will be tagged
+     * with `abi`. An expandable struct must always have `abi` on its last field.
+     *
+     * It must be a version in `A.B.C` format.
+     */
+    abi?: string
 }
 
 export interface ValueDef {

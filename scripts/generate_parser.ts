@@ -71,8 +71,8 @@ const genFunction = (name: string, args: string, ret: string | null, body: strin
     withDocstring(docs, `export function ${name}(${args})${ret ? ': ' + ret : ''} {\n${indent(body)}\n}`)
 interface TSField { name: string, type: string, docs?: string, required?: boolean }
 const genField = (x: TSField) => withDocstring(x.docs, `${x.name}${x.required ? '' : '?'}: ${x.type}`)
-const genInterface = (name: string, fields: TSField[], docs?: string) =>
-    withDocstring(docs, `export interface ${name} {\n${indent(fields.map(genField).join('\n\n'))}\n}`)
+const genInterface = (name: string, fields: TSField[], docs?: string, extend?: string) =>
+    withDocstring(docs, `export interface ${name}${extend ? ` extends ${extend}` : ''} {\n${indent(fields.map(genField).join('\n\n'))}\n}`)
 
 
 // Main code
@@ -105,7 +105,7 @@ for (const name of Object.keys(types)) {
         blocks[name] = processEnum(name, type, enumFlagsNeeded.has(name), enumAttrFlagsNeeded.has(name))
 }
 const pre = [
-    "import { BaseObject, StreamData } from '../structs'",
+    "import { BaseObject, BaseExpandableStruct, StreamData } from '../structs'",
     "import * as structs from '../structs'",
 ].join('\n') + '\n\n'
 const output = pre + Object.keys(types).map(k => blocks[k]).join('\n\n') + '\n'
@@ -125,6 +125,9 @@ function toCamelCase(x: string) {
 }
 function getFlagName(x: string) {
     return `${x}Set`
+}
+function isStructExpandable(x: TypeDef) {
+    return x.attrs!.some(attr => attr[2]?.abi)
 }
 
 type TypeResult = { type: null | string, parse: (x: string) => string, format: (x: string) => string }
@@ -320,7 +323,7 @@ function processStructType(t: TypeExpr, lower?: AttributeOptions['type']): Struc
     } else if ({}.hasOwnProperty.call(types, t)) {
         const type = types[t]
         if (lower) throw Error(`Lower type ${lower} specified over struct type`)
-        if (type.kind !== 'struct')
+        if (type.kind !== 'struct' || isStructExpandable(type))
             throw Error(`Invalid type ${t} specified as struct type`)
         const length = getLengthName(t)
         return { type: t, length,
@@ -345,9 +348,16 @@ function calculateLength(lengths: (string | number)[]): number | string {
 }
 
 function processStruct(name: string, type: TypeDef) {
+    // TODO: proper support for expandable structs... right now we just strip
+    // fields added after the 1st ABI and relax the length check.
+    const expandable = isStructExpandable(type)
+    let attrs = type.attrs!
+    if (expandable)
+        attrs = attrs.slice(0, attrs.findIndex(attr => attr[2]?.abi) + 1)
+
     const fields: TSField[] = [], parseCode: ((o: string) => string)[] = [], formatCode: ((o: string) => string)[] = []
     const lengths: (string | number)[] = []
-    for (const [ name, ftype, opts ] of type.attrs!) {
+    for (const [ name, ftype, opts ] of attrs) {
         if (ftype === 'data' || ftype === 'string') {
             if (opts && opts.type)
                 console.warn('Warning: Lower type ignored on struct data member')
@@ -380,9 +390,10 @@ function processStruct(name: string, type: TypeDef) {
             lengths.push(built.length)
         }
     }
-    const lengthName = getLengthName(name)
+    const lengthName = expandable ? `__MINLENGTH_${name}` : getLengthName(name)
     const length = calculateLength(lengths)
-    const check = `if (r.length !== ${lengthName}) throw Error('Unexpected length for ${name}')`
+    const cond = expandable ? '<' : '!=='
+    const check = `if (r.length ${cond} ${lengthName}) throw Error('Unexpected length for ${name}')`
     let fullParseCode = [check, `const x: ${name} = {}` ]
     let fullFormatCode = [check]
     if (typeof length === 'number') {
@@ -402,12 +413,19 @@ function processStruct(name: string, type: TypeDef) {
             fullFormatCode.push(`${formatCode[i]('pos')}; pos += ${l}`)
         })
     }
+    if (expandable) {
+        fullParseCode.push(`if (r.length > ${lengthName}) x.__unparsed = r.subarray(${lengthName})`)
+        fullFormatCode.push(`if (x.__unparsed) r.set(x.__unparsed, ${lengthName})`)
+    }
     fullParseCode.push('return x')
     fullFormatCode.push('return r')
-    const iface = genInterface(name, fields, type.docs && type.docs.join('\n'))
+    const iface = genInterface(name, fields,
+        type.docs && type.docs.join('\n'),
+        expandable ? 'BaseExpandableStruct' : undefined)
     const parse = genFunction(`parse${name}`, `r: Buffer`, name, fullParseCode.join('\n'),
         `Parses the attributes of a {@link ${name}} object`)
-    const format = genFunction(`format${name}`, `x: ${name}, r: Buffer = Buffer.alloc(${lengthName})`, 'Buffer', fullFormatCode.join('\n'),
+    const allocExpr = expandable ? `${lengthName} + (x.__unparsed || []).length` : lengthName
+    const format = genFunction(`format${name}`, `x: ${name}, r: Buffer = Buffer.alloc(${allocExpr})`, 'Buffer', fullFormatCode.join('\n'),
         `Encodes a {@link ${name}} object into a stream of attributes`)
     return iface + '\n\n' + parse + '\n\n' + format + '\n\n' + `export const ${lengthName} = ${length}`
 }
