@@ -1,4 +1,4 @@
-import { BaseObject, StreamData } from '../structs'
+import { BaseObject, BaseExpandableStruct, StreamData } from '../structs'
 import * as structs from '../structs'
 
 export enum Commands {

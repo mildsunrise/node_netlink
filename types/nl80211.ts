@@ -1723,8 +1723,7 @@ const types: TypeStore = {
             'TDLS conversation between two devices.',
         ] }],
         ['tdlsOperation', u8, { type: 'TdlsOperation', orig: 'NL80211_ATTR_TDLS_OPERATION', docs: [
-            'High level TDLS operation; see',
-            '&enum nl80211_tdls_operation, represented as a u8.',
+            'High level TDLS operation',
         ] }],
         ['tdlsSupport', flag, { orig: 'NL80211_ATTR_TDLS_SUPPORT', docs: [
             'A flag indicating the device can operate',

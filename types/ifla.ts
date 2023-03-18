@@ -47,9 +47,9 @@ const types: TypeStore = {
             'multicast packets received',
         ] }],
         ['collisions', u32, { orig: 'collisions' }],
-        ['rxLengthErrors', u32, { orig: 'rx_length_errors', docs: [
-            'detailed rx_errors:',
-        ] }],
+
+        // detailed rx_errors:
+        ['rxLengthErrors', u32, { orig: 'rx_length_errors' }],
         ['rxOverErrors', u32, { orig: 'rx_over_errors', docs: [
             'receiver ring buff overflow',
         ] }],
@@ -65,13 +65,16 @@ const types: TypeStore = {
         ['rxMissedErrors', u32, { orig: 'rx_missed_errors', docs: [
             'receiver missed packet',
         ] }],
-        ['txAbortedErrors', u32, { orig: 'tx_aborted_errors', docs: [
-            'detailed tx_errors',
-        ] }],
+
+        // detailed tx_errors:
+        ['txAbortedErrors', u32, { orig: 'tx_aborted_errors' }],
         ['txCarrierErrors', u32, { orig: 'tx_carrier_errors' }],
         ['txFifoErrors', u32, { orig: 'tx_fifo_errors' }],
         ['txHeartbeatErrors', u32, { orig: 'tx_heartbeat_errors' }],
         ['txWindowErrors', u32, { orig: 'tx_window_errors' }],
+
+        // detailed tx_errors:
+        ['rxCompressed', u32, { orig: 'rx_compressed' }],
         ['txCompressed', u32, { orig: 'tx_compressed', abi: '2.6.0' }],
 
         ['rxNohandler', u32, { orig: 'rx_nohandler', docs: [
@@ -110,9 +113,9 @@ const types: TypeStore = {
             'multicast packets received',
         ] }],
         ['collisions', u64, { orig: 'collisions' }],
-        ['rxLengthErrors', u64, { orig: 'rx_length_errors', docs: [
-            'detailed rx_errors:',
-        ] }],
+
+        // detailed rx_errors:
+        ['rxLengthErrors', u64, { orig: 'rx_length_errors' }],
         ['rxOverErrors', u64, { orig: 'rx_over_errors', docs: [
             'receiver ring buff overflow',
         ] }],
@@ -128,13 +131,16 @@ const types: TypeStore = {
         ['rxMissedErrors', u64, { orig: 'rx_missed_errors', docs: [
             'receiver missed packet',
         ] }],
-        ['txAbortedErrors', u64, { orig: 'tx_aborted_errors', docs: [
-            'detailed tx_errors',
-        ] }],
+
+        // detailed tx_errors:
+        ['txAbortedErrors', u64, { orig: 'tx_aborted_errors' }],
         ['txCarrierErrors', u64, { orig: 'tx_carrier_errors' }],
         ['txFifoErrors', u64, { orig: 'tx_fifo_errors' }],
         ['txHeartbeatErrors', u64, { orig: 'tx_heartbeat_errors' }],
         ['txWindowErrors', u64, { orig: 'tx_window_errors' }],
+
+        // for cslip etc
+        ['rxCompressed', u64, { orig: 'rx_compressed' }],
         ['txCompressed', u64, { orig: 'tx_compressed', abi: '2.6.35' }],
 
         ['rxNohandler', u64, { orig: 'rx_nohandler', docs: [

@@ -1,8 +1,8 @@
-import { BaseObject, StreamData } from '../structs'
+import { BaseObject, BaseExpandableStruct, StreamData } from '../structs'
 import * as structs from '../structs'
 
 /** This struct should be in sync with struct rtnl_link_stats64 */
-export interface LinkStats {
+export interface LinkStats extends BaseExpandableStruct {
     /** total packets received */
     rxPackets?: number
     
@@ -32,7 +32,6 @@ export interface LinkStats {
     
     collisions?: number
     
-    /** detailed rx_errors: */
     rxLengthErrors?: number
     
     /** receiver ring buff overflow */
@@ -50,7 +49,6 @@ export interface LinkStats {
     /** receiver missed packet */
     rxMissedErrors?: number
     
-    /** detailed tx_errors */
     txAbortedErrors?: number
     
     txCarrierErrors?: number
@@ -61,18 +59,14 @@ export interface LinkStats {
     
     txWindowErrors?: number
     
-    /** for cslip etc */
     rxCompressed?: number
     
     txCompressed?: number
-    
-    /** dropped, no handler found */
-    rxNohandler?: number
 }
 
 /** Parses the attributes of a {@link LinkStats} object */
 export function parseLinkStats(r: Buffer): LinkStats {
-    if (r.length !== __LENGTH_LinkStats) throw Error('Unexpected length for LinkStats')
+    if (r.length < __MINLENGTH_LinkStats) throw Error('Unexpected length for LinkStats')
     const x: LinkStats = {}
     x.rxPackets = structs.readU32.call(r, 0)
     x.txPackets = structs.readU32.call(r, 4)
@@ -97,13 +91,13 @@ export function parseLinkStats(r: Buffer): LinkStats {
     x.txWindowErrors = structs.readU32.call(r, 80)
     x.rxCompressed = structs.readU32.call(r, 84)
     x.txCompressed = structs.readU32.call(r, 88)
-    x.rxNohandler = structs.readU32.call(r, 92)
+    if (r.length > __MINLENGTH_LinkStats) x.__unparsed = r.subarray(__MINLENGTH_LinkStats)
     return x
 }
 
 /** Encodes a {@link LinkStats} object into a stream of attributes */
-export function formatLinkStats(x: LinkStats, r: Buffer = Buffer.alloc(__LENGTH_LinkStats)): Buffer {
-    if (r.length !== __LENGTH_LinkStats) throw Error('Unexpected length for LinkStats')
+export function formatLinkStats(x: LinkStats, r: Buffer = Buffer.alloc(__MINLENGTH_LinkStats + (x.__unparsed || []).length)): Buffer {
+    if (r.length < __MINLENGTH_LinkStats) throw Error('Unexpected length for LinkStats')
     x.rxPackets && structs.writeU32.call(r, x.rxPackets, 0)
     x.txPackets && structs.writeU32.call(r, x.txPackets, 4)
     x.rxBytes && structs.writeU32.call(r, x.rxBytes, 8)
@@ -127,14 +121,14 @@ export function formatLinkStats(x: LinkStats, r: Buffer = Buffer.alloc(__LENGTH_
     x.txWindowErrors && structs.writeU32.call(r, x.txWindowErrors, 80)
     x.rxCompressed && structs.writeU32.call(r, x.rxCompressed, 84)
     x.txCompressed && structs.writeU32.call(r, x.txCompressed, 88)
-    x.rxNohandler && structs.writeU32.call(r, x.rxNohandler, 92)
+    if (x.__unparsed) r.set(x.__unparsed, __MINLENGTH_LinkStats)
     return r
 }
 
-export const __LENGTH_LinkStats = 96
+export const __MINLENGTH_LinkStats = 92
 
 /** The main device statistics structure */
-export interface LinkStats64 {
+export interface LinkStats64 extends BaseExpandableStruct {
     /** total packets received */
     rxPackets?: bigint
     
@@ -164,7 +158,6 @@ export interface LinkStats64 {
     
     collisions?: bigint
     
-    /** detailed rx_errors: */
     rxLengthErrors?: bigint
     
     /** receiver ring buff overflow */
@@ -182,7 +175,6 @@ export interface LinkStats64 {
     /** receiver missed packet */
     rxMissedErrors?: bigint
     
-    /** detailed tx_errors */
     txAbortedErrors?: bigint
     
     txCarrierErrors?: bigint
@@ -193,18 +185,14 @@ export interface LinkStats64 {
     
     txWindowErrors?: bigint
     
-    /** for cslip etc */
     rxCompressed?: bigint
     
     txCompressed?: bigint
-    
-    /** dropped, no handler found */
-    rxNohandler?: bigint
 }
 
 /** Parses the attributes of a {@link LinkStats64} object */
 export function parseLinkStats64(r: Buffer): LinkStats64 {
-    if (r.length !== __LENGTH_LinkStats64) throw Error('Unexpected length for LinkStats64')
+    if (r.length < __MINLENGTH_LinkStats64) throw Error('Unexpected length for LinkStats64')
     const x: LinkStats64 = {}
     x.rxPackets = structs.readU64.call(r, 0)
     x.txPackets = structs.readU64.call(r, 8)
@@ -229,13 +217,13 @@ export function parseLinkStats64(r: Buffer): LinkStats64 {
     x.txWindowErrors = structs.readU64.call(r, 160)
     x.rxCompressed = structs.readU64.call(r, 168)
     x.txCompressed = structs.readU64.call(r, 176)
-    x.rxNohandler = structs.readU64.call(r, 184)
+    if (r.length > __MINLENGTH_LinkStats64) x.__unparsed = r.subarray(__MINLENGTH_LinkStats64)
     return x
 }
 
 /** Encodes a {@link LinkStats64} object into a stream of attributes */
-export function formatLinkStats64(x: LinkStats64, r: Buffer = Buffer.alloc(__LENGTH_LinkStats64)): Buffer {
-    if (r.length !== __LENGTH_LinkStats64) throw Error('Unexpected length for LinkStats64')
+export function formatLinkStats64(x: LinkStats64, r: Buffer = Buffer.alloc(__MINLENGTH_LinkStats64 + (x.__unparsed || []).length)): Buffer {
+    if (r.length < __MINLENGTH_LinkStats64) throw Error('Unexpected length for LinkStats64')
     x.rxPackets && structs.writeU64.call(r, x.rxPackets, 0)
     x.txPackets && structs.writeU64.call(r, x.txPackets, 8)
     x.rxBytes && structs.writeU64.call(r, x.rxBytes, 16)
@@ -259,11 +247,11 @@ export function formatLinkStats64(x: LinkStats64, r: Buffer = Buffer.alloc(__LEN
     x.txWindowErrors && structs.writeU64.call(r, x.txWindowErrors, 160)
     x.rxCompressed && structs.writeU64.call(r, x.rxCompressed, 168)
     x.txCompressed && structs.writeU64.call(r, x.txCompressed, 176)
-    x.rxNohandler && structs.writeU64.call(r, x.rxNohandler, 184)
+    if (x.__unparsed) r.set(x.__unparsed, __MINLENGTH_LinkStats64)
     return r
 }
 
-export const __LENGTH_LinkStats64 = 192
+export const __MINLENGTH_LinkStats64 = 184
 
 /** The struct should be in sync with struct ifmap */
 export interface LinkInterfaceMap {

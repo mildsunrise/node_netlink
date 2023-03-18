@@ -1,4 +1,4 @@
-import { BaseObject, StreamData } from '../structs'
+import { BaseObject, BaseExpandableStruct, StreamData } from '../structs'
 import * as structs from '../structs'
 
 /** supported nl80211 commands */
@@ -2181,10 +2181,7 @@ export interface Message extends BaseObject {
      */
     tdlsDialogToken?: Buffer
     
-    /**
-     * High level TDLS operation; see
-     * &enum nl80211_tdls_operation, represented as a u8.
-     */
+    /** High level TDLS operation */
     tdlsOperation?: TdlsOperation | keyof typeof TdlsOperation
     
     /**
